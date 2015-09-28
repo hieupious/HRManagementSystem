@@ -21,19 +21,7 @@ namespace HRMS.Web.Controllers
         }
         public IActionResult Index()
         {
-            //var users = _importDataService.ImportUserFromAccessDB();
-            //var depts = _importDataService.ImportDepartmentFromAccessDB();
-            Stopwatch stopwatch = Stopwatch.StartNew(); 
-            var checkIns = _importDataService.ImportAllCheckInOutFromAccessDB();
-            //_dbContext.Deparments.AddRange(depts);
-            //_dbContext.UserInfoes.AddRange(users);
-            _dbContext.CheckInOutRecords.AddRange(checkIns);
-            _dbContext.SaveChanges();
-            stopwatch.Stop();
-            var user = _dbContext.UserInfoes.ToList();
-            ViewBag.Time = stopwatch.ElapsedMilliseconds / 1000;
-            ViewBag.Total = checkIns.Count;
-            return View(user);
+            return View();
         }
 
         public IActionResult About()
