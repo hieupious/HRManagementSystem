@@ -19,6 +19,8 @@ namespace HRMS.Web.Models
             modelBuilder.Entity<Department>().Key(d => d.Id);
             modelBuilder.Entity<Department>().Property(d => d.Id).ValueGeneratedNever();
             modelBuilder.Entity<CheckInOutRecord>().Key(c => c.Id);
+            modelBuilder.Entity<DailyWorkingReport>().Key(d => d.Id);
+
         }
     }
 }
