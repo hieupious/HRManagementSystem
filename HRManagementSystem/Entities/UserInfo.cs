@@ -12,5 +12,6 @@ namespace Entities
         public string EmployeeId { get; set; }
         public string Name { get; set; }
         public int DeptId { get; set; }
+        public Department Deparment { get; set; }
     }
 }

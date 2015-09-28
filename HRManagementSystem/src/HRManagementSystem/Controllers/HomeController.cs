@@ -1,9 +1,15 @@
 ﻿using Microsoft.AspNet.Mvc;
+using HRMS.Models;
 
-namespace HRManagementSystem.Controllers
+namespace HRMS.Controllers
 {
     public class HomeController : Controller
     {
+        private Repository _repository;
+        public HomeController(Repository repository)
+        {
+            _repository = repository;
+        }
         public IActionResult Index()
         {
             return View();

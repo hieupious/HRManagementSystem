@@ -10,5 +10,6 @@ namespace Entities
     {
         public int UserId { get; set; }
         public DateTime CheckTime { get; set; }
+        public UserInfo User { get; set; }
     }
 }

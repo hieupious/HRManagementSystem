@@ -13,7 +13,12 @@
   </PropertyGroup>
   <PropertyGroup>
     <SchemaVersion>2.0</SchemaVersion>
-    <DevelopmentServerPort>46045</DevelopmentServerPort>
+    <DevelopmentServerPort>45052</DevelopmentServerPort>
+    <IISExpressWindowsAuthentication>Enabled</IISExpressWindowsAuthentication>
+    <IISExpressAnonymousAuthentication>Enabled</IISExpressAnonymousAuthentication>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Entities\HRMS.Entities.csproj" />
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\DNX\Microsoft.DNX.targets" Condition="'$(VSToolsPath)' != ''" />
 </Project>

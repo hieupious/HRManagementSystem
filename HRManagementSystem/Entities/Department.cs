@@ -10,5 +10,6 @@ namespace Entities
     {
         public int DeptId { get; set; }
         public string Name { get; set; }
+        public List<UserInfo> UserInfoes { get; set; }
     }
 }
