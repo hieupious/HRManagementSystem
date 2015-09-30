@@ -2,11 +2,16 @@
   "name": "ASP.NET",
   "private": true,
   "dependencies": {
-    "bootstrap": "3.0.0",
-    "bootstrap-touch-carousel": "0.8.0",
-    "hammer.js": "2.0.4",
-    "jquery": "2.1.4",
-    "jquery-validation": "1.11.1",
-    "jquery-validation-unobtrusive": "3.2.2"
+    "angular": "~1.4.7",
+    "angular-i18n": "~1.4.7",
+    "angular-recursion": "~1.0.5",
+    "angular-resource": "~1.4.7",
+    "angular-sanitize": "~1.4.7",
+    "font-awesome": "~4.4.0",
+    "jquery": "~2.1.4",
+    "phantomnet-ui": "~3.0.0-beta7",
+    "ui-bootstrap-datetimepicker": "~1.0.0-beta1",
+    "ng-focus-if": "~1.0.2",
+    "phantomnet-resource": "~1.0.0-beta1"
   }
 }

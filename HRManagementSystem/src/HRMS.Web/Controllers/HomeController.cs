@@ -23,8 +23,11 @@ namespace HRMS.Web.Controllers
         }
         public IActionResult Index()
         {
-            //var checkInOutRecords = _dbContext.CheckInOutRecords.Where(c => c.CheckTime.Date == new DateTime(2005, 8, 3)).ToList();
-            //int count = checkInOutRecords.Count;
+            return View();
+        }
+
+        public IActionResult Report()
+        {
             return View();
         }
 

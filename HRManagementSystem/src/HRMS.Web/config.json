@@ -1,10 +1,13 @@
 {
+  "Site": {
+    "Name": "HRMS"
+  },
   "Data": {
     "DefaultConnection": {
       "ConnectionString": "Server=10.9.1.100\\SQLSERVER2012;Database=HRMSDB;uid=dev;pwd=HRMS@124;Trusted_Connection=True;MultipleActiveResultSets=true"
     },
     "ImportedDBPath": {
-      "dbPath" :  "ImportedDB\\importedDB.mdb"
+      "dbPath": "ImportedDB\\importedDB.mdb"
     }
   }
 }

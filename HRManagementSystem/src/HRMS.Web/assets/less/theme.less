@@ -1,0 +1,21 @@
+﻿@import "./lib.less";
+@import "./toolkit/components.less";
+@import "./phantomnet-ui/components.less";
+
+.nav-bordered {
+  > li {
+    > a {
+      &:hover,
+      &:focus {
+        color: @nav-bordered-color;
+      }
+    }
+    &.active > a {
+      &,
+      &:hover,
+      &:focus {
+        border-bottom-color: @nav-bordered-color-active;
+      }
+    }
+  }
+}

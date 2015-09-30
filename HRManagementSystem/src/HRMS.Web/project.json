@@ -1,5 +1,6 @@
 ﻿{
   "webroot": "wwwroot",
+  "userSecretsId": "aspnet5-HRMS-911c369d-760d-4df2-bd37-7c0015522987",
   "version": "1.0.0-*",
 
   "dependencies": {
@@ -18,10 +19,12 @@
     "Microsoft.Framework.Logging.Console": "1.0.0-beta7",
     "Microsoft.Framework.Logging.Debug": "1.0.0-beta7",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0-beta7",
-    "Microsoft.AspNet.Mvc.WebApiCompatShim" : "6.0.0-beta7",
     "Autofac": "4.0.0-alpha2",
     "Autofac.Dnx": "4.0.0-alpha4-79",
     "Autofac.Framework.DependencyInjection": "4.0.0-beta6-97",
+    "PhantomNet.Web.Preferences": "3.0.0-beta7",
+    "Microsoft.Framework.Configuration.UserSecrets": "1.0.0-beta7",
+    "Microsoft.AspNet.Mvc.WebApiCompatShim": "6.0.0-beta7",
     "Newtonsoft.Json": "7.0.1"
   },
 
