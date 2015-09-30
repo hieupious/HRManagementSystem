@@ -25,6 +25,7 @@ namespace HRMS.Web
             var builder = new ConfigurationBuilder(appEnv.ApplicationBasePath)
                 .AddJsonFile("config.json")
                 .AddEnvironmentVariables();
+            
             Configuration = builder.Build();
             appBasePath = appEnv.ApplicationBasePath;
         }
@@ -45,14 +46,14 @@ namespace HRMS.Web
 
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
-            // services.AddWebApiConventions();
+            //services.AddWebApiConventions();
 
             // Add application service
             //services.AddTransient<IImportDataService, ImportDataService>();
             var dbPath = appBasePath + "\\" + Configuration["Data:ImportedDBPath:dbPath"];
             var builder = new ContainerBuilder();
             builder.Register(svc => new ImportDataService(dbPath)).As<IImportDataService>().InstancePerLifetimeScope();
-
+            builder.Register(svc => new WorkingProcessService()).As<IDailyWorkingProcessService>().InstancePerLifetimeScope();
             //Populate the container with services that were previously registered
             builder.Populate(services);
 
@@ -67,7 +68,7 @@ namespace HRMS.Web
             loggerFactory.MinimumLevel = LogLevel.Information;
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
-
+            
             // Configure the HTTP request pipeline.
 
             // Add the following to the request pipeline only in development environment.
@@ -94,7 +95,7 @@ namespace HRMS.Web
                     template: "{controller=Home}/{action=Index}/{id?}");
 
                 // Uncomment the following line to add a route for porting Web API 2 controllers.
-                // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
+                routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
             });
         }
     }

@@ -12,7 +12,7 @@ namespace HRMS.Web.Models
         public int UserId { get; set; }
         public int? WorkingReportId { get; set; }
         public DateTime CheckTime { get; set; }
-        public virtual UserInfo User { get; set; }
-        public virtual DailyWorkingReport WorkingReport { get; set; }
+        public UserInfo User { get; set; }
+        public DailyWorkingReport WorkingReport { get; set; }
     }
 }

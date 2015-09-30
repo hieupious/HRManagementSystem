@@ -13,28 +13,18 @@ namespace HRMS.Web.Controllers
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IImportDataService _importDataService;
+        private readonly IDailyWorkingProcessService _dailyWorkingProcess;
 
-        public HomeController(ApplicationDbContext dbContext, IImportDataService importDataService)
+        public HomeController(ApplicationDbContext dbContext, IImportDataService importDataService, IDailyWorkingProcessService dailyWorkingProcess)
         {
             _dbContext = dbContext;
             _importDataService = importDataService;
+            _dailyWorkingProcess = dailyWorkingProcess;
         }
         public IActionResult Index()
         {
-            return View();
-        }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
+            //var checkInOutRecords = _dbContext.CheckInOutRecords.Where(c => c.CheckTime.Date == new DateTime(2005, 8, 3)).ToList();
+            //int count = checkInOutRecords.Count;
             return View();
         }
 

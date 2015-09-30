@@ -18,9 +18,11 @@
     "Microsoft.Framework.Logging.Console": "1.0.0-beta7",
     "Microsoft.Framework.Logging.Debug": "1.0.0-beta7",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0-beta7",
+    "Microsoft.AspNet.Mvc.WebApiCompatShim" : "6.0.0-beta7",
     "Autofac": "4.0.0-alpha2",
     "Autofac.Dnx": "4.0.0-alpha4-79",
-    "Autofac.Framework.DependencyInjection": "4.0.0-beta6-97"
+    "Autofac.Framework.DependencyInjection": "4.0.0-beta6-97",
+    "Newtonsoft.Json": "7.0.1"
   },
 
   "commands": {

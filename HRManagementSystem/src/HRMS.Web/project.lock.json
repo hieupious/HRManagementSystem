@@ -892,6 +892,29 @@
           "lib/dnx451/Microsoft.AspNet.Mvc.ViewFeatures.dll": {}
         }
       },
+      "Microsoft.AspNet.Mvc.WebApiCompatShim/6.0.0-beta7": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Mvc.Core": "6.0.0-beta7",
+          "Microsoft.AspNet.Mvc.Formatters.Json": "6.0.0-beta7",
+          "Microsoft.AspNet.WebApi.Client": "5.2.2"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Net.Http",
+          "System.Runtime.Serialization",
+          "System.Xml"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Mvc.WebApiCompatShim.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Mvc.WebApiCompatShim.dll": {}
+        }
+      },
       "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces/1.0.0-beta7": {
         "type": "package",
         "frameworkAssemblies": [
@@ -1029,6 +1052,21 @@
         },
         "runtime": {
           "lib/dnx451/Microsoft.AspNet.Tooling.Razor.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebApi.Client/5.2.2": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "6.0.4"
+        },
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net45/System.Net.Http.Formatting.dll": {}
+        },
+        "runtime": {
+          "lib/net45/System.Net.Http.Formatting.dll": {}
         }
       },
       "Microsoft.AspNet.WebUtilities/1.0.0-beta7": {
@@ -1715,7 +1753,7 @@
           "lib/dnx451/Microsoft.VisualStudio.Web.BrowserLink.Loader.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.6": {
+      "Newtonsoft.Json/7.0.1": {
         "type": "package",
         "compile": {
           "lib/net45/Newtonsoft.Json.dll": {}
@@ -2569,6 +2607,21 @@
         "repo.json"
       ]
     },
+    "Microsoft.AspNet.Mvc.WebApiCompatShim/6.0.0-beta7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "KsW1ho6nn2tFj8VBvXkuCh+J/H5Ri/klaR7zNQklQCEijtNEjrcbFpTwf87pC0YkFyPPqde87cNRlnEDpNAFzw==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.Mvc.WebApiCompatShim.dll",
+        "lib/dnx451/Microsoft.AspNet.Mvc.WebApiCompatShim.xml",
+        "lib/dnxcore50/Microsoft.AspNet.Mvc.WebApiCompatShim.dll",
+        "lib/dnxcore50/Microsoft.AspNet.Mvc.WebApiCompatShim.xml",
+        "Microsoft.AspNet.Mvc.WebApiCompatShim.6.0.0-beta7.nupkg",
+        "Microsoft.AspNet.Mvc.WebApiCompatShim.6.0.0-beta7.nupkg.sha512",
+        "Microsoft.AspNet.Mvc.WebApiCompatShim.nuspec",
+        "repo.json"
+      ]
+    },
     "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces/1.0.0-beta7": {
       "type": "package",
       "serviceable": true,
@@ -2683,6 +2736,20 @@
         "Microsoft.AspNet.Tooling.Razor.1.0.0-beta7.nupkg",
         "Microsoft.AspNet.Tooling.Razor.1.0.0-beta7.nupkg.sha512",
         "Microsoft.AspNet.Tooling.Razor.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.WebApi.Client/5.2.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "YVq+s0WeXrPxJk57CoElbtMYf95j76uJcW6nue3Cs4eIer9sgUp4rasSo0gALX3ls1Zf2jMceOLik9X/sJyrwA==",
+      "files": [
+        "lib/net45/System.Net.Http.Formatting.dll",
+        "lib/net45/System.Net.Http.Formatting.xml",
+        "lib/portable-wp8+netcore45+net45+wp81+wpa81/System.Net.Http.Formatting.dll",
+        "lib/portable-wp8+netcore45+net45+wp81+wpa81/System.Net.Http.Formatting.xml",
+        "Microsoft.AspNet.WebApi.Client.5.2.2.nupkg",
+        "Microsoft.AspNet.WebApi.Client.5.2.2.nupkg.sha512",
+        "Microsoft.AspNet.WebApi.Client.nuspec"
       ]
     },
     "Microsoft.AspNet.WebUtilities/1.0.0-beta7": {
@@ -3296,9 +3363,9 @@
         "Microsoft.VisualStudio.Web.BrowserLink.Loader.nuspec"
       ]
     },
-    "Newtonsoft.Json/6.0.6": {
+    "Newtonsoft.Json/7.0.1": {
       "type": "package",
-      "sha512": "w26uZNyCG5VeoKiEOJ4+9/o8koSofLKwHl7WLreIcp0U6r57L7WiRXmjp8MTKFw6dYNZ9AE0lw69WYbIhUsU9Q==",
+      "sha512": "q3V4KLetMLnt1gpAVWgtXnHjKs0UG/RalBc29u2ZKxd5t5Ze4JBL5WiiYIklJyK/5CRiIiNwigVQUo0FgbsuWA==",
       "files": [
         "lib/net20/Newtonsoft.Json.dll",
         "lib/net20/Newtonsoft.Json.xml",
@@ -3308,14 +3375,12 @@
         "lib/net40/Newtonsoft.Json.xml",
         "lib/net45/Newtonsoft.Json.dll",
         "lib/net45/Newtonsoft.Json.xml",
-        "lib/netcore45/Newtonsoft.Json.dll",
-        "lib/netcore45/Newtonsoft.Json.xml",
         "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.dll",
         "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.xml",
-        "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.dll",
-        "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.xml",
-        "Newtonsoft.Json.6.0.6.nupkg",
-        "Newtonsoft.Json.6.0.6.nupkg.sha512",
+        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll",
+        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.xml",
+        "Newtonsoft.Json.7.0.1.nupkg",
+        "Newtonsoft.Json.7.0.1.nupkg.sha512",
         "Newtonsoft.Json.nuspec",
         "tools/install.ps1"
       ]
@@ -3962,9 +4027,11 @@
       "Microsoft.Framework.Logging.Console >= 1.0.0-beta7",
       "Microsoft.Framework.Logging.Debug >= 1.0.0-beta7",
       "Microsoft.VisualStudio.Web.BrowserLink.Loader >= 14.0.0-beta7",
+      "Microsoft.AspNet.Mvc.WebApiCompatShim >= 6.0.0-beta7",
       "Autofac >= 4.0.0-alpha2",
       "Autofac.Dnx >= 4.0.0-alpha4-79",
-      "Autofac.Framework.DependencyInjection >= 4.0.0-beta6-97"
+      "Autofac.Framework.DependencyInjection >= 4.0.0-beta6-97",
+      "Newtonsoft.Json >= 7.0.1"
     ],
     "DNX,Version=v4.5.1": []
   }
