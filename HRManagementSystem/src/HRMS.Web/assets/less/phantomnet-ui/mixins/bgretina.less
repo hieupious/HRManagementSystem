@@ -1,0 +1,40 @@
+.bg-retina(@file-1x; @file-2x; @width-1x; @height-1x) {
+    background-image: url(@file-1x);
+
+    @media only screen {
+        @media (-webkit-min-device-pixel-ratio: 2), ( min--moz-device-pixel-ratio: 2), ( -o-min-device-pixel-ratio: 2/1), ( min-device-pixel-ratio: 2), ( min-resolution: 192dpi), ( min-resolution: 2dppx) {
+            background-image: url(@file-2x);
+            background-size: @width-1x @height-1x;
+        }
+    }
+}
+
+.bg-retina(min-width; @file-1x; @file-2x; @width-1x; @height-1x; @width) {
+    @media (min-width: @width) {
+        background-image: url(@file-1x);
+    }
+
+    @media only screen {
+        @media (-webkit-min-device-pixel-ratio: 2), ( min--moz-device-pixel-ratio: 2), ( -o-min-device-pixel-ratio: 2/1), ( min-device-pixel-ratio: 2), ( min-resolution: 192dpi), ( min-resolution: 2dppx) {
+            @media (min-width: @width) {
+                background-image: url(@file-2x);
+                background-size: @width-1x @height-1x;
+            }
+        }
+    }
+}
+
+.bg-retina(max-width; @file-1x; @file-2x; @width-1x; @height-1x; @width) {
+    @media (max-width: @width) {
+        background-image: url(@file-1x);
+    }
+
+    @media only screen {
+        @media (-webkit-min-device-pixel-ratio: 2), ( min--moz-device-pixel-ratio: 2), ( -o-min-device-pixel-ratio: 2/1), ( min-device-pixel-ratio: 2), ( min-resolution: 192dpi), ( min-resolution: 2dppx) {
+            @media (max-width: @width) {
+                background-image: url(@file-2x);
+                background-size: @width-1x @height-1x;
+            }
+        }
+    }
+}

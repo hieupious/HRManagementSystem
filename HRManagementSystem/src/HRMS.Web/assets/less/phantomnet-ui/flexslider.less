@@ -1,0 +1,23 @@
+.flexslider { 
+    margin: @flexslider-margin;
+}
+
+.flex-direction-nav a {
+    line-height: 1;
+}
+
+.flexslider-fill-height {
+    border: 0;
+    border-radius: 0;
+    height: 100vh;
+    overflow: hidden;
+
+    .slides {
+        &, > li {
+            height: 100vh;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    }
+}
