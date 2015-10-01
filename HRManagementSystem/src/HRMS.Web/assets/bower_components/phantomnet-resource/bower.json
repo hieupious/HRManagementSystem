@@ -1,0 +1,29 @@
+{
+  "name": "phantomnet-resource",
+  "version": "1.0.0-beta2",
+  "homepage": "https://github.com/green-grass/phantomnet-resource",
+  "authors": [
+    "Minh Nguyen <mnguyen284@gmail.com>"
+  ],
+  "description": "AngularJS Resource factory with create/update support",
+  "main": "src/phantomnet-resource.js",
+  "moduleType": [
+    "amd",
+    "es6",
+    "globals",
+    "node",
+    "yui"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.7",
+    "angular-resource": "~1.4.7"
+  }
+}

@@ -8,6 +8,7 @@ namespace HRMS.Web.Models
     public class MonthlyReport
     {
         public int Id { get; set; }
+        public int Month { get; set; }
         public int User { get; set; }
         public UserInfo UserInfo { get; set; }
         public List<DailyWorkingReport> DailyRecord { get; set; }

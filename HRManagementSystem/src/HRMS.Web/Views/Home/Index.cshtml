@@ -18,14 +18,14 @@
     <table class="table table-condensed table-striped table-hover" ng-show="searchTerms && (users | filter:searchTerms).length > 0">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>Account No</th>
                 <th>Name</th>
                 <th>Department</th>
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="user in users | filter:searchTerms">
-                <td><a asp-controller="Home" asp-action="User">{{user.Id}}</a></td>
+            <tr ng-repeat="user in users | filter: searchTerms">
+                <td><a asp-controller="Home" asp-action="User">{{user.EmployeeId}}</a></td>
                 <td><a asp-controller="Home" asp-action="User">{{user.Name}}</a></td>
                 <td>{{user.Department.Name}}</td>
             </tr>

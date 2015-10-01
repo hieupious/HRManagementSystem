@@ -1,0 +1,29 @@
+{
+  "name": "ui-bootstrap-datetimepicker",
+  "version": "1.0.0-beta1",
+  "homepage": "https://github.com/green-grass/ui-bootstrap-datetimepicker",
+  "authors": [
+    "Minh Nguyen <mnguyen284@gmail.com>"
+  ],
+  "description": "Bootstrap 3 Date/Time Picker AngularJS directive",
+  "main": "src/js/ui-bootstrap-datetimepicker.js",
+  "moduleType": [
+    "amd",
+    "es6",
+    "globals",
+    "node",
+    "yui"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "eonasdan-bootstrap-datetimepicker": "~4.17.37",
+    "angular": "~1.4.7"
+  }
+}

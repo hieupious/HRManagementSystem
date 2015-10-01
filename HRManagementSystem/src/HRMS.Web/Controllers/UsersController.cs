@@ -3,42 +3,41 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
+using HRMS.Web.Models;
+using HRMS.Web.Services;
+using Microsoft.Data.Entity;
+using Newtonsoft.Json;
 
-// For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace HRMS.Web.Controllers
 {
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
+        private readonly ApplicationDbContext _dbContext;
+        private readonly IDailyWorkingProcessService _dailyWorkingProcess;
+
+        public UsersController(ApplicationDbContext dbContext, IDailyWorkingProcessService dailyWorkingProcess)
+        {
+            _dbContext = dbContext;
+            _dailyWorkingProcess = dailyWorkingProcess;
+        }
+
         // GET: api/values
         [HttpGet]
-        public IEnumerable<dynamic> Get()
+        public string Get()
         {
-            return new dynamic[] {
-                new {
-                    Id = 223,
-                    Name = "Tran Quoc Linh",
-                    Department = new {
-                        Id = 7,
-                        Name = "2XX GP OFFICE"
-                    }
-                },
-                new {
-                    Id = 209,
-                    Name = "Nguyen Luong Yen Vy",
-                    Department = new {
-                        Id = 7,
-                        Name = "2XX GP OFFICE"
-                    }
-                }
-            };
+            int[] activeDepts = { 2, 3, 6, 7, 8, 9, 10 };
+            var users = _dbContext.UserInfoes.Include(u => u.Department).Where(u => activeDepts.Contains(u.DepartmentId)).ToList();
+            
+            return JsonConvert.SerializeObject(users);
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
         public string Get(int id)
         {
+            
             return "value";
         }
 

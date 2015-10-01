@@ -36,13 +36,17 @@ namespace HRMS.Web.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("ClockIn");
+                    b.Property<DateTime?>("CheckIn");
 
-                    b.Property<DateTime>("ClockOut");
+                    b.Property<DateTime?>("CheckOut");
 
-                    b.Property<string>("MinuteLate");
+                    b.Property<double>("MinuteLate");
+
+                    b.Property<int>("MonthlyReportId");
 
                     b.Property<int>("UserId");
+
+                    b.Property<int?>("UserInfoId");
 
                     b.Property<DateTime>("WorkingDay");
 
@@ -56,6 +60,24 @@ namespace HRMS.Web.Migrations
                     b.Property<int>("Id");
 
                     b.Property<string>("Name");
+
+                    b.Property<string>("Office");
+
+                    b.Key("Id");
+                });
+
+            modelBuilder.Entity("HRMS.Web.Models.MonthlyReport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Month");
+
+                    b.Property<double>("TotalLackTime");
+
+                    b.Property<int>("User");
+
+                    b.Property<int?>("UserInfoId");
 
                     b.Key("Id");
                 });
@@ -82,6 +104,24 @@ namespace HRMS.Web.Migrations
                     b.Reference("HRMS.Web.Models.DailyWorkingReport")
                         .InverseCollection()
                         .ForeignKey("WorkingReportId");
+                });
+
+            modelBuilder.Entity("HRMS.Web.Models.DailyWorkingReport", b =>
+                {
+                    b.Reference("HRMS.Web.Models.MonthlyReport")
+                        .InverseCollection()
+                        .ForeignKey("MonthlyReportId");
+
+                    b.Reference("HRMS.Web.Models.UserInfo")
+                        .InverseCollection()
+                        .ForeignKey("UserInfoId");
+                });
+
+            modelBuilder.Entity("HRMS.Web.Models.MonthlyReport", b =>
+                {
+                    b.Reference("HRMS.Web.Models.UserInfo")
+                        .InverseCollection()
+                        .ForeignKey("UserInfoId");
                 });
 
             modelBuilder.Entity("HRMS.Web.Models.UserInfo", b =>

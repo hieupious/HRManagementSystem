@@ -1,0 +1,15 @@
+{
+  "name": "ui-bootstrap-datetimepicker",
+  "version": "1.0.0-beta1",
+  "description": "Bootstrap 3 Date/Time Picker AngularJS directive",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/green-grass/ui-bootstrap-datetimepicker.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-uglify": "1.2.0",
+    "rimraf": "2.2.8"
+  }
+}
