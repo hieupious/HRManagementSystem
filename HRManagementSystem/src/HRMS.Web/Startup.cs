@@ -49,6 +49,7 @@ namespace HRMS.Web
             var builder = new ContainerBuilder();
             builder.Register(svc => new ImportDataService(dbPath)).As<IImportDataService>().InstancePerLifetimeScope();
             builder.Register(svc => new WorkingProcessService()).As<IDailyWorkingProcessService>().InstancePerLifetimeScope();
+            builder.Register(svc => new WorkingProcessService()).As<IMonthlyWorkingProcess>().InstancePerLifetimeScope();
             //Populate the container with services that were previously registered
             builder.Populate(services);
 

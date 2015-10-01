@@ -9,9 +9,14 @@ using Microsoft.Data.Entity.SqlServer.Metadata;
 namespace HRMS.Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    partial class HRMSMigration_v3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        public override string Id
+        {
+            get { return "20151001095541_HRMSMigration_v3"; }
+        }
+
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .Annotation("ProductVersion", "7.0.0-beta7-15540")
@@ -46,6 +51,8 @@ namespace HRMS.Web.Migrations
 
                     b.Property<int>("UserId");
 
+                    b.Property<int?>("UserInfoId");
+
                     b.Property<DateTime>("WorkingDay");
 
                     b.Property<int>("WorkingType");
@@ -76,6 +83,8 @@ namespace HRMS.Web.Migrations
                     b.Property<int>("Type");
 
                     b.Property<int>("UserId");
+
+                    b.Property<int?>("UserInfoId");
 
                     b.Property<int>("Year");
 
@@ -114,14 +123,14 @@ namespace HRMS.Web.Migrations
 
                     b.Reference("HRMS.Web.Models.UserInfo")
                         .InverseCollection()
-                        .ForeignKey("UserId");
+                        .ForeignKey("UserInfoId");
                 });
 
             modelBuilder.Entity("HRMS.Web.Models.MonthlyRecord", b =>
                 {
                     b.Reference("HRMS.Web.Models.UserInfo")
                         .InverseCollection()
-                        .ForeignKey("UserId");
+                        .ForeignKey("UserInfoId");
                 });
 
             modelBuilder.Entity("HRMS.Web.Models.UserInfo", b =>

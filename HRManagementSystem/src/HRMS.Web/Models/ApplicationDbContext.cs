@@ -11,6 +11,8 @@ namespace HRMS.Web.Models
         public DbSet<UserInfo> UserInfoes { get; set; }
         public DbSet<Department> Deparments { get; set; }
         public DbSet<CheckInOutRecord> CheckInOutRecords { get; set; }
+        public DbSet<DailyWorkingRecord> DailyWorkingRecords { get; set; }
+        public DbSet<MonthlyRecord> MonthlyRecords { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,7 +22,7 @@ namespace HRMS.Web.Models
             modelBuilder.Entity<Department>().Key(d => d.Id);
             modelBuilder.Entity<Department>().Property(d => d.Id).ValueGeneratedNever();
             modelBuilder.Entity<CheckInOutRecord>().Key(c => c.Id);
-            modelBuilder.Entity<DailyWorkingReport>().Key(d => d.Id);
+            modelBuilder.Entity<DailyWorkingRecord>().Key(d => d.Id);
             //modelBuilder.Entity<CheckInOutRecord>().Index(c => c.CheckTime);
             //modelBuilder.Entity<CheckInOutRecord>().Index(c => new { c.UserId, c.CheckTime });
         }

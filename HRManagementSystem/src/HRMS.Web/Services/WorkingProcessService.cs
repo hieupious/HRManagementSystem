@@ -6,13 +6,28 @@ using HRMS.Web.Models;
 
 namespace HRMS.Web.Services
 {
-    public class WorkingProcessService : IDailyWorkingProcessService
+    public class WorkingProcessService : IDailyWorkingProcessService, IMonthlyWorkingProcess
     {
-        public DailyWorkingReport ProcessDailyWorking(UserInfo user, List<CheckInOutRecord> checkInOutTime, DateTime day)
+        public List<CheckInOutRecord> GetCheckInOutRecordPerDay(UserInfo user, DateTime day, ApplicationDbContext dbContext)
+        {
+            return dbContext.CheckInOutRecords.Where(u => u.UserId == user.Id && u.CheckTime.Date == day).ToList();
+        }
+
+        public DailyWorkingRecord GetDailyWorkingReport(int userId, DateTime day, ApplicationDbContext dbContext)
+        {
+            var user = dbContext.UserInfoes.First(u => u.Id == userId);
+            if (user != null)
+            {
+                var checkInOutRecords = GetCheckInOutRecordPerDay(user, day, dbContext);
+                return ProcessDailyWorking(user, checkInOutRecords, day);
+            }
+            return null;
+        }
+        public DailyWorkingRecord ProcessDailyWorking(UserInfo user, List<CheckInOutRecord> checkInOutTime, DateTime day)
         {
             if (IsWorkingDay(day))
             {
-                DailyWorkingReport workingReport = new DailyWorkingReport()
+                DailyWorkingRecord workingReport = new DailyWorkingRecord()
                 {
                     UserId = user.Id,
                     WorkingDay = day
@@ -47,12 +62,13 @@ namespace HRMS.Web.Services
                         //        workingReport.WorkingType = WorkingType.HalfDayAfternoon;
                         //    }
                         //}
+
                         if (workingTime < WorkingRule.FullWorkingHour)
                         {
                             workingReport.WorkingType = WorkingType.LackTime;
                             var minuteLate = WorkingRule.FullWorkingHour.Subtract(workingTime).TotalMinutes;
                             workingReport.MinuteLate = Math.Floor(minuteLate);
-                        } 
+                        }
                         else
                         {
                             workingReport.WorkingType = WorkingType.FullWorkingDay;
@@ -104,6 +120,36 @@ namespace HRMS.Web.Services
 
             return holidays;
         }
+
+        public MonthlyRecord GetMonthlyRecord(int year, int month, UserInfo user, List<DailyWorkingRecord> dailyRecords)
+        {
+            if (user != null && dailyRecords != null)
+            {
+                MonthlyRecord monthlyRecord = new MonthlyRecord()
+                {
+                    Month = month,
+                    Year = year,
+                    UserId = user.Id
+                };
+                var reportRecords = new List<DailyWorkingRecord>();
+
+                var lackTimeRecords = dailyRecords.Where(d => d.MinuteLate > 0).ToList();
+                reportRecords.AddRange(lackTimeRecords);
+
+                var lackCheckoutRecords = dailyRecords.Where(d => d.WorkingType == WorkingType.LackCheckOut).ToList();
+                reportRecords.AddRange(lackCheckoutRecords);
+
+                var totalLackTime = dailyRecords.Sum(d => d.MinuteLate);
+                if (totalLackTime > WorkingRule.TotalLackTime || lackCheckoutRecords.Count > 0)
+                {
+                    monthlyRecord.DailyRecords = reportRecords;
+                    monthlyRecord.TotalLackTime = totalLackTime;
+                    return monthlyRecord;
+                }
+            }
+
+            return null;
+        }
     }
 
     public class WorkingRule
@@ -115,5 +161,6 @@ namespace HRMS.Web.Services
         public static TimeSpan FullWorkingHour = new TimeSpan(9, 0, 0);
         public static TimeSpan HalfWorkingHour = new TimeSpan(4, 0, 0);
         public static TimeSpan NoonHour = new TimeSpan(12, 0, 0);
+        public static double TotalLackTime = 30d;
     }
 }

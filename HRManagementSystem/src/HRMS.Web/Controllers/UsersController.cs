@@ -16,18 +16,22 @@ namespace HRMS.Web.Controllers
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IDailyWorkingProcessService _dailyWorkingProcess;
+        private readonly IMonthlyWorkingProcess _monthlyWorkingProcess;
 
-        public UsersController(ApplicationDbContext dbContext, IDailyWorkingProcessService dailyWorkingProcess)
+        private static int[] activeDepts = { 2, 3, 6, 7, 8, 9, 10 };
+
+        public UsersController(ApplicationDbContext dbContext, IDailyWorkingProcessService dailyWorkingProcess, IMonthlyWorkingProcess monthlyWorkingProcess)
         {
             _dbContext = dbContext;
             _dailyWorkingProcess = dailyWorkingProcess;
+            _monthlyWorkingProcess = monthlyWorkingProcess;
         }
 
         // GET: api/values
         [HttpGet]
         public string Get()
         {
-            int[] activeDepts = { 2, 3, 6, 7, 8, 9, 10 };
+            
             var users = _dbContext.UserInfoes.Include(u => u.Department).Where(u => activeDepts.Contains(u.DepartmentId)).ToList();
             
             return JsonConvert.SerializeObject(users);
@@ -39,6 +43,54 @@ namespace HRMS.Web.Controllers
         {
             
             return "value";
+        }
+
+        [HttpGet("GetMonthlyWorkingReport")]
+        public string GetMonthlyWorkingReport(int year, int month)
+        {
+            var monthRecords = new List<MonthlyRecord>();
+            var users = _dbContext.UserInfoes.Include(u => u.Department).Where(u => activeDepts.Contains(u.DepartmentId)).ToList();
+            foreach(var user in users)
+            {
+                var days = WorkingProcessService.AllDatesInMonth(year, month);
+                var dailyRecords = new List<DailyWorkingRecord>();
+                foreach (var day in days)
+                {
+                    dailyRecords = _dbContext.DailyWorkingRecords.Where(d => d.UserId == user.Id && d.WorkingDay.Date == day).ToList();
+                }
+                
+                var monthRecord = _monthlyWorkingProcess.GetMonthlyRecord(year, month, user, dailyRecords);
+                if (monthRecord != null)
+                    monthRecords.Add(monthRecord);
+            }
+            return JsonConvert.SerializeObject(monthRecords);
+        }
+
+        [HttpGet("ProcessDailyWorkingReport")]
+        public string ProcessDailyWorkingReport()
+        {
+            int year = 2015;
+            int month = 8;
+            var users = _dbContext.UserInfoes.ToList();
+            foreach(var user in users)
+            {
+                var days = WorkingProcessService.AllDatesInMonth(year, month);
+                foreach(var day in days)
+                {
+                    var records = _dbContext.CheckInOutRecords.Where(u => u.UserId == user.Id && u.CheckTime.Date == day).ToList();
+                    if(records != null && records.Count > 0)
+                    {
+                        var dailyRecord = _dailyWorkingProcess.ProcessDailyWorking(user, records, day);
+                        if (dailyRecord != null)
+                            _dbContext.DailyWorkingRecords.Add(dailyRecord);
+                    }
+                    
+                }
+                
+            }
+            _dbContext.SaveChanges();
+            
+            return "";
         }
 
         // POST api/values
