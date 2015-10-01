@@ -1,0 +1,33 @@
+﻿@model UserInfo
+@{
+    ViewData["Title"] = Model.Name;
+    ViewBag.ActiveMenuItem = "Users";
+}
+
+<div ng-app="hrmsUserInfo" ng-controller="UserInfoController">
+    <h2 class="m-t-lg m-b-lg">@ViewData["Title"] <small class="text-muted">ASWVN@(Model.Id) - @Model.Department.Name</small></h2>
+    <table class="table table-condensed table-striped table-hover" ng-show="dates.length > 0">
+        <thead>
+            <tr>
+                <th class="text-center">Date</th>
+                <th class="text-center">Check-in</th>
+                <th class="text-center">Check-out</th>
+                <th class="text-center">Lack Time (h:mm)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="date in dates">
+                <td class="text-center">{{date.Date | date: "dd/MM/yyyy"}}</td>
+                <td class="text-center">{{date.Checkin | date: "shortTime"}}</td>
+                <td class="text-center">{{date.Checkout | date: "shortTime"}}</td>
+                <td class="text-center" ng-class="{ 'text-danger': date.LackTime > 0 }">{{date.LackTime | timespan}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+@section scripts {
+    <script src="~/js/users/user-info/app.js" asp-append-version="true"></script>
+    <script src="~/js/users/user-info/controllers.js" asp-append-version="true"></script>
+    <script src="~/js/users/user-info/services.js" asp-append-version="true"></script>
+}

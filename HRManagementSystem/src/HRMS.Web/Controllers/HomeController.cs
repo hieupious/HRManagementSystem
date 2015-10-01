@@ -19,9 +19,26 @@ namespace HRMS.Web.Controllers
             _dbContext = dbContext;
             _importDataService = importDataService;
         }
+
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult UserInfo(int id)
+        {
+            var model = new UserInfo()
+            {
+                Id = 223,
+                Name = "Tran Quoc Linh",
+                Department = new Department()
+                {
+                    Id = 7,
+                    Name = "2XX GP OFFICE"
+                }
+            };
+
+            return View(model);
         }
 
         public IActionResult Report()
