@@ -4,7 +4,7 @@
   },
   "Data": {
     "DefaultConnection": {
-      "ConnectionString": "Server=10.9.1.100\\SQLSERVER2012;Database=HRMSDB;uid=dev;pwd=HRMS@124;Trusted_Connection=True;MultipleActiveResultSets=true"
+      "ConnectionString": "Server=10.9.1.100\\SQLSERVER2012;Database=HRMSDB;uid=dev;pwd=HRMS@124;MultipleActiveResultSets=true"
     },
     "ImportedDBPath": {
       "dbPath": "ImportedDB\\importedDB.mdb"
