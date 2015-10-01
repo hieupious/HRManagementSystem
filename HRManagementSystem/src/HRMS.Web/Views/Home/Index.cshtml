@@ -24,9 +24,9 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="user in users | filter: searchTerms">
-                <td><a asp-controller="Home" asp-action="User">{{user.EmployeeId}}</a></td>
-                <td><a asp-controller="Home" asp-action="User">{{user.Name}}</a></td>
+            <tr ng-repeat="user in users | filter:searchTerms">
+                <td><a href="@Url.Action("UserInfo")/{{user.Id}}">ASWVN{{user.Id}}</a></td>
+                <td><a href="@Url.Action("UserInfo")/{{user.Id}}">{{user.Name}}</a></td>
                 <td>{{user.Department.Name}}</td>
             </tr>
         </tbody>

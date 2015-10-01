@@ -6,7 +6,7 @@
     <title>@ViewData["Title"] - @Preferences.SiteName</title>
 
     <environment names="Development">
-        <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     </environment>
     <environment names="Staging,Production">
         <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -57,6 +57,7 @@
     <script src="~/js/angular-resource.js" asp-append-version="true"></script>
     <script src="~/js/focusif.js" asp-append-version="true"></script>
     <script src="~/js/phantomnet-resource.js" asp-append-version="true"></script>
+    <script src="~/js/filters.js" asp-append-version="true"></script>
 
     @RenderSection("scripts", required: false)
 </body>
