@@ -48,7 +48,7 @@ namespace HRMS.Web
             var dbPath = appBasePath + "\\" + Configuration["Data:ImportedDBPath:dbPath"];
             var builder = new ContainerBuilder();
             builder.Register(svc => new ImportDataService(dbPath)).As<IImportDataService>().InstancePerLifetimeScope();
-
+            builder.Register(svc => new WorkingProcessService()).As<IDailyWorkingProcessService>().InstancePerLifetimeScope();
             //Populate the container with services that were previously registered
             builder.Populate(services);
 

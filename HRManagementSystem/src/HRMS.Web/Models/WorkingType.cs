@@ -9,7 +9,9 @@ namespace HRMS.Web.Models
     {
         FullWorkingDay = 1,
         HalfDayMorning = 2,
-        HalfDayEvening = 3,
-        Absence = 4
+        HalfDayAfternoon = 3,
+        Absence = 4,
+        LackCheckOut = 5,
+        LackTime = 6
     }
 }

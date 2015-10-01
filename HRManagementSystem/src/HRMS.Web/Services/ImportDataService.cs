@@ -11,10 +11,10 @@ namespace HRMS.Web.Services
     {
         private string _dbPath;
         private DatabaseContext _dbContext;
-        private const string queryUser = "SELECT * from USERINFO";
-        private const string queryDepartment = "SELECT * FROM DEPARTMENTS";
-        private const string queryAllCheckInOutRecord = "SELECT * FROM CHECKINOUT";
-        private const string queryDailyCheckInOutRecord = "SELECT * FROM CHECKINOUT WHERE CHECKTIME >= #{0}#";
+        private const string queryUser = "SELECT [USERID], [Badgenumber], [Name], [DEFAULTDEPTID] from USERINFO";
+        private const string queryDepartment = "SELECT [DEPTID], [DEPTNAME] FROM DEPARTMENTS";
+        private const string queryAllCheckInOutRecord = "SELECT [USERID], [CHECKTIME] FROM CHECKINOUT";
+        private const string queryDailyCheckInOutRecord = "SELECT [USERID], [CHECKTIME] FROM CHECKINOUT WHERE CHECKTIME >= #{0}#";
 
         public ImportDataService(string dbPath)
         {

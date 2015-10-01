@@ -14,13 +14,15 @@ namespace HRMS.Web.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.Entity<UserInfo>().Key(u => u.Id);
             modelBuilder.Entity<UserInfo>().Property(u => u.Id).ValueGeneratedNever();
             modelBuilder.Entity<Department>().Key(d => d.Id);
             modelBuilder.Entity<Department>().Property(d => d.Id).ValueGeneratedNever();
             modelBuilder.Entity<CheckInOutRecord>().Key(c => c.Id);
             modelBuilder.Entity<DailyWorkingReport>().Key(d => d.Id);
-
+            //modelBuilder.Entity<CheckInOutRecord>().Index(c => c.CheckTime);
+            //modelBuilder.Entity<CheckInOutRecord>().Index(c => new { c.UserId, c.CheckTime });
         }
     }
 }
