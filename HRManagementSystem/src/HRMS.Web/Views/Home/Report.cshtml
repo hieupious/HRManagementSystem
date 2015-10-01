@@ -5,7 +5,12 @@
 
 <div ng-app="hrmsReport" ng-controller="ReportController">
     <header class="m-t-lg m-b-lg clearfix">
-        <h2 class="m-a-0 pull-left text-uppercase">@ViewData["Title"]</h2>
+        <div class="pull-left">
+            <h2 class="m-a-0 text-uppercase">@ViewData["Title"]</h2>
+            <div class="h2 m-a-0 text-muted">
+                <small>{{date | date: "MMMM, yyyy"}}</small>
+            </div>
+        </div>
         <div class="visible-xs m-b clearfix"></div>
         <div class="form-inline pull-right-sm">
             <div class="form-group form-group-sm">
@@ -35,19 +40,21 @@
             </tr>
         </thead>
         <tbody ng-repeat="user in users">
-            <tr class="row-highlight">
-                <td>ASWVN{{user.Id}}</td>
-                <td>{{user.Name}}</td>
-                <td>{{user.Department.Name}}</td>
-                <td colspan="3"></td>
+            <tr>
+                <td rowspan="{{user.Dates.length === 1 ? 1 : user.Dates.length + 1}}">ASWVN{{user.Id}}</td>
+                <td rowspan="{{user.Dates.length === 1 ? 1 : user.Dates.length + 1}}">{{user.Name}}</td>
+                <td rowspan="{{user.Dates.length === 1 ? 1 : user.Dates.length + 1}}">{{user.Department.Name}}</td>
+                <td colspan="3" ng-show="user.Dates.length > 1"></td>
+                <td class="text-center text-muted" ng-hide="user.Dates.length > 1"><small>{{user.Dates[0].Date | date: "dd/MM/yyyy"}}</small></td>
+                <td class="text-center text-muted" ng-hide="user.Dates.length > 1"><small>{{user.Dates[0].Checkin | date: "shortTime"}}</small></td>
+                <td class="text-center text-muted" ng-hide="user.Dates.length > 1"><small>{{user.Dates[0].Checkout | date: "shortTime"}}</small></td>
                 <td class="text-center">{{user.totalLackTime | timespan}}</td>
             </tr>
-            <tr ng-repeat="date in user.Dates">
-                <td colspan="3"></td>
-                <td class="text-center">{{date.Date | date: "dd/MM/yyyy"}}</td>
-                <td class="text-center">{{date.Checkin | date: "shortTime"}}</td>
-                <td class="text-center">{{date.Checkout | date: "shortTime"}}</td>
-                <td class="text-center">{{date.LackTime | timespan}}</td>
+            <tr ng-repeat="date in user.Dates" ng-show="user.Dates.length > 1">
+                <td class="text-center text-muted"><small>{{date.Date | date: "dd/MM/yyyy"}}</small></td>
+                <td class="text-center text-muted"><small>{{date.Checkin | date: "shortTime"}}</small></td>
+                <td class="text-center text-muted"><small>{{date.Checkout | date: "shortTime"}}</small></td>
+                <td class="text-center text-muted"><small>{{date.LackTime | timespan}}</small></td>
             </tr>
         </tbody>
     </table>

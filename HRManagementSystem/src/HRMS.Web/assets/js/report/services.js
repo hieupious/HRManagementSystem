@@ -50,6 +50,38 @@
                                     LackTime: 20
                                 }
                             ],
+                        },
+                        {
+                            Id: 205,
+                            Name: "Hoang Trung Hieu",
+                            Department: {
+                                Id: 7,
+                                Name: "2XX GP OFFICE"
+                            },
+                            Dates: [
+                                {
+                                    Date: new Date(),
+                                    Checkin: new Date(),
+                                    Checkout: new Date(),
+                                    LackTime: (2 * 60) + 16
+                                }
+                            ],
+                        },
+                        {
+                            Id: 251,
+                            Name: "Nguyen Thao Nguyen",
+                            Department: {
+                                Id: 7,
+                                Name: "2XX GP OFFICE"
+                            },
+                            Dates: [
+                                {
+                                    Date: new Date(),
+                                    Checkin: new Date(),
+                                    Checkout: new Date(),
+                                    LackTime: (2 * 60) + 16
+                                }
+                            ],
                         }
                     ];
                 }
