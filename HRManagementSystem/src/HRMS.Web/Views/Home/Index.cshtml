@@ -5,8 +5,8 @@
     ViewBag.ActiveMenuItem = "Users";
 }
 
-<div ng-app="hrmsUserSearch" ng-controller="UserSearchController">
-    <h2 class="m-t-lg m-b-lg">@ViewData["Title"]</h2>
+<div ng-app="hrmsUserSearch" ng-controller="UserSearchController" ng-init="searchTerms = '@ViewBag.SearchTerms'">
+    <h2 class="m-t-lg m-b-lg text-uppercase">@ViewData["Title"]</h2>
     <form>
         <div class="input-group m-b-md">
             <input type="text" name="search" class="form-control" placeholder="search by ID, name or department..." ng-model="searchTerms" focus-if />

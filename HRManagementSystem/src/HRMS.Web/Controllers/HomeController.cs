@@ -22,12 +22,13 @@ namespace HRMS.Web.Controllers
             _dailyWorkingProcess = dailyWorkingProcess;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string id)
         {
+            ViewBag.SearchTerms = id;
             return View();
         }
 
-        public IActionResult UserInfo(int id)
+        public IActionResult UserInfo(int id, string searchTerms)
         {
             var model = new UserInfo()
             {
@@ -40,6 +41,7 @@ namespace HRMS.Web.Controllers
                 }
             };
 
+            ViewBag.SearchTerms = searchTerms;
             return View(model);
         }
 

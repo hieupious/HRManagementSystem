@@ -5,7 +5,32 @@
 }
 
 <div ng-app="hrmsUserInfo" ng-controller="UserInfoController">
-    <h2 class="m-t-lg m-b-lg">@ViewData["Title"] <small class="text-muted">ASWVN@(Model.Id) - @Model.Department.Name</small></h2>
+    <div class="toolbox">
+        <a asp-action="Index" asp-route-id="@ViewBag.SearchTerms" title="Back"><span class="icon icon-chevron-thin-left"></span></a>
+    </div>
+    <header class="m-t-lg m-b-lg clearfix">
+        <div class="pull-left">
+            <h2 class="m-a-0 text-uppercase">@ViewData["Title"] <small class="text-muted">ASWVN@(Model.Id) - @Model.Department.Name</small></h2>
+            <div class="h2 m-a-0 text-muted">
+                <small>{{date | date: "MMMM, yyyy"}}</small>
+            </div>
+        </div>
+        <div class="visible-xs m-b clearfix"></div>
+        <div class="form-inline pull-right-sm">
+            <div class="form-group form-group-sm">
+                <select class="form-control" ng-model="month" ng-change="refreshDates()">
+                    <option value="">month</option>
+                    <option ng-repeat="index in [] | range: 12">{{index + 1}}</option>
+                </select>
+            </div>
+            <div class="form-group form-group-sm">
+                <select class="form-control" ng-model="year" ng-change="refreshDates()">
+                    <option value="">year</option>
+                    <option ng-repeat="index in [] | range: endYear - startYear + 1">{{index + startYear}}</option>
+                </select>
+            </div>
+        </div>
+    </header>
     <table class="table table-condensed table-striped table-hover" ng-show="dates.length > 0">
         <thead>
             <tr>
@@ -16,14 +41,19 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="date in dates">
+            <tr ng-repeat="date in dates" ng-class="{ 'text-danger': date.LackTime > 0 }">
                 <td class="text-center">{{date.Date | date: "dd/MM/yyyy"}}</td>
                 <td class="text-center">{{date.Checkin | date: "shortTime"}}</td>
                 <td class="text-center">{{date.Checkout | date: "shortTime"}}</td>
-                <td class="text-center" ng-class="{ 'text-danger': date.LackTime > 0 }">{{date.LackTime | timespan}}</td>
+                <td class="text-center">{{date.LackTime | timespan}}</td>
             </tr>
         </tbody>
     </table>
+    <div class="alert alert-info" ng-hide="dates.length > 0">
+        <p>
+            Please select a month to see the report.
+        </p>
+    </div>
 </div>
 
 @section scripts {

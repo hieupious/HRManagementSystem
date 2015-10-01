@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "Report";
+    ViewBag.ActiveMenuItem = "Report";
+}
+
+<div ng-app="hrmsReport" ng-controller="ReportController">
+    <header class="m-t-lg m-b-lg clearfix">
+        <div class="pull-left">
+            <h2 class="m-a-0 text-uppercase">@ViewData["Title"]</h2>
+            <div class="h2 m-a-0 text-muted">
+                <small>{{date | date: "MMMM, yyyy"}}</small>
+            </div>
+        </div>
+        <div class="visible-xs m-b clearfix"></div>
+        <div class="form-inline pull-right-sm">
+            <div class="form-group form-group-sm">
+                <select class="form-control" ng-model="month" ng-change="refreshUsers()">
+                    <option value="">month</option>
+                    <option ng-repeat="index in [] | range: 12">{{index + 1}}</option>
+                </select>
+            </div>
+            <div class="form-group form-group-sm">
+                <select class="form-control" ng-model="year" ng-change="refreshUsers()">
+                    <option value="">year</option>
+                    <option ng-repeat="index in [] | range: endYear - startYear + 1">{{index + startYear}}</option>
+                </select>
+            </div>
+        </div>
+    </header>
+    <table class="table table-condensed table-hover" ng-show="users.length > 0">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th class="text-center">Date</th>
+                <th class="text-center">Check-in</th>
+                <th class="text-center">Check-out</th>
+                <th class="text-center">Lack Time (h:mm)</th>
+            </tr>
+        </thead>
+        <tbody ng-repeat="user in users">
+            <tr>
+                <td rowspan="{{user.Dates.length === 1 ? 1 : user.Dates.length + 1}}">ASWVN{{user.Id}}</td>
+                <td rowspan="{{user.Dates.length === 1 ? 1 : user.Dates.length + 1}}">{{user.Name}}</td>
+                <td rowspan="{{user.Dates.length === 1 ? 1 : user.Dates.length + 1}}">{{user.Department.Name}}</td>
+                <td colspan="3" ng-show="user.Dates.length > 1"></td>
+                <td class="text-center text-muted" ng-hide="user.Dates.length > 1"><small>{{user.Dates[0].Date | date: "dd/MM/yyyy"}}</small></td>
+                <td class="text-center text-muted" ng-hide="user.Dates.length > 1"><small>{{user.Dates[0].Checkin | date: "shortTime"}}</small></td>
+                <td class="text-center text-muted" ng-hide="user.Dates.length > 1"><small>{{user.Dates[0].Checkout | date: "shortTime"}}</small></td>
+                <td class="text-center">{{user.totalLackTime | timespan}}</td>
+            </tr>
+            <tr ng-repeat="date in user.Dates" ng-show="user.Dates.length > 1">
+                <td class="text-center text-muted"><small>{{date.Date | date: "dd/MM/yyyy"}}</small></td>
+                <td class="text-center text-muted"><small>{{date.Checkin | date: "shortTime"}}</small></td>
+                <td class="text-center text-muted"><small>{{date.Checkout | date: "shortTime"}}</small></td>
+                <td class="text-center text-muted"><small>{{date.LackTime | timespan}}</small></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="alert alert-info" ng-hide="users.length > 0">
+        <p>
+            Please select a month to see the report.
+        </p>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/js/report/app.js" asp-append-version="true"></script>
+    <script src="~/js/report/controllers.js" asp-append-version="true"></script>
+    <script src="~/js/report/services.js" asp-append-version="true"></script>
+}
