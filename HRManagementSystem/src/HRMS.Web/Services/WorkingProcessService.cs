@@ -121,7 +121,7 @@ namespace HRMS.Web.Services
             return holidays;
         }
 
-        public MonthlyRecord GetMonthlyRecord(int year, int month, UserInfo user, List<DailyWorkingRecord> dailyRecords)
+        public MonthlyRecord GetMonthlyRecord(int year, int month, UserInfo user, IEnumerable<DailyWorkingRecord> dailyRecords)
         {
             if (user != null && dailyRecords != null)
             {

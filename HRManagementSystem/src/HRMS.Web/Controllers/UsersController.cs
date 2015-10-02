@@ -31,9 +31,9 @@ namespace HRMS.Web.Controllers
         [HttpGet]
         public string Get()
         {
-            
+
             var users = _dbContext.UserInfoes.Include(u => u.Department).Where(u => activeDepts.Contains(u.DepartmentId)).ToList();
-            
+
             return JsonConvert.SerializeObject(users);
         }
 
@@ -41,28 +41,43 @@ namespace HRMS.Web.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            
+
             return "value";
+        }
+
+        [HttpGet("{empId}/{Report}/{month?}")]
+        public string Report(int empId, DateTime? month)
+        {
+            if (!month.HasValue)
+                month = DateTime.Now;
+            var user = _dbContext.UserInfoes.Where(u => int.Parse(u.EmployeeId) == empId).First();
+            if (user == null)
+                return null;
+            var records = _dbContext.DailyWorkingRecords.Where(d => d.UserId == user.Id && d.WorkingDay.Month == 8 && d.WorkingDay.Year == month.Value.Year).OrderBy(u => u.WorkingDay).ToList();
+            return JsonConvert.SerializeObject(records);
         }
 
         [HttpGet("GetMonthlyWorkingReport")]
         public string GetMonthlyWorkingReport(int year, int month)
         {
-            var monthRecords = new List<MonthlyRecord>();
-            var users = _dbContext.UserInfoes.Include(u => u.Department).Where(u => activeDepts.Contains(u.DepartmentId)).ToList();
-            foreach(var user in users)
-            {
-                var days = WorkingProcessService.AllDatesInMonth(year, month);
-                var dailyRecords = new List<DailyWorkingRecord>();
-                foreach (var day in days)
-                {
-                    dailyRecords = _dbContext.DailyWorkingRecords.Where(d => d.UserId == user.Id && d.WorkingDay.Date == day).ToList();
-                }
-                
-                var monthRecord = _monthlyWorkingProcess.GetMonthlyRecord(year, month, user, dailyRecords);
-                if (monthRecord != null)
-                    monthRecords.Add(monthRecord);
-            }
+            //var monthRecords = new List<MonthlyRecord>();
+            //var users = _dbContext.UserInfoes.Include(u => u.Department).Where(u => activeDepts.Contains(u.DepartmentId)).ToList();
+            //foreach (var user in users)
+            //{
+            //    var days = WorkingProcessService.AllDatesInMonth(year, month);
+            //    var dailyRecords = _dbContext.DailyWorkingRecords.Where(d => d.WorkingDay.Month == month && d.WorkingDay.Year == year && d.UserId == user.Id).ToList();
+
+            //    var monthRecord = _monthlyWorkingProcess.GetMonthlyRecord(year, month, user, dailyRecords);
+            //    if (monthRecord != null)
+            //    {
+            //        monthRecords.Add(monthRecord);
+            //        _dbContext.MonthlyRecords.Add(monthRecord);
+            //        _dbContext.SaveChanges();
+            //    }
+
+            //}
+            var monthRecords = _dbContext.MonthlyRecords.Where(m => m.Month == month && m.Year == year);
+
             return JsonConvert.SerializeObject(monthRecords);
         }
 
@@ -72,24 +87,23 @@ namespace HRMS.Web.Controllers
             int year = 2015;
             int month = 8;
             var users = _dbContext.UserInfoes.ToList();
-            foreach(var user in users)
+            foreach (var user in users)
             {
                 var days = WorkingProcessService.AllDatesInMonth(year, month);
-                foreach(var day in days)
+                foreach (var day in days)
                 {
                     var records = _dbContext.CheckInOutRecords.Where(u => u.UserId == user.Id && u.CheckTime.Date == day).ToList();
-                    if(records != null && records.Count > 0)
+                    if (records != null && records.Count > 0)
                     {
                         var dailyRecord = _dailyWorkingProcess.ProcessDailyWorking(user, records, day);
                         if (dailyRecord != null)
                             _dbContext.DailyWorkingRecords.Add(dailyRecord);
                     }
-                    
                 }
-                
+                _dbContext.SaveChanges();
             }
-            _dbContext.SaveChanges();
-            
+
+
             return "";
         }
 

@@ -1,28 +1,11 @@
 (function () {
 
-    var services = angular.module("hrmsUserInfoServices", []);
+    var services = angular.module("hrmsUserInfoServices", ["pnResource"]);
 
-    services.factory("UserLogResource",
-        function () {
-            return {
-                query: function (month) {
-                    return [
-                        {
-                            Date: new Date(),
-                            Checkin: new Date(),
-                            Checkout: new Date(),
-                            LackTime: (2 * 60) + 16
-                        },
-                        {
-                            Date: new Date(),
-                            Checkin: new Date(),
-                            Checkout: new Date(),
-                            LackTime: 0
-                        }
-                    ];
-                }
-            };
+    services.factory("UserLogResource", ["Resource",
+        function ($resource) {
+            return $resource("/api/Users/:empId/Report/:month", { empId : '@empId', month : '@month'});
         }
-    );
+    ]);
 
 })();

@@ -18,8 +18,14 @@
                     $scope.date = null;
                     $scope.users = [];
                 } else {
-                    $scope.date = new Date($scope.year, $scope.month -1, 1);
-                    $scope.users = ReportResource.query($scope.date);
+                    $scope.date = new Date($scope.year, $scope.month - 1, 1);
+                    var month = $scope.year + '-' + '8' + '-1';
+                    console.log(month);
+                    ReportResource.query({ month: month }, function (records) {
+                        $scope.users = records;
+                        console.log($scope.users);
+                    });
+
                 }
                 $.each($scope.users, function (userIndex, user) {
                     user.totalLackTime = 0;

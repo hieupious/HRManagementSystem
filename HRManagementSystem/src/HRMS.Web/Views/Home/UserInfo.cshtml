@@ -4,13 +4,13 @@
     ViewBag.ActiveMenuItem = "Users";
 }
 
-<div ng-app="hrmsUserInfo" ng-controller="UserInfoController">
+<div ng-app="hrmsUserInfo" ng-controller="UserInfoController" ng-init="empId = @Model.EmployeeId">
     <div class="toolbox">
         <a asp-action="Index" asp-route-id="@ViewBag.SearchTerms" title="Back"><span class="icon icon-chevron-thin-left"></span></a>
     </div>
     <header class="m-t-lg m-b-lg clearfix">
         <div class="pull-left">
-            <h2 class="m-a-0 text-uppercase">@ViewData["Title"] <small class="text-muted">ASWVN@(Model.Id) - @Model.Department.Name</small></h2>
+            <h2 class="m-a-0 text-uppercase">@ViewData["Title"] <small class="text-muted">ASWVN@(Model.EmployeeId) - @Model.Department.Office</small></h2>
             <div class="h2 m-a-0 text-muted">
                 <small>{{date | date: "MMMM, yyyy"}}</small>
             </div>
@@ -28,10 +28,11 @@
                     <option value="">year</option>
                     <option ng-repeat="index in [] | range: endYear - startYear + 1">{{index + startYear}}</option>
                 </select>
+                @*<input type="hidden" ng-model="empId" value="@Model.EmployeeId" />*@
             </div>
         </div>
     </header>
-    <table class="table table-condensed table-striped table-hover" ng-show="dates.length > 0">
+    <table class="table table-condensed table-striped table-hover" ng-show="records.length > 0">
         <thead>
             <tr>
                 <th class="text-center">Date</th>
@@ -41,11 +42,11 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="date in dates" ng-class="{ 'text-danger': date.LackTime > 0 }">
-                <td class="text-center">{{date.Date | date: "dd/MM/yyyy"}}</td>
-                <td class="text-center">{{date.Checkin | date: "shortTime"}}</td>
-                <td class="text-center">{{date.Checkout | date: "shortTime"}}</td>
-                <td class="text-center">{{date.LackTime | timespan}}</td>
+            <tr ng-repeat="record in records" ng-class="{ 'text-danger': record.MinuteLate > 0 }">
+                <td class="text-center">{{record.WorkingDay | date: "dd/MM/yyyy"}}</td>
+                <td class="text-center">{{record.CheckIn | date: "shortTime"}}</td>
+                <td class="text-center">{{record.CheckOut | date: "shortTime"}}</td>
+                <td class="text-center">{{record.MinuteLate | timespan}}</td>
             </tr>
         </tbody>
     </table>

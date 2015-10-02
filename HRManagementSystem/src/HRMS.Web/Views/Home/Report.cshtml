@@ -32,7 +32,7 @@
             <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Department</th>
+                <th>Office</th>
                 <th class="text-center">Date</th>
                 <th class="text-center">Check-in</th>
                 <th class="text-center">Check-out</th>
@@ -41,26 +41,26 @@
         </thead>
         <tbody ng-repeat="user in users">
             <tr>
-                <td rowspan="{{user.Dates.length === 1 ? 1 : user.Dates.length + 1}}">ASWVN{{user.Id}}</td>
-                <td rowspan="{{user.Dates.length === 1 ? 1 : user.Dates.length + 1}}">{{user.Name}}</td>
-                <td rowspan="{{user.Dates.length === 1 ? 1 : user.Dates.length + 1}}">{{user.Department.Name}}</td>
-                <td colspan="3" ng-show="user.Dates.length > 1"></td>
-                <td class="text-center text-muted" ng-hide="user.Dates.length > 1"><small>{{user.Dates[0].Date | date: "dd/MM/yyyy"}}</small></td>
-                <td class="text-center text-muted" ng-hide="user.Dates.length > 1"><small>{{user.Dates[0].Checkin | date: "shortTime"}}</small></td>
-                <td class="text-center text-muted" ng-hide="user.Dates.length > 1"><small>{{user.Dates[0].Checkout | date: "shortTime"}}</small></td>
-                <td class="text-center">{{user.totalLackTime | timespan}}</td>
+                <td rowspan="{{user.DailyRecords.length === 1 ? 1 : user.DailyRecords.length + 1}}">ASWVN{{user.UserInfo.EmployeeId}}</td>
+                <td rowspan="{{user.DailyRecords.length === 1 ? 1 : user.DailyRecords.length + 1}}">{{user.UserInfo.Name}}</td>
+                <td rowspan="{{user.DailyRecords.length === 1 ? 1 : user.DailyRecords.length + 1}}">{{user.UserInfo.Department.Office}}</td>
+                <td colspan="3" ng-show="user.DailyRecords.length > 1"></td>
+                <td class="text-center text-muted" ng-hide="user.DailyRecords.length > 1"><small>{{user.DailyRecords[0].WorkingDay | date: "dd/MM/yyyy"}}</small></td>
+                <td class="text-center text-muted" ng-hide="user.DailyRecords.length > 1"><small>{{user.DailyRecords[0].CheckIn | date: "shortTime"}}</small></td>
+                <td class="text-center text-muted" ng-hide="user.DailyRecords.length > 1"><small>{{user.DailyRecords[0].CheckOut | date: "shortTime"}}</small></td>
+                <td class="text-center">{{user.TotalLackTime | timespan}}</td>
             </tr>
-            <tr ng-repeat="date in user.Dates" ng-show="user.Dates.length > 1">
-                <td class="text-center text-muted"><small>{{date.Date | date: "dd/MM/yyyy"}}</small></td>
-                <td class="text-center text-muted"><small>{{date.Checkin | date: "shortTime"}}</small></td>
-                <td class="text-center text-muted"><small>{{date.Checkout | date: "shortTime"}}</small></td>
-                <td class="text-center text-muted"><small>{{date.LackTime | timespan}}</small></td>
+            <tr ng-repeat="date in user.DailyRecords" ng-show="user.DailyRecords.length > 1">
+                <td class="text-center text-muted"><small>{{date.WorkingDay | date: "dd/MM/yyyy"}}</small></td>
+                <td class="text-center text-muted"><small>{{date.CheckIn | date: "shortTime"}}</small></td>
+                <td class="text-center text-muted"><small>{{date.CheckOut | date: "shortTime"}}</small></td>
+                <td class="text-center text-muted"><small>{{date.MinuteLate | timespan}}</small></td>
             </tr>
         </tbody>
     </table>
     <div class="alert alert-info" ng-hide="users.length > 0">
         <p>
-            Please select a month to see the report.
+            Generating the report. <i class="fa fa-spinner"></i>
         </p>
     </div>
 </div>

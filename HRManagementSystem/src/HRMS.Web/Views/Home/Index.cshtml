@@ -26,7 +26,7 @@
         <tbody>
             <tr ng-repeat="user in users | filter:searchTerms">
                 <td><a href="@Url.Action("UserInfo")/{{user.EmployeeId}}">ASWVN{{user.EmployeeId}}</a></td>
-                <td><a href="@Url.Action("UserInfo")/{{user.Id}}">{{user.Name}}</a></td>
+                <td><a href="@Url.Action("UserInfo")/{{user.EmployeeId}}">{{user.Name}}</a></td>
                 <td>{{user.Department.Name}}</td>
             </tr>
         </tbody>

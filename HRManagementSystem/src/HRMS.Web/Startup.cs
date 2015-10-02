@@ -90,6 +90,16 @@ namespace HRMS.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
 
+                //routes.MapWebApiRoute(
+                //    name: "UserReportApi",
+                //    template: "api/{controller}/{empId}/{action}/{month?}",
+                //    defaults: null,
+                //    constraints: new
+                //    {
+                //        controller = "Users",
+                //        action = "Report"
+                //    });
+
                 routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
             });
         }

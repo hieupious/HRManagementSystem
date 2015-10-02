@@ -6,6 +6,7 @@ using Microsoft.AspNet.Mvc;
 using HRMS.Web.Models;
 using HRMS.Web.Services;
 using System.Diagnostics;
+using Microsoft.Data.Entity;
 
 namespace HRMS.Web.Controllers
 {
@@ -30,19 +31,9 @@ namespace HRMS.Web.Controllers
 
         public IActionResult UserInfo(int id, string searchTerms)
         {
-            var model = new UserInfo()
-            {
-                Id = 223,
-                Name = "Tran Quoc Linh",
-                Department = new Department()
-                {
-                    Id = 7,
-                    Name = "2XX GP OFFICE"
-                }
-            };
-
+            var user = _dbContext.UserInfoes.Include(u => u.Department).Where(u => int.Parse(u.EmployeeId) == id).FirstOrDefault();
             ViewBag.SearchTerms = searchTerms;
-            return View(model);
+            return View(user);
         }
 
         public IActionResult Report()
