@@ -4,48 +4,79 @@ using System.Linq;
 using System.Threading.Tasks;
 using HRMS.Web.Models;
 using ekm.oledb.data;
+using System.IO;
+using HRMS.Web.Configuration;
+using Microsoft.Framework.OptionsModel;
 
 namespace HRMS.Web.Services
 {
     public class ImportDataService : IImportDataService
     {
-        private string _dbPath;
-        private DatabaseContext _dbContext;
+        private string dbPath;
+        private DatabaseContext dbContext;
+        private ImportConfiguration importConfiguration;
+        // Query string 
         private const string queryUser = "SELECT [USERID], [Badgenumber], [Name], [DEFAULTDEPTID] from USERINFO";
         private const string queryDepartment = "SELECT [DEPTID], [DEPTNAME] FROM DEPARTMENTS";
         private const string queryAllCheckInOutRecord = "SELECT [USERID], [CHECKTIME] FROM CHECKINOUT";
-        private const string queryDailyCheckInOutRecord = "SELECT [USERID], [CHECKTIME] FROM CHECKINOUT WHERE CHECKTIME >= #{0}#";
+        private const string queryCheckInOutRecordWithDay = "SELECT [USERID], [CHECKTIME] FROM CHECKINOUT WHERE (CHECKTIME >= #{0}#) AND (CHECKTIME <= #{1}#)";
 
-        public ImportDataService(string dbPath)
+
+        public ImportDataService(IOptions<ImportConfiguration> options)
         {
-            _dbPath = dbPath;
-            _dbContext = Db.Open(_dbPath);
+            importConfiguration = options.Options;
+            dbPath = importConfiguration.ApplicationBasePath + "\\" + importConfiguration.ImportedDBPath;
+            dbContext = Db.Open(this.dbPath);
         }
 
-        public List<CheckInOutRecord> ImportAllCheckInOutFromAccessDB()
+        public IEnumerable<CheckInOutRecord> ImportAllCheckInOutFromAccessDB()
         {
-            var checkInOutInfo = _dbContext.ExecuteMany(queryAllCheckInOutRecord);
+            var checkInOutInfo = dbContext.ExecuteMany(queryAllCheckInOutRecord);
             return Mapper.MapMany<CheckInOutRecord, CheckInOutMapping>(checkInOutInfo);
         }
 
-        public List<CheckInOutRecord> ImportDailyCheckInOutFromAccessDB()
+        public IEnumerable<CheckInOutRecord> ImportDailyCheckInOutFromAccessDB()
         {
-            throw new NotImplementedException();
+            return ImportWithDayCheckInOutFromAccessDB(DateTime.Now, null);
+        }
+        public IEnumerable<CheckInOutRecord> ImportWithDayCheckInOutFromAccessDB(DateTime fromDay, DateTime? toDay)
+        {
+            if (!toDay.HasValue)
+                toDay = fromDay.AddDays(1);
+            var query = string.Format(queryCheckInOutRecordWithDay, fromDay.Date.ToShortDateString(), toDay.Value.Date.ToShortDateString());
+            var checkInOutInfo = dbContext.ExecuteMany(query);
+            return Mapper.MapMany<CheckInOutRecord, CheckInOutMapping>(checkInOutInfo);
         }
 
-        public List<Department> ImportDepartmentFromAccessDB()
+        public IEnumerable<Department> ImportDepartmentFromAccessDB()
         {
-            var deptInfo = _dbContext.ExecuteMany(queryDepartment);
+            var deptInfo = dbContext.ExecuteMany(queryDepartment);
             return Mapper.MapMany<Department, DepartmentMapping>(deptInfo);
         }
 
-        public List<UserInfo> ImportUserFromAccessDB()
+        public IEnumerable<UserInfo> ImportUserFromAccessDB()
         {
-            var userInfo = _dbContext.ExecuteMany(queryUser);
+            var userInfo = dbContext.ExecuteMany(queryUser);
             return Mapper.MapMany<UserInfo, UserMapping>(userInfo);
         }
 
+        public bool CopyFileFromExternal(ref DateTime lastWriteTime)
+        {
+            try
+            {
+                string fullFilePath = importConfiguration.FileToCopyPath;
+                
+                File.Copy(fullFilePath, dbPath, true);
+                lastWriteTime = File.GetLastWriteTime(dbPath);
 
+            } catch (Exception e)
+            {
+                
+                return false;
+            }
+
+            return false;
+        }
     }
 
     public class UserMapping : ObjectMapping

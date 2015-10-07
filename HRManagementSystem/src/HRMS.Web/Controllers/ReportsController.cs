@@ -6,6 +6,8 @@ using Microsoft.AspNet.Mvc;
 using HRMS.Web.Models;
 using Newtonsoft.Json;
 using Microsoft.Data.Entity;
+using Hangfire;
+using HRMS.Web.Services;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,10 +16,12 @@ namespace HRMS.Web.Controllers
     [Route("api/[controller]")]
     public class ReportsController : Controller
     {
-        private readonly ApplicationDbContext _dbContext;
-        public ReportsController(ApplicationDbContext dbContext)
+        private readonly ApplicationDbContext dbContext;
+        private readonly IImportDataService importDataService;
+        public ReportsController(ApplicationDbContext dbContext, IImportDataService importDataService)
         {
-            _dbContext = dbContext;
+            this.dbContext = dbContext;
+            this.importDataService = importDataService;
         }
         // GET: api/values
         [HttpGet]
@@ -30,12 +34,21 @@ namespace HRMS.Web.Controllers
         [HttpGet("{month}")]
         public string Get(DateTime month)
         {
-            var monthRecords = _dbContext.MonthlyRecords.Include(m => m.UserInfo).ThenInclude(u => u.Department).Where(m => m.Month == month.Month && m.Year == month.Year).Include(m => m.DailyRecords);
+            var monthRecords = dbContext.MonthlyRecords.Include(m => m.UserInfo).ThenInclude(u => u.Department).Where(m => m.Month == month.Month && m.Year == month.Year).Include(m => m.DailyRecords);
             foreach(var record in monthRecords)
             {
-                record.UserInfo = _dbContext.UserInfoes.Include(u => u.Department).FirstOrDefault(u => u.Id == record.UserId);
+                record.UserInfo = dbContext.UserInfoes.Include(u => u.Department).FirstOrDefault(u => u.Id == record.UserId);
             }
             return JsonConvert.SerializeObject(monthRecords);
+        }
+
+        [HttpGet("RunDailyImport")]
+        public string RunDailyImport()
+        {
+            
+            //RecurringJob.AddOrUpdate(() => importDataService.ImportDailyCheckInOutFromAccessDB(), Cron.Daily);
+
+            return "Success";
         }
 
         // POST api/values

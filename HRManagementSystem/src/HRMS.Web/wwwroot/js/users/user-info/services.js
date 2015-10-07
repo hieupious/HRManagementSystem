@@ -4,7 +4,7 @@
 
     services.factory("UserLogResource", ["Resource",
         function ($resource) {
-            return $resource("/api/Users/:empId/Report/:month", { empId : '@empId', month : '@month'});
+            return $resource("/api/Users/:empId/Report/:month", { empId: '@empId', month: '@month' });
         }
     ]);
 

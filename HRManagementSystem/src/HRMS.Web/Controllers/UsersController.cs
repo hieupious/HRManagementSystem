@@ -14,7 +14,7 @@ namespace HRMS.Web.Controllers
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext dbContext;
         private readonly IDailyWorkingProcessService _dailyWorkingProcess;
         private readonly IMonthlyWorkingProcess _monthlyWorkingProcess;
 
@@ -22,7 +22,7 @@ namespace HRMS.Web.Controllers
 
         public UsersController(ApplicationDbContext dbContext, IDailyWorkingProcessService dailyWorkingProcess, IMonthlyWorkingProcess monthlyWorkingProcess)
         {
-            _dbContext = dbContext;
+            this.dbContext = dbContext;
             _dailyWorkingProcess = dailyWorkingProcess;
             _monthlyWorkingProcess = monthlyWorkingProcess;
         }
@@ -31,9 +31,7 @@ namespace HRMS.Web.Controllers
         [HttpGet]
         public string Get()
         {
-
-            var users = _dbContext.UserInfoes.Include(u => u.Department).Where(u => activeDepts.Contains(u.DepartmentId)).ToList();
-
+            var users = dbContext.UserInfoes.Include(u => u.Department).Where(u => activeDepts.Contains(u.DepartmentId)).ToList();
             return JsonConvert.SerializeObject(users);
         }
 
@@ -41,8 +39,10 @@ namespace HRMS.Web.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-
-            return "value";
+            var user = dbContext.UserInfoes.Include(u => u.Department).FirstOrDefault(u => u.Id == id);
+            if (user != null)
+                return JsonConvert.SerializeObject(user);
+            return "Not Found";
         }
 
         [HttpGet("{empId}/{Report}/{month?}")]
@@ -50,10 +50,20 @@ namespace HRMS.Web.Controllers
         {
             if (!month.HasValue)
                 month = DateTime.Now;
-            var user = _dbContext.UserInfoes.Where(u => int.Parse(u.EmployeeId) == empId).First();
+            var user = dbContext.UserInfoes.Where(u => int.Parse(u.EmployeeId) == empId).First();
             if (user == null)
                 return null;
-            var records = _dbContext.DailyWorkingRecords.Where(d => d.UserId == user.Id && d.WorkingDay.Month == 8 && d.WorkingDay.Year == month.Value.Year).OrderBy(u => u.WorkingDay).ToList();
+            //var records = _dbContext.DailyWorkingRecords.Where(d => d.UserId == user.Id && d.WorkingDay.Month == 8 && d.WorkingDay.Year == month.Value.Year).OrderBy(u => u.WorkingDay);
+            var records = new List<DailyWorkingRecord>();
+            foreach(var day in WorkingProcessService.AllDatesInMonth(month.Value.Year, month.Value.Month))
+            {
+                if (day < DateTime.Now.AddDays(-1))
+                {
+                    var record = _dailyWorkingProcess.GetDailyWorkingReport(user.Id, day);
+                    if (record != null)
+                        records.Add(record);
+                }
+            }
             return JsonConvert.SerializeObject(records);
         }
 
@@ -76,7 +86,7 @@ namespace HRMS.Web.Controllers
             //    }
 
             //}
-            var monthRecords = _dbContext.MonthlyRecords.Where(m => m.Month == month && m.Year == year);
+            var monthRecords = dbContext.MonthlyRecords.Where(m => m.Month == month && m.Year == year);
 
             return JsonConvert.SerializeObject(monthRecords);
         }
@@ -86,21 +96,21 @@ namespace HRMS.Web.Controllers
         {
             int year = 2015;
             int month = 8;
-            var users = _dbContext.UserInfoes.ToList();
+            var users = dbContext.UserInfoes.ToList();
             foreach (var user in users)
             {
                 var days = WorkingProcessService.AllDatesInMonth(year, month);
                 foreach (var day in days)
                 {
-                    var records = _dbContext.CheckInOutRecords.Where(u => u.UserId == user.Id && u.CheckTime.Date == day).ToList();
+                    var records = dbContext.CheckInOutRecords.Where(u => u.UserId == user.Id && u.CheckTime.Date == day).ToList();
                     if (records != null && records.Count > 0)
                     {
                         var dailyRecord = _dailyWorkingProcess.ProcessDailyWorking(user, records, day);
                         if (dailyRecord != null)
-                            _dbContext.DailyWorkingRecords.Add(dailyRecord);
+                            dbContext.DailyWorkingRecords.Add(dailyRecord);
                     }
                 }
-                _dbContext.SaveChanges();
+                dbContext.SaveChanges();
             }
 
 

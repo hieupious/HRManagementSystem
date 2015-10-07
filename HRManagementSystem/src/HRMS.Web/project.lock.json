@@ -3,40 +3,15 @@
   "version": 1,
   "targets": {
     "DNX,Version=v4.5.1": {
-      "Autofac/4.0.0-alpha2": {
+      "Autofac/3.0.0": {
         "type": "package",
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
         "compile": {
-          "lib/dnx451/Autofac.dll": {}
+          "lib/net40/Autofac.Configuration.dll": {},
+          "lib/net40/Autofac.dll": {}
         },
         "runtime": {
-          "lib/dnx451/Autofac.dll": {}
-        }
-      },
-      "Autofac.Dnx/4.0.0-alpha4-79": {
-        "type": "package",
-        "dependencies": {
-          "Autofac": "4.0.0-alpha4-79",
-          "Microsoft.Framework.DependencyInjection": "1.0.0-beta6-11596"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Autofac.dll": {},
-          "lib/dnx451/Autofac.Dnx.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Autofac.dll": {},
-          "lib/dnx451/Autofac.Dnx.dll": {}
+          "lib/net40/Autofac.Configuration.dll": {},
+          "lib/net40/Autofac.dll": {}
         }
       },
       "Autofac.Framework.DependencyInjection/4.0.0-beta6-97": {
@@ -188,6 +163,52 @@
           "lib/net45/EntityFramework.SqlServer.dll": {}
         }
       },
+      "Hangfire/1.5.0": {
+        "type": "package",
+        "dependencies": {
+          "Hangfire.Core": "[1.5.0]",
+          "Hangfire.SqlServer": "[1.5.0]",
+          "Microsoft.Owin.Host.SystemWeb": "3.0.0"
+        }
+      },
+      "Hangfire.Autofac/2.0.0": {
+        "type": "package",
+        "dependencies": {
+          "Autofac": "3.0.0",
+          "Hangfire.Core": "1.5.0"
+        },
+        "compile": {
+          "lib/net45/Hangfire.Autofac.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Hangfire.Autofac.dll": {}
+        }
+      },
+      "Hangfire.Core/1.5.0": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "5.0.0",
+          "Owin": "1.0"
+        },
+        "compile": {
+          "lib/net45/Hangfire.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Hangfire.Core.dll": {}
+        }
+      },
+      "Hangfire.SqlServer/1.5.0": {
+        "type": "package",
+        "dependencies": {
+          "Hangfire.Core": "[1.5.0]"
+        },
+        "compile": {
+          "lib/net45/Hangfire.SqlServer.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Hangfire.SqlServer.dll": {}
+        }
+      },
       "Ix-Async/1.2.5": {
         "type": "package",
         "frameworkAssemblies": [
@@ -231,6 +252,49 @@
         },
         "runtime": {
           "lib/dnx451/Microsoft.AspNet.Antiforgery.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Authentication/1.0.0-beta7": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.DataProtection": "1.0.0-beta7",
+          "Microsoft.AspNet.Http": "1.0.0-beta7",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta7",
+          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta7",
+          "Microsoft.Framework.OptionsModel": "1.0.0-beta7",
+          "Microsoft.Framework.WebEncoders": "1.0.0-beta7"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Authentication.Cookies/1.0.0-beta7": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication": "1.0.0-beta7",
+          "Microsoft.Framework.WebEncoders": "1.0.0-beta7",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.Cookies.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.Cookies.dll": {}
         }
       },
       "Microsoft.AspNet.Authorization/1.0.0-beta7": {
@@ -287,6 +351,24 @@
         },
         "runtime": {
           "lib/dnx451/Microsoft.AspNet.Cryptography.Internal.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Cryptography.KeyDerivation/1.0.0-beta7": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Cryptography.Internal": "1.0.0-beta7"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Cryptography.KeyDerivation.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Cryptography.KeyDerivation.dll": {}
         }
       },
       "Microsoft.AspNet.DataProtection/1.0.0-beta7": {
@@ -567,6 +649,26 @@
         },
         "runtime": {
           "lib/dnx451/Microsoft.AspNet.Http.Features.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Identity/3.0.0-beta7": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication.Cookies": "1.0.0-beta7",
+          "Microsoft.AspNet.Cryptography.KeyDerivation": "1.0.0-beta7",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-beta7"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Identity.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Identity.dll": {}
         }
       },
       "Microsoft.AspNet.JsonPatch/1.0.0-beta7": {
@@ -913,6 +1015,24 @@
         },
         "runtime": {
           "lib/dnx451/Microsoft.AspNet.Mvc.WebApiCompatShim.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Owin/1.0.0-beta7": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http": "1.0.0-beta7"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Owin.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Owin.dll": {}
         }
       },
       "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces/1.0.0-beta7": {
@@ -1750,6 +1870,31 @@
           "lib/dnx451/Microsoft.Net.WebSockets.dll": {}
         }
       },
+      "Microsoft.Owin/3.0.0": {
+        "type": "package",
+        "dependencies": {
+          "Owin": "1.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.dll": {}
+        }
+      },
+      "Microsoft.Owin.Host.SystemWeb/3.0.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Owin": "3.0.0",
+          "Owin": "1.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.Host.SystemWeb.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.Host.SystemWeb.dll": {}
+        }
+      },
       "Microsoft.VisualStudio.Web.BrowserLink.Loader/14.0.0-beta7": {
         "type": "package",
         "dependencies": {
@@ -1780,28 +1925,13 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "PhantomNet.Web.Preferences/3.0.0-beta7": {
+      "Owin/1.0": {
         "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-beta7",
-          "Microsoft.Dnx.Runtime.Abstractions": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.Abstractions": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.EnvironmentVariables": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.Json": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.UserSecrets": "1.0.0-beta7"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
         "compile": {
-          "lib/dnx451/PhantomNet.Web.Preferences.dll": {}
+          "lib/net40/Owin.dll": {}
         },
         "runtime": {
-          "lib/dnx451/PhantomNet.Web.Preferences.dll": {}
+          "lib/net40/Owin.dll": {}
         }
       },
       "Remotion.Linq/2.0.0-beta-002": {
@@ -1967,36 +2097,18 @@
     }
   },
   "libraries": {
-    "Autofac/4.0.0-alpha2": {
+    "Autofac/3.0.0": {
       "type": "package",
-      "sha512": "nlKsjAyDK827ARwrQL54bq80NcadZTKas7vqJfc/ZEqgmMFlTOESvHKy97Ny7IGChAW98qJZQ7Wlmp5xDVUbnw==",
+      "sha512": "MzwfKuvmltHX+7ty3ewZU3vbACIdLhK1/pHG4BS7YF+15rJ3e7sjG3Fsjyfys8ZMSNcHa4fUyh9TYzAZ6q4eBQ==",
       "files": [
-        "Autofac.4.0.0-alpha2.nupkg",
-        "Autofac.4.0.0-alpha2.nupkg.sha512",
+        "Autofac.3.0.0.nupkg",
+        "Autofac.3.0.0.nupkg.sha512",
         "Autofac.nuspec",
-        "lib/dnx451/Autofac.dll",
-        "lib/dnx451/Autofac.xml",
-        "lib/dnxcore50/Autofac.dll",
-        "lib/dnxcore50/Autofac.xml",
-        "lib/portable-net45+win+wpa81+wp80/Autofac.dll",
-        "lib/portable-net45+win+wpa81+wp80/Autofac.xml"
-      ]
-    },
-    "Autofac.Dnx/4.0.0-alpha4-79": {
-      "type": "package",
-      "sha512": "x4/ZiEnI1wzlL1sPeW2Mj3EyfjMtR8ZaReUJLsZRy+YoHgNVicSB05DC33tJHAvdNWS+CLVlyFhcxOUIM8EIfQ==",
-      "files": [
-        "Autofac.Dnx.4.0.0-alpha4-79.nupkg",
-        "Autofac.Dnx.4.0.0-alpha4-79.nupkg.sha512",
-        "Autofac.Dnx.nuspec",
-        "lib/dnx451/Autofac.dll",
-        "lib/dnx451/Autofac.Dnx.dll",
-        "lib/dnx451/Autofac.Dnx.xml",
-        "lib/dnx451/Autofac.xml",
-        "lib/dnxcore50/Autofac.dll",
-        "lib/dnxcore50/Autofac.Dnx.dll",
-        "lib/dnxcore50/Autofac.Dnx.xml",
-        "lib/dnxcore50/Autofac.xml"
+        "lib/net40/Autofac.Configuration.dll",
+        "lib/net40/Autofac.dll",
+        "lib/net40/Autofac.xml",
+        "lib/portable-win+net40+sl50+wp8/Autofac.dll",
+        "lib/portable-win+net40+sl50+wp8/Autofac.xml"
       ]
     },
     "Autofac.Framework.DependencyInjection/4.0.0-beta6-97": {
@@ -2109,6 +2221,50 @@
         "repo.json"
       ]
     },
+    "Hangfire/1.5.0": {
+      "type": "package",
+      "sha512": "48FUsyUTGkofvAN8K+bSG3R88BGb3bwx1ABH6+aQEPewBOWipStMrmUFDKoD1oyv0l4IXD5mClXJFJ1+KHWPEg==",
+      "files": [
+        "Hangfire.1.5.0.nupkg",
+        "Hangfire.1.5.0.nupkg.sha512",
+        "Hangfire.nuspec",
+        "readme.txt"
+      ]
+    },
+    "Hangfire.Autofac/2.0.0": {
+      "type": "package",
+      "sha512": "Y3QZx1vpYoZsyV56toQsKekA98NjFRdVhOMV8/1Nu0xccu0rKkBAk42H0MP+GVIgXhqwNpv7sAVc8ZmPXt71Og==",
+      "files": [
+        "Hangfire.Autofac.2.0.0.nupkg",
+        "Hangfire.Autofac.2.0.0.nupkg.sha512",
+        "Hangfire.Autofac.nuspec",
+        "lib/net45/Hangfire.Autofac.dll",
+        "lib/net45/Hangfire.Autofac.xml"
+      ]
+    },
+    "Hangfire.Core/1.5.0": {
+      "type": "package",
+      "sha512": "UPN0Q0J+oWGksz7Lq/tayaepsga5SY4kk1hBkmniQ3yfJCXyMHH9Dz0CWjtWNBXGwq3N0HlzipFflAX/+ono0Q==",
+      "files": [
+        "Hangfire.Core.1.5.0.nupkg",
+        "Hangfire.Core.1.5.0.nupkg.sha512",
+        "Hangfire.Core.nuspec",
+        "lib/net45/Hangfire.Core.dll",
+        "lib/net45/Hangfire.Core.xml"
+      ]
+    },
+    "Hangfire.SqlServer/1.5.0": {
+      "type": "package",
+      "sha512": "5UsXAVyX3fenkSepNDAsJwWsATgmvy/1dKAyUjewQkEyLVHfCPPUrNVIObldu2+bMMtOoLxHFjwpMe8WAY6qvQ==",
+      "files": [
+        "Hangfire.SqlServer.1.5.0.nupkg",
+        "Hangfire.SqlServer.1.5.0.nupkg.sha512",
+        "Hangfire.SqlServer.nuspec",
+        "lib/net45/Hangfire.SqlServer.dll",
+        "lib/net45/Hangfire.SqlServer.xml",
+        "tools/install.sql"
+      ]
+    },
     "Ix-Async/1.2.5": {
       "type": "package",
       "sha512": "8EXO8q7cpDUH9G2q+UOPOO/6uZ9aN7mx/4xjFIfkp+qLWVJiYuglkRhjY8Ggs2CucXzHR8GHnovJKB5yQoYaJg==",
@@ -2146,6 +2302,36 @@
         "Microsoft.AspNet.Antiforgery.1.0.0-beta7.nupkg",
         "Microsoft.AspNet.Antiforgery.1.0.0-beta7.nupkg.sha512",
         "Microsoft.AspNet.Antiforgery.nuspec",
+        "repo.json"
+      ]
+    },
+    "Microsoft.AspNet.Authentication/1.0.0-beta7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "Z3UEugE53Kg0rZCEz2wHCEDmHrb9k9OVSzZG5OTSqs8K0fz06wvMoHYvSl/AVSAp6Tw9b7tqvATr9usP7Hpgyg==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.Authentication.dll",
+        "lib/dnx451/Microsoft.AspNet.Authentication.xml",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.dll",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.xml",
+        "Microsoft.AspNet.Authentication.1.0.0-beta7.nupkg",
+        "Microsoft.AspNet.Authentication.1.0.0-beta7.nupkg.sha512",
+        "Microsoft.AspNet.Authentication.nuspec",
+        "repo.json"
+      ]
+    },
+    "Microsoft.AspNet.Authentication.Cookies/1.0.0-beta7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "ObK6iDhEfaXSWfvu1RUgQUSz6WeNe8dicXOL11E7sP/RsmQv0wxXkueZ22++MMN+dEYjKRDimqtTb5TIaLuO5g==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.Authentication.Cookies.dll",
+        "lib/dnx451/Microsoft.AspNet.Authentication.Cookies.xml",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.Cookies.dll",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.Cookies.xml",
+        "Microsoft.AspNet.Authentication.Cookies.1.0.0-beta7.nupkg",
+        "Microsoft.AspNet.Authentication.Cookies.1.0.0-beta7.nupkg.sha512",
+        "Microsoft.AspNet.Authentication.Cookies.nuspec",
         "repo.json"
       ]
     },
@@ -2193,6 +2379,23 @@
         "Microsoft.AspNet.Cryptography.Internal.1.0.0-beta7.nupkg",
         "Microsoft.AspNet.Cryptography.Internal.1.0.0-beta7.nupkg.sha512",
         "Microsoft.AspNet.Cryptography.Internal.nuspec",
+        "repo.json"
+      ]
+    },
+    "Microsoft.AspNet.Cryptography.KeyDerivation/1.0.0-beta7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "OhbE06XVioG6hMKXbIi5OMMRi1KxFHTepjo4RPRtXZlSn2CS/U/gm1Eoa7sKTIb/vGI0AXkxsB9LuiYIIsnquQ==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.Cryptography.KeyDerivation.dll",
+        "lib/dnx451/Microsoft.AspNet.Cryptography.KeyDerivation.xml",
+        "lib/dnxcore50/Microsoft.AspNet.Cryptography.KeyDerivation.dll",
+        "lib/dnxcore50/Microsoft.AspNet.Cryptography.KeyDerivation.xml",
+        "lib/net451/Microsoft.AspNet.Cryptography.KeyDerivation.dll",
+        "lib/net451/Microsoft.AspNet.Cryptography.KeyDerivation.xml",
+        "Microsoft.AspNet.Cryptography.KeyDerivation.1.0.0-beta7.nupkg",
+        "Microsoft.AspNet.Cryptography.KeyDerivation.1.0.0-beta7.nupkg.sha512",
+        "Microsoft.AspNet.Cryptography.KeyDerivation.nuspec",
         "repo.json"
       ]
     },
@@ -2411,6 +2614,21 @@
         "Microsoft.AspNet.Http.Features.1.0.0-beta7.nupkg",
         "Microsoft.AspNet.Http.Features.1.0.0-beta7.nupkg.sha512",
         "Microsoft.AspNet.Http.Features.nuspec",
+        "repo.json"
+      ]
+    },
+    "Microsoft.AspNet.Identity/3.0.0-beta7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "B/dEHKfoT/z32yR2PmlHVJqAWf6VtHkITM+4bC++5gf6S1AdjTvWlugFT5eX7poHAt/Ivk6kHl4sjgEV+ergEA==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.Identity.dll",
+        "lib/dnx451/Microsoft.AspNet.Identity.xml",
+        "lib/dnxcore50/Microsoft.AspNet.Identity.dll",
+        "lib/dnxcore50/Microsoft.AspNet.Identity.xml",
+        "Microsoft.AspNet.Identity.3.0.0-beta7.nupkg",
+        "Microsoft.AspNet.Identity.3.0.0-beta7.nupkg.sha512",
+        "Microsoft.AspNet.Identity.nuspec",
         "repo.json"
       ]
     },
@@ -2661,6 +2879,21 @@
         "Microsoft.AspNet.Mvc.WebApiCompatShim.6.0.0-beta7.nupkg",
         "Microsoft.AspNet.Mvc.WebApiCompatShim.6.0.0-beta7.nupkg.sha512",
         "Microsoft.AspNet.Mvc.WebApiCompatShim.nuspec",
+        "repo.json"
+      ]
+    },
+    "Microsoft.AspNet.Owin/1.0.0-beta7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "9lgJAik+SqJ2GSCFSEnBOhAFmYvL6z5EVLGBRqFhl87piQ1CsZIzBxrXx+AThebdOtTuNahXkY7DShOyZofdpA==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.Owin.dll",
+        "lib/dnx451/Microsoft.AspNet.Owin.xml",
+        "lib/dnxcore50/Microsoft.AspNet.Owin.dll",
+        "lib/dnxcore50/Microsoft.AspNet.Owin.xml",
+        "Microsoft.AspNet.Owin.1.0.0-beta7.nupkg",
+        "Microsoft.AspNet.Owin.1.0.0-beta7.nupkg.sha512",
+        "Microsoft.AspNet.Owin.nuspec",
         "repo.json"
       ]
     },
@@ -3407,6 +3640,30 @@
         "Microsoft.Net.WebSockets.nuspec"
       ]
     },
+    "Microsoft.Owin/3.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "SpMoiTFNsfzlo4VFYVtlErbBpm84pNVnhAbihzm1JCaXs7VfHqs/MEXEJ4Xtr1jXEp2hyKYpno8v8P58KTZVEA==",
+      "files": [
+        "lib/net45/Microsoft.Owin.dll",
+        "lib/net45/Microsoft.Owin.XML",
+        "Microsoft.Owin.3.0.0.nupkg",
+        "Microsoft.Owin.3.0.0.nupkg.sha512",
+        "Microsoft.Owin.nuspec"
+      ]
+    },
+    "Microsoft.Owin.Host.SystemWeb/3.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "MK7tSToRPgLgPpBXczM7bq1Z93yvPTuwkYwHMRKnwLwXX1+4phK/JqyAGPoHKIxZLiMOmY6J+KEDCRtJq7HiSg==",
+      "files": [
+        "lib/net45/Microsoft.Owin.Host.SystemWeb.dll",
+        "lib/net45/Microsoft.Owin.Host.SystemWeb.xml",
+        "Microsoft.Owin.Host.SystemWeb.3.0.0.nupkg",
+        "Microsoft.Owin.Host.SystemWeb.3.0.0.nupkg.sha512",
+        "Microsoft.Owin.Host.SystemWeb.nuspec"
+      ]
+    },
     "Microsoft.VisualStudio.Web.BrowserLink.Loader/14.0.0-beta7": {
       "type": "package",
       "sha512": "KszhKI/1wwcZQhU7el7qwmQrVjx2Xq0n5MM59CXHa8A+bsUAwwHirzU7e2mIo8UYtdZ6HGZrv4942qMVkeYQtQ==",
@@ -3444,17 +3701,14 @@
         "tools/install.ps1"
       ]
     },
-    "PhantomNet.Web.Preferences/3.0.0-beta7": {
+    "Owin/1.0": {
       "type": "package",
-      "sha512": "lhMYqQK23CRN0gZpxCJHQYXCIcgtxOpCQ/lvKOOvVSuMIHQXvz0G2/ihz39mCHVxRMEwGKy57sXRbEQ3kWypEg==",
+      "sha512": "OseTFniKmyp76mEzOBwIKGBRS5eMoYNkMKaMXOpxx9jv88+b6mh1rSaw43vjBOItNhaLFG3d0a20PfHyibH5sw==",
       "files": [
-        "lib/dnx451/PhantomNet.Web.Preferences.dll",
-        "lib/dnx451/PhantomNet.Web.Preferences.xml",
-        "lib/dnxcore50/PhantomNet.Web.Preferences.dll",
-        "lib/dnxcore50/PhantomNet.Web.Preferences.xml",
-        "PhantomNet.Web.Preferences.3.0.0-beta7.nupkg",
-        "PhantomNet.Web.Preferences.3.0.0-beta7.nupkg.sha512",
-        "PhantomNet.Web.Preferences.nuspec"
+        "lib/net40/Owin.dll",
+        "Owin.1.0.0.nupkg",
+        "Owin.1.0.0.nupkg.sha512",
+        "Owin.nuspec"
       ]
     },
     "Remotion.Linq/2.0.0-beta-002": {
@@ -4099,12 +4353,14 @@
       "Microsoft.Framework.Logging.Console >= 1.0.0-beta7",
       "Microsoft.Framework.Logging.Debug >= 1.0.0-beta7",
       "Microsoft.VisualStudio.Web.BrowserLink.Loader >= 14.0.0-beta7",
-      "Autofac >= 4.0.0-alpha2",
-      "Autofac.Dnx >= 4.0.0-alpha4-79",
       "Autofac.Framework.DependencyInjection >= 4.0.0-beta6-97",
-      "PhantomNet.Web.Preferences >= 3.0.0-beta7",
       "Microsoft.Framework.Configuration.UserSecrets >= 1.0.0-beta7",
-      "Microsoft.AspNet.Mvc.WebApiCompatShim >= 6.0.0-beta7"
+      "Microsoft.AspNet.Mvc.WebApiCompatShim >= 6.0.0-beta7",
+      "Microsoft.AspNet.Identity >= 3.0.0-beta7",
+      "Hangfire >= 1.5.0",
+      "Hangfire.Autofac >= 2.0.0",
+      "Microsoft.AspNet.Owin >= 1.0.0-beta7",
+      "Autofac >= 3.0.0"
     ],
     "DNX,Version=v4.5.1": []
   }

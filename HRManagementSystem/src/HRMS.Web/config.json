@@ -1,13 +1,15 @@
 {
-  "Site": {
-    "Name": "HRMS"
+  "AppSettings": {
+    "Title": "ASWIG Solutions HR Management System"
+  },
+  "ImportConfiguration": {
+    "ImportedDBPath": "ImportedDB\\importedDB.mdb",
+    "FileToCopyPath": "C:\\Users\\h.hoangt\\ownCloud\\TimeSheet\\att2000.mdb",
+    "TimeToImport" :  "21:30"
   },
   "Data": {
     "DefaultConnection": {
       "ConnectionString": "Server=10.9.1.100\\SQLSERVER2012;Database=HRMSDB;uid=dev;pwd=HRMS@124;MultipleActiveResultSets=true"
-    },
-    "ImportedDBPath": {
-      "dbPath": "ImportedDB\\importedDB.mdb"
     }
   }
 }

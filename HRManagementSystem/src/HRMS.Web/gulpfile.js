@@ -16,11 +16,14 @@ var paths = {
     less_phantomnet_local: "./assets/less/phantomnet-ui",
 
     less_src: "./assets/less/site.less",
-    css_src: [],
+    css_src: [
+        "./assets/bower_components/font-awesome/css/font-awesome.css"
+    ],
     less_watch: "./assets/less/**/*",
     fonts_src: [
         "./assets/lib/theme-marketing/fonts/*",
-        "./assets/lib/fonts/" + FONT_NAME + "/*"
+        "./assets/lib/fonts/" + FONT_NAME + "/*",
+        "./assets/bower_components/font-awesome/fonts/*"
     ],
     js_src: [
         "./assets/bower_components/jquery/dist/jquery.js",

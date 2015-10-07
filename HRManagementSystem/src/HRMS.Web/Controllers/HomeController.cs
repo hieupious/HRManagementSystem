@@ -7,20 +7,27 @@ using HRMS.Web.Models;
 using HRMS.Web.Services;
 using System.Diagnostics;
 using Microsoft.Data.Entity;
+using HRMS.Web.Configuration;
+using Microsoft.Framework.OptionsModel;
+using Hangfire;
 
 namespace HRMS.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly IImportDataService _importDataService;
-        private readonly IDailyWorkingProcessService _dailyWorkingProcess;
+        private IOptions<AppSettings> appSetting;
+        private IOptions<ImportConfiguration> importConfig;
+        private readonly ApplicationDbContext dbContext;
+        private readonly IImportDataService importDataService;
+        private readonly IDailyWorkingProcessService dailyWorkingProcess;
 
-        public HomeController(ApplicationDbContext dbContext, IImportDataService importDataService, IDailyWorkingProcessService dailyWorkingProcess)
+        public HomeController(ApplicationDbContext dbContext, 
+            IImportDataService importDataService, IDailyWorkingProcessService dailyWorkingProcess, IOptions<ImportConfiguration> importConfig)
         {
-            _dbContext = dbContext;
-            _importDataService = importDataService;
-            _dailyWorkingProcess = dailyWorkingProcess;
+            this.dbContext = dbContext;
+            this.importDataService = importDataService;
+            this.dailyWorkingProcess = dailyWorkingProcess;
+            this.importConfig = importConfig;
         }
 
         public IActionResult Index(string id)
@@ -31,7 +38,7 @@ namespace HRMS.Web.Controllers
 
         public IActionResult UserInfo(int id, string searchTerms)
         {
-            var user = _dbContext.UserInfoes.Include(u => u.Department).Where(u => int.Parse(u.EmployeeId) == id).FirstOrDefault();
+            var user = dbContext.UserInfoes.Include(u => u.Department).Where(u => int.Parse(u.EmployeeId) == id).FirstOrDefault();
             ViewBag.SearchTerms = searchTerms;
             return View(user);
         }
@@ -43,6 +50,7 @@ namespace HRMS.Web.Controllers
 
         public IActionResult Error()
         {
+            
             return View("~/Views/Shared/Error.cshtml");
         }
     }

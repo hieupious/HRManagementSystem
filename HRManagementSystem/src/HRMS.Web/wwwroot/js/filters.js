@@ -22,4 +22,28 @@
         };
     });
 
+    filters.filter("sum", function () {
+        return function (records, property) {
+            var sum = 0;
+            for(var i = 0; i < records.length; i++) {
+                sum = sum + records[i][property];
+            }
+            return sum;
+        }
+    });
+    
+    filters.filter("monthInYear", function () {
+        return function (input, year) {
+            var day = new Date();
+            var month = 12;
+            if (year == day.getFullYear()) {
+                month = day.getMonth() + 1;
+            }
+            for (var i = 0; i < month; i++) {
+                input.push(i)
+            }
+            return input;
+        }
+    });
+
 })();

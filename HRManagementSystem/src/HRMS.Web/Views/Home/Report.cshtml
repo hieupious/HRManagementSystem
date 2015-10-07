@@ -1,9 +1,16 @@
 ﻿@{
-    ViewData["Title"] = "Report";
+    ViewData["Title"] = "TimeKeeping Report";
     ViewBag.ActiveMenuItem = "Report";
 }
 
 <div ng-app="hrmsReport" ng-controller="ReportController">
+    <div class="toolbox">
+        &nbsp;
+        @* // TODO:: Revise *@
+    </div>
+    <div class="toolbox pull-right">
+        <a download='Timekeepking report' href="" onclick="GG.setUpExport()" id="export" title="Export to Excel" class="export"><span class="icon icon-export"></span> <sup>Excel</sup></a>
+    </div>
     <header class="m-t-lg m-b-lg clearfix">
         <div class="pull-left">
             <h2 class="m-a-0 text-uppercase">@ViewData["Title"]</h2>
@@ -15,18 +22,21 @@
         <div class="form-inline pull-right-sm">
             <div class="form-group form-group-sm">
                 <select class="form-control" ng-model="month" ng-change="refreshUsers()">
-                    <option value="">month</option>
-                    <option ng-repeat="index in [] | range: 12">{{index + 1}}</option>
+                    <option value="">Month</option>
+                    <option ng-repeat="index in [] | monthInYear: year">{{index + 1}}</option>
                 </select>
             </div>
             <div class="form-group form-group-sm">
                 <select class="form-control" ng-model="year" ng-change="refreshUsers()">
-                    <option value="">year</option>
+                    <option value="">Year</option>
                     <option ng-repeat="index in [] | range: endYear - startYear + 1">{{index + startYear}}</option>
                 </select>
             </div>
         </div>
     </header>
+    <div class="text-center m-b">
+        <i class="fa fa-spinner fa-pulse fa-4x" ng-hide="users.length > 0"></i>
+    </div>
     <table class="table table-condensed table-hover" ng-show="users.length > 0">
         <thead>
             <tr>
@@ -44,13 +54,13 @@
                 <td rowspan="{{user.DailyRecords.length === 1 ? 1 : user.DailyRecords.length + 1}}">ASWVN{{user.UserInfo.EmployeeId}}</td>
                 <td rowspan="{{user.DailyRecords.length === 1 ? 1 : user.DailyRecords.length + 1}}">{{user.UserInfo.Name}}</td>
                 <td rowspan="{{user.DailyRecords.length === 1 ? 1 : user.DailyRecords.length + 1}}">{{user.UserInfo.Department.Office}}</td>
-                <td colspan="3" ng-show="user.DailyRecords.length > 1"></td>
-                <td class="text-center text-muted" ng-hide="user.DailyRecords.length > 1"><small>{{user.DailyRecords[0].WorkingDay | date: "dd/MM/yyyy"}}</small></td>
-                <td class="text-center text-muted" ng-hide="user.DailyRecords.length > 1"><small>{{user.DailyRecords[0].CheckIn | date: "shortTime"}}</small></td>
-                <td class="text-center text-muted" ng-hide="user.DailyRecords.length > 1"><small>{{user.DailyRecords[0].CheckOut | date: "shortTime"}}</small></td>
+                <td colspan="3" ng-show="user.DailyRecords.length > 1" ng-class="{'excel-hidden' : user.DailyRecords.length === 1}"></td>
+                <td class="text-center text-muted" ng-hide="user.DailyRecords.length > 1" ng-class="{'excel-hidden' : user.DailyRecords.length > 1}"><small>{{user.DailyRecords[0].WorkingDay | date: "dd/MM/yyyy"}}</small></td>
+                <td class="text-center text-muted" ng-hide="user.DailyRecords.length > 1" ng-class="{'excel-hidden' : user.DailyRecords.length > 1}"><small>{{user.DailyRecords[0].CheckIn | date: "shortTime"}}</small></td>
+                <td class="text-center text-muted" ng-hide="user.DailyRecords.length > 1" ng-class="{'excel-hidden' : user.DailyRecords.length > 1}"><small>{{user.DailyRecords[0].CheckOut | date: "shortTime"}}</small></td>
                 <td class="text-center">{{user.TotalLackTime | timespan}}</td>
             </tr>
-            <tr ng-repeat="date in user.DailyRecords" ng-show="user.DailyRecords.length > 1">
+            <tr ng-repeat="date in user.DailyRecords" ng-show="user.DailyRecords.length > 1" ng-class="{'excel-hidden' : user.DailyRecords.length === 1}">
                 <td class="text-center text-muted"><small>{{date.WorkingDay | date: "dd/MM/yyyy"}}</small></td>
                 <td class="text-center text-muted"><small>{{date.CheckIn | date: "shortTime"}}</small></td>
                 <td class="text-center text-muted"><small>{{date.CheckOut | date: "shortTime"}}</small></td>
@@ -58,9 +68,9 @@
             </tr>
         </tbody>
     </table>
-    <div class="alert alert-info" ng-hide="users.length > 0">
+    <div class="alert alert-info" ng-hide="date != null">
         <p>
-            Generating the report. <i class="fa fa-spinner"></i>
+            Please select a month to see the report.
         </p>
     </div>
 </div>

@@ -8,22 +8,27 @@ namespace HRMS.Web.Services
 {
     public class WorkingProcessService : IDailyWorkingProcessService, IMonthlyWorkingProcess
     {
-        public List<CheckInOutRecord> GetCheckInOutRecordPerDay(UserInfo user, DateTime day, ApplicationDbContext dbContext)
+        private ApplicationDbContext dbContext;
+        public WorkingProcessService(ApplicationDbContext dbContext)
         {
-            return dbContext.CheckInOutRecords.Where(u => u.UserId == user.Id && u.CheckTime.Date == day).ToList();
+            this.dbContext = dbContext;
+        }
+        public IEnumerable<CheckInOutRecord> GetCheckInOutRecordPerDay(UserInfo user, DateTime day)
+        {
+            return dbContext.CheckInOutRecords.Where(u => u.UserId == user.Id && u.CheckTime.Date == day);
         }
 
-        public DailyWorkingRecord GetDailyWorkingReport(int userId, DateTime day, ApplicationDbContext dbContext)
+        public DailyWorkingRecord GetDailyWorkingReport(int userId, DateTime day)
         {
             var user = dbContext.UserInfoes.First(u => u.Id == userId);
             if (user != null)
             {
-                var checkInOutRecords = GetCheckInOutRecordPerDay(user, day, dbContext);
+                var checkInOutRecords = GetCheckInOutRecordPerDay(user, day);
                 return ProcessDailyWorking(user, checkInOutRecords, day);
             }
             return null;
         }
-        public DailyWorkingRecord ProcessDailyWorking(UserInfo user, List<CheckInOutRecord> checkInOutTime, DateTime day)
+        public DailyWorkingRecord ProcessDailyWorking(UserInfo user, IEnumerable<CheckInOutRecord> checkInOutTime, DateTime day)
         {
             if (IsWorkingDay(day))
             {
@@ -32,9 +37,9 @@ namespace HRMS.Web.Services
                     UserId = user.Id,
                     WorkingDay = day
                 };
-                if (checkInOutTime != null && checkInOutTime.Count > 0)
+                if (checkInOutTime != null && checkInOutTime.Count() > 0)
                 {
-                    if (checkInOutTime.Count == 1)
+                    if (checkInOutTime.Count() == 1)
                     {
                         workingReport.CheckIn = checkInOutTime.First().CheckTime;
                         workingReport.CheckOut = null;
@@ -89,7 +94,7 @@ namespace HRMS.Web.Services
             return null;
         }
 
-        bool IsWorkingDay(DateTime day)
+        public bool IsWorkingDay(DateTime day)
         {
             if (day.DayOfWeek != DayOfWeek.Saturday && day.DayOfWeek != DayOfWeek.Sunday && !PublicHolidays(day.Year).Exists(d => d == day))
                 return true;

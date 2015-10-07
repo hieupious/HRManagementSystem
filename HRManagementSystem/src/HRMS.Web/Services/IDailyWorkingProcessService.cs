@@ -8,7 +8,7 @@ namespace HRMS.Web.Services
 {
     public interface IDailyWorkingProcessService
     {
-        DailyWorkingRecord ProcessDailyWorking(UserInfo user, List<CheckInOutRecord> checkInOutTime, DateTime day);
-        
+        DailyWorkingRecord ProcessDailyWorking(UserInfo user, IEnumerable<CheckInOutRecord> checkInOutTime, DateTime day);
+        DailyWorkingRecord GetDailyWorkingReport(int userId, DateTime day);
     }
 }

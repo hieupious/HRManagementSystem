@@ -12,8 +12,10 @@ using Microsoft.Data.Entity;
 using HRMS.Web.Models;
 using HRMS.Web.Services;
 using Autofac;
-using Autofac.Dnx;
-using PhantomNet.Web.Preferences;
+//using Autofac.Dnx;
+using Hangfire;
+
+using HRMS.Web.Configuration;
 
 namespace HRMS.Web
 {
@@ -21,7 +23,10 @@ namespace HRMS.Web
     {
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
-            Configuration = Preferences.Init(env, appEnv);
+            var builder = new ConfigurationBuilder(appEnv.ApplicationBasePath)
+                            .AddJsonFile("config.json");
+            builder.AddEnvironmentVariables();
+            Configuration = builder.Build();
             appBasePath = appEnv.ApplicationBasePath;
         }
 
@@ -29,7 +34,7 @@ namespace HRMS.Web
         public IConfigurationRoot Configuration { get; set; }
 
         // This method gets called by the runtime.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             var connection = Configuration["Data:DefaultConnection:ConnectionString"];
             services.AddEntityFramework()
@@ -39,23 +44,37 @@ namespace HRMS.Web
             // Add MVC services to the services container.
             services.AddMvc();
 
+            // Add Configuration service
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<ImportConfiguration>(Configuration.GetSection("ImportConfiguration"));
+            services.Configure<ImportConfiguration>(options =>
+            {
+                options.ApplicationBasePath = appBasePath;
+            });
+
+
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
 
             // Add application service
-            //services.AddTransient<IImportDataService, ImportDataService>();
-            var dbPath = appBasePath + "\\" + Configuration["Data:ImportedDBPath:dbPath"];
-            var builder = new ContainerBuilder();
-            builder.Register(svc => new ImportDataService(dbPath)).As<IImportDataService>().InstancePerLifetimeScope();
-            builder.Register(svc => new WorkingProcessService()).As<IDailyWorkingProcessService>().InstancePerLifetimeScope();
-            builder.Register(svc => new WorkingProcessService()).As<IMonthlyWorkingProcess>().InstancePerLifetimeScope();
+            services.AddTransient<IImportDataService, ImportDataService>();
+            services.AddTransient<IDailyWorkingProcessService, WorkingProcessService>();
+            services.AddTransient<IMonthlyWorkingProcess, WorkingProcessService>();
+            JobActivator.Current = new ServiceJobActivator(services);
+            //var dbPath = appBasePath + "\\" + Configuration["Data:ImportedDBPath:dbPath"];
+            //var builder = new ContainerBuilder();
+            //builder.Register(svc => new ImportDataService()).As<IImportDataService>().InstancePerLifetimeScope();
+            //builder.Register(svc => new WorkingProcessService()).As<IDailyWorkingProcessService>().InstancePerLifetimeScope();
+            //builder.Register(svc => new WorkingProcessService()).As<IMonthlyWorkingProcess>().InstancePerLifetimeScope();
             //Populate the container with services that were previously registered
-            builder.Populate(services);
+            //builder.Populate(services);
+            //GlobalConfiguration.Configuration.UseAutofacActivator(builder.Build());
 
-            var container = builder.Build();
+            //GlobalConfiguration.Configuration.UseActivator(new ServiceJobActivator(services));
+            //var container = builder.Build();
 
-            return container.Resolve<IServiceProvider>();
+            //return container.Resolve<IServiceProvider>();
         }
 
         // Configure is called after ConfigureServices is called.
@@ -80,6 +99,12 @@ namespace HRMS.Web
                 app.UseErrorHandler("/Home/Error");
             }
 
+            // Configure for Hangfire Server
+            GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration["Data:DefaultConnection:ConnectionString"]);
+            
+            app.UseHangfireServer();
+            app.UseHangfireDashboard();
+
             // Add static files to the request pipeline.
             app.UseStaticFiles();
 
@@ -102,6 +127,37 @@ namespace HRMS.Web
 
                 routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
             });
+            
         }
     }
+
+    public class ServiceJobActivator : JobActivator
+    {
+        private IServiceCollection _service;
+
+        public ServiceJobActivator(IServiceCollection service)
+        {
+            _service = service;            
+        }
+
+        public override object ActivateJob(Type type)
+        {
+            return _service.AddInstance(type);
+        }
+    }
+
+    //public class ContainerJobActivator : JobActivator
+    //{
+    //    private IContainer _container;
+
+    //    public ContainerJobActivator(IContainer container)
+    //    {
+    //        _container = container;
+    //    }
+
+    //    public override object ActivateJob(Type type)
+    //    {
+    //        return _container.Resolve(type);
+    //    }
+    //}
 }

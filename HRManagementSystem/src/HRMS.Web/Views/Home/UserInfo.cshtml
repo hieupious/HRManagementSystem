@@ -7,7 +7,7 @@
 <div ng-app="hrmsUserInfo" ng-controller="UserInfoController" ng-init="empId = @Model.EmployeeId">
     <div class="toolbox">
         <a asp-action="Index" asp-route-id="@ViewBag.SearchTerms" title="Back"><span class="icon icon-chevron-thin-left"></span></a>
-    </div>
+    </div>    
     <header class="m-t-lg m-b-lg clearfix">
         <div class="pull-left">
             <h2 class="m-a-0 text-uppercase">@ViewData["Title"] <small class="text-muted">ASWVN@(Model.EmployeeId) - @Model.Department.Office</small></h2>
@@ -18,20 +18,22 @@
         <div class="visible-xs m-b clearfix"></div>
         <div class="form-inline pull-right-sm">
             <div class="form-group form-group-sm">
-                <select class="form-control" ng-model="month" ng-change="refreshDates()">
-                    <option value="">month</option>
-                    <option ng-repeat="index in [] | range: 12">{{index + 1}}</option>
+                <select class="form-control" ng-model="month" ng-change="refreshRecords()">
+                    <option value="">Month</option>
+                    <option ng-repeat="index in [] | monthInYear: year">{{index + 1}}</option>
                 </select>
             </div>
             <div class="form-group form-group-sm">
-                <select class="form-control" ng-model="year" ng-change="refreshDates()">
-                    <option value="">year</option>
+                <select class="form-control" ng-model="year" ng-change="refreshRecords()">
+                    <option value="">Year</option>
                     <option ng-repeat="index in [] | range: endYear - startYear + 1">{{index + startYear}}</option>
                 </select>
-                @*<input type="hidden" ng-model="empId" value="@Model.EmployeeId" />*@
             </div>
         </div>
     </header>
+    <div class="text-center m-b">
+        <i class="fa fa-spinner fa-pulse fa-4x" ng-hide="records.length > 0"></i>
+    </div>
     <table class="table table-condensed table-striped table-hover" ng-show="records.length > 0">
         <thead>
             <tr>
@@ -42,18 +44,24 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="record in records" ng-class="{ 'text-danger': record.MinuteLate > 0 }">
+            <tr ng-repeat="record in records" ng-class="{ 'text-warning warning': record.MinuteLate > 0 && record.WorkingType == 6, 'text-danger danger' : record.WorkingType == 4 }">
                 <td class="text-center">{{record.WorkingDay | date: "dd/MM/yyyy"}}</td>
                 <td class="text-center">{{record.CheckIn | date: "shortTime"}}</td>
                 <td class="text-center">{{record.CheckOut | date: "shortTime"}}</td>
-                <td class="text-center">{{record.MinuteLate | timespan}}</td>
+                <td class="text-center"><span ng-show="record.MinuteLate > 0 && record.WorkingType == 6">{{record.MinuteLate | timespan}}</span></td>
             </tr>
         </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3" class="text-right">Total Lacking Time</th>
+                <th class="text-center"><span class="badge">{{ records | sum : 'MinuteLate' | timespan }}</span></th>
+            </tr>
+        </tfoot>
     </table>
-    <div class="alert alert-info" ng-hide="dates.length > 0">
+    <div class="alert alert-info" ng-hide="date != null">
         <p>
-            Please select a month to see the report.
-        </p>
+            Please select a month to see the report.            
+        </p>        
     </div>
 </div>
 
