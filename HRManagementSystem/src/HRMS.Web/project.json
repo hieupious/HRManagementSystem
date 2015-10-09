@@ -19,7 +19,6 @@
     "Microsoft.Framework.Logging.Console": "1.0.0-beta7",
     "Microsoft.Framework.Logging.Debug": "1.0.0-beta7",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0-beta7",
-    "Autofac.Framework.DependencyInjection": "4.0.0-beta6-97",
     "Microsoft.Framework.Configuration.UserSecrets": "1.0.0-beta7",
     "Microsoft.AspNet.Mvc.WebApiCompatShim": "6.0.0-beta7",
     "Microsoft.AspNet.Identity": "3.0.0-beta7",

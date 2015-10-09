@@ -3,42 +3,6 @@
   "version": 1,
   "targets": {
     "DNX,Version=v4.5.1": {
-      "Autofac/4.0.0-beta6-97": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Autofac.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Autofac.dll": {}
-        }
-      },
-      "Autofac.Framework.DependencyInjection/4.0.0-beta6-97": {
-        "type": "package",
-        "dependencies": {
-          "Autofac": "4.0.0-beta6-97",
-          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta6-11596"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Autofac.dll": {},
-          "lib/dnx451/Autofac.Framework.DependencyInjection.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Autofac.dll": {},
-          "lib/dnx451/Autofac.Framework.DependencyInjection.dll": {}
-        }
-      },
       "EntityFramework.Commands/7.0.0-beta7": {
         "type": "package",
         "dependencies": {
@@ -2088,38 +2052,6 @@
     }
   },
   "libraries": {
-    "Autofac/4.0.0-beta6-97": {
-      "type": "package",
-      "sha512": "4PJ5qIlGnoU8hxDlIYGTh3QlVmyuFkt4TS3tqupmEBVyQNg+eoB9mEuPbhpdCQdFBwB2wiB/E1mmuZqbdweQGQ==",
-      "files": [
-        "Autofac.4.0.0-beta6-97.nupkg",
-        "Autofac.4.0.0-beta6-97.nupkg.sha512",
-        "Autofac.nuspec",
-        "lib/dnx451/Autofac.dll",
-        "lib/dnx451/Autofac.xml",
-        "lib/dnxcore50/Autofac.dll",
-        "lib/dnxcore50/Autofac.xml",
-        "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10/Autofac.dll",
-        "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10/Autofac.xml"
-      ]
-    },
-    "Autofac.Framework.DependencyInjection/4.0.0-beta6-97": {
-      "type": "package",
-      "sha512": "aAWaDZlan/NVcKzXJjRr/vOn9gW4btuMnDKjOEYHdBQ5usk+lNct52vEIKFrd6HwP8qt27seOG1GigJjzWutPg==",
-      "files": [
-        "Autofac.Framework.DependencyInjection.4.0.0-beta6-97.nupkg",
-        "Autofac.Framework.DependencyInjection.4.0.0-beta6-97.nupkg.sha512",
-        "Autofac.Framework.DependencyInjection.nuspec",
-        "lib/dnx451/Autofac.dll",
-        "lib/dnx451/Autofac.Framework.DependencyInjection.dll",
-        "lib/dnx451/Autofac.Framework.DependencyInjection.xml",
-        "lib/dnx451/Autofac.xml",
-        "lib/dnxcore50/Autofac.dll",
-        "lib/dnxcore50/Autofac.Framework.DependencyInjection.dll",
-        "lib/dnxcore50/Autofac.Framework.DependencyInjection.xml",
-        "lib/dnxcore50/Autofac.xml"
-      ]
-    },
     "EntityFramework.Commands/7.0.0-beta7": {
       "type": "package",
       "serviceable": true,
@@ -4334,7 +4266,6 @@
       "Microsoft.Framework.Logging.Console >= 1.0.0-beta7",
       "Microsoft.Framework.Logging.Debug >= 1.0.0-beta7",
       "Microsoft.VisualStudio.Web.BrowserLink.Loader >= 14.0.0-beta7",
-      "Autofac.Framework.DependencyInjection >= 4.0.0-beta6-97",
       "Microsoft.Framework.Configuration.UserSecrets >= 1.0.0-beta7",
       "Microsoft.AspNet.Mvc.WebApiCompatShim >= 6.0.0-beta7",
       "Microsoft.AspNet.Identity >= 3.0.0-beta7",
