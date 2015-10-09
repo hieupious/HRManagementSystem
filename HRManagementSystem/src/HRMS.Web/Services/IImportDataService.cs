@@ -6,11 +6,11 @@ namespace HRMS.Web.Services
 {
     public interface IImportDataService
     {
-        IEnumerable<UserInfo> ImportUserFromAccessDB();
-        IEnumerable<Department> ImportDepartmentFromAccessDB();
-        IEnumerable<CheckInOutRecord> ImportAllCheckInOutFromAccessDB();
-        IEnumerable<CheckInOutRecord> ImportDailyCheckInOutFromAccessDB();
-        IEnumerable<CheckInOutRecord> ImportWithDayCheckInOutFromAccessDB(DateTime fromDay, DateTime? toDay);
+        IEnumerable<UserInfo> GetUserFromAccessDB();
+        IEnumerable<Department> GetDepartmentFromAccessDB();
+        IEnumerable<CheckInOutRecord> GetAllCheckInOutFromAccessDB();
+        IEnumerable<CheckInOutRecord> GetDailyCheckInOutFromAccessDB();
+        IEnumerable<CheckInOutRecord> GetWithDayCheckInOutFromAccessDB(DateTime fromDay, DateTime? toDay);
         bool CopyFileFromExternal();
     }
 }

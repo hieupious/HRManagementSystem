@@ -35,17 +35,30 @@ namespace HRMS.Web.Services
             dbContext = Db.Open(this.dbPath);
         }
 
-        public IEnumerable<CheckInOutRecord> ImportAllCheckInOutFromAccessDB()
+        public void ImportAllCheckInOutFromAccessDB()
+        {
+            var allCheckInOutRecords = GetAllCheckInOutFromAccessDB();
+            efDbContext.CheckInOutRecords.AddRange(allCheckInOutRecords);
+            efDbContext.SaveChanges();
+        }
+
+        public IEnumerable<CheckInOutRecord> GetAllCheckInOutFromAccessDB()
         {
             var checkInOutInfo = dbContext.ExecuteMany(queryAllCheckInOutRecord);
             return Mapper.MapMany<CheckInOutRecord, CheckInOutMapping>(checkInOutInfo);
         }
 
-        public IEnumerable<CheckInOutRecord> ImportDailyCheckInOutFromAccessDB()
+        public void ImportDailyCheckInOutFromAccessDB()
         {
-            return ImportWithDayCheckInOutFromAccessDB(DateTime.Now, null);
+            var dailyCheckInOutRecords = GetDailyCheckInOutFromAccessDB();
+            efDbContext.CheckInOutRecords.AddRange(dailyCheckInOutRecords);
+            efDbContext.SaveChanges();
         }
-        public IEnumerable<CheckInOutRecord> ImportWithDayCheckInOutFromAccessDB(DateTime fromDay, DateTime? toDay)
+        public IEnumerable<CheckInOutRecord> GetDailyCheckInOutFromAccessDB()
+        {
+            return GetWithDayCheckInOutFromAccessDB(DateTime.Now, null);
+        }
+        public IEnumerable<CheckInOutRecord> GetWithDayCheckInOutFromAccessDB(DateTime fromDay, DateTime? toDay)
         {
             if (!toDay.HasValue)
                 toDay = fromDay.AddDays(1);
@@ -54,13 +67,13 @@ namespace HRMS.Web.Services
             return Mapper.MapMany<CheckInOutRecord, CheckInOutMapping>(checkInOutInfo);
         }
 
-        public IEnumerable<Department> ImportDepartmentFromAccessDB()
+        public IEnumerable<Department> GetDepartmentFromAccessDB()
         {
             var deptInfo = dbContext.ExecuteMany(queryDepartment);
             return Mapper.MapMany<Department, DepartmentMapping>(deptInfo);
         }
 
-        public IEnumerable<UserInfo> ImportUserFromAccessDB()
+        public IEnumerable<UserInfo> GetUserFromAccessDB()
         {
             var userInfo = dbContext.ExecuteMany(queryUser);
             return Mapper.MapMany<UserInfo, UserMapping>(userInfo);
@@ -73,7 +86,7 @@ namespace HRMS.Web.Services
                 string fullFilePath = importConfiguration.FileToCopyPath;
                 
                 File.Copy(fullFilePath, dbPath, true);
-                //lastWriteTime = File.GetLastWriteTime(dbPath);
+                var lastWriteTime = File.GetLastWriteTime(dbPath);
 
             } catch (Exception e)
             {
@@ -95,7 +108,6 @@ namespace HRMS.Web.Services
             Map("DEFAULTDEPTID", "DepartmentId");
         }
     }
-
     public class DepartmentMapping : ObjectMapping
     {
         public DepartmentMapping()

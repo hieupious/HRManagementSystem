@@ -11,6 +11,7 @@ using HRMS.Web.Services;
 using Hangfire;
 
 using HRMS.Web.Configuration;
+using HRMS.Web.Jobs;
 
 namespace HRMS.Web
 {
@@ -110,21 +111,6 @@ namespace HRMS.Web
                 routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
             });
             
-        }
-    }
-
-    public class ServiceJobActivator : JobActivator
-    {
-        private IServiceProvider provider;
-
-        public ServiceJobActivator(IServiceProvider provider)
-        {
-            this.provider = provider;
-        }
-
-        public override object ActivateJob(Type jobType)
-        {
-            return provider.GetService(jobType) ?? Activator.CreateInstance(jobType);
         }
     }
 }

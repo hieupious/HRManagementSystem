@@ -168,4 +168,10 @@ namespace HRMS.Web.Services
         public static TimeSpan NoonHour = new TimeSpan(12, 0, 0);
         public static double TotalLackTime = 30d;
     }
+
+    public class DevWorkingRule : WorkingRule
+    {
+        
+    }
+
 }
