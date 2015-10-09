@@ -15,15 +15,21 @@ namespace HRMS.Web.Services
         private string dbPath;
         private DatabaseContext dbContext;
         private ImportConfiguration importConfiguration;
+        private ApplicationDbContext efDbContext;
         // Query string 
         private const string queryUser = "SELECT [USERID], [Badgenumber], [Name], [DEFAULTDEPTID] from USERINFO";
         private const string queryDepartment = "SELECT [DEPTID], [DEPTNAME] FROM DEPARTMENTS";
         private const string queryAllCheckInOutRecord = "SELECT [USERID], [CHECKTIME] FROM CHECKINOUT";
         private const string queryCheckInOutRecordWithDay = "SELECT [USERID], [CHECKTIME] FROM CHECKINOUT WHERE (CHECKTIME >= #{0}#) AND (CHECKTIME <= #{1}#)";
 
-
-        public ImportDataService(IOptions<ImportConfiguration> options)
+        public ImportDataService()
         {
+
+        }
+
+        public ImportDataService(IOptions<ImportConfiguration> options, ApplicationDbContext efDbContext)
+        {
+            this.efDbContext = efDbContext;
             importConfiguration = options.Options;
             dbPath = importConfiguration.ApplicationBasePath + "\\" + importConfiguration.ImportedDBPath;
             dbContext = Db.Open(this.dbPath);
@@ -60,14 +66,14 @@ namespace HRMS.Web.Services
             return Mapper.MapMany<UserInfo, UserMapping>(userInfo);
         }
 
-        public bool CopyFileFromExternal(ref DateTime lastWriteTime)
+        public bool CopyFileFromExternal()
         {
             try
             {
                 string fullFilePath = importConfiguration.FileToCopyPath;
                 
                 File.Copy(fullFilePath, dbPath, true);
-                lastWriteTime = File.GetLastWriteTime(dbPath);
+                //lastWriteTime = File.GetLastWriteTime(dbPath);
 
             } catch (Exception e)
             {

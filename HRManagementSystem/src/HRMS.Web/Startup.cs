@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Dnx.Runtime;
@@ -11,8 +8,6 @@ using Microsoft.Framework.Logging;
 using Microsoft.Data.Entity;
 using HRMS.Web.Models;
 using HRMS.Web.Services;
-using Autofac;
-//using Autofac.Dnx;
 using Hangfire;
 
 using HRMS.Web.Configuration;
@@ -61,20 +56,7 @@ namespace HRMS.Web
             services.AddTransient<IImportDataService, ImportDataService>();
             services.AddTransient<IDailyWorkingProcessService, WorkingProcessService>();
             services.AddTransient<IMonthlyWorkingProcess, WorkingProcessService>();
-            JobActivator.Current = new ServiceJobActivator(services);
-            //var dbPath = appBasePath + "\\" + Configuration["Data:ImportedDBPath:dbPath"];
-            //var builder = new ContainerBuilder();
-            //builder.Register(svc => new ImportDataService()).As<IImportDataService>().InstancePerLifetimeScope();
-            //builder.Register(svc => new WorkingProcessService()).As<IDailyWorkingProcessService>().InstancePerLifetimeScope();
-            //builder.Register(svc => new WorkingProcessService()).As<IMonthlyWorkingProcess>().InstancePerLifetimeScope();
-            //Populate the container with services that were previously registered
-            //builder.Populate(services);
-            //GlobalConfiguration.Configuration.UseAutofacActivator(builder.Build());
-
-            //GlobalConfiguration.Configuration.UseActivator(new ServiceJobActivator(services));
-            //var container = builder.Build();
-
-            //return container.Resolve<IServiceProvider>();
+            services.AddTransient<ImportDataService, ImportDataService>();
         }
 
         // Configure is called after ConfigureServices is called.
@@ -101,7 +83,7 @@ namespace HRMS.Web
 
             // Configure for Hangfire Server
             GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration["Data:DefaultConnection:ConnectionString"]);
-            
+            GlobalConfiguration.Configuration.UseActivator(new ServiceJobActivator(app.ApplicationServices));
             app.UseHangfireServer();
             app.UseHangfireDashboard();
 
@@ -133,31 +115,16 @@ namespace HRMS.Web
 
     public class ServiceJobActivator : JobActivator
     {
-        private IServiceCollection _service;
+        private IServiceProvider provider;
 
-        public ServiceJobActivator(IServiceCollection service)
+        public ServiceJobActivator(IServiceProvider provider)
         {
-            _service = service;            
+            this.provider = provider;
         }
 
-        public override object ActivateJob(Type type)
+        public override object ActivateJob(Type jobType)
         {
-            return _service.AddInstance(type);
+            return provider.GetService(jobType) ?? Activator.CreateInstance(jobType);
         }
     }
-
-    //public class ContainerJobActivator : JobActivator
-    //{
-    //    private IContainer _container;
-
-    //    public ContainerJobActivator(IContainer container)
-    //    {
-    //        _container = container;
-    //    }
-
-    //    public override object ActivateJob(Type type)
-    //    {
-    //        return _container.Resolve(type);
-    //    }
-    //}
 }

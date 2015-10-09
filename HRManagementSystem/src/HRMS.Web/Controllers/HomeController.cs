@@ -20,13 +20,18 @@ namespace HRMS.Web.Controllers
         private readonly ApplicationDbContext dbContext;
         private readonly IImportDataService importDataService;
         private readonly IDailyWorkingProcessService dailyWorkingProcess;
+        private readonly IMonthlyWorkingProcess monthlyWorkingProcess;
 
-        public HomeController(ApplicationDbContext dbContext, 
-            IImportDataService importDataService, IDailyWorkingProcessService dailyWorkingProcess, IOptions<ImportConfiguration> importConfig)
+        private static int[] activeDepts = { 2, 3, 6, 7, 8, 9, 10 };
+
+        public HomeController(ApplicationDbContext dbContext,
+            IImportDataService importDataService, IDailyWorkingProcessService dailyWorkingProcess, 
+            IOptions<ImportConfiguration> importConfig, IMonthlyWorkingProcess monthlyWorkingProcess)
         {
             this.dbContext = dbContext;
             this.importDataService = importDataService;
             this.dailyWorkingProcess = dailyWorkingProcess;
+            this.monthlyWorkingProcess = monthlyWorkingProcess;
             this.importConfig = importConfig;
         }
 
@@ -50,7 +55,7 @@ namespace HRMS.Web.Controllers
 
         public IActionResult Error()
         {
-            
+
             return View("~/Views/Shared/Error.cshtml");
         }
     }

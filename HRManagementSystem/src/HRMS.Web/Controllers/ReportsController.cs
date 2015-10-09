@@ -35,10 +35,10 @@ namespace HRMS.Web.Controllers
         public string Get(DateTime month)
         {
             var monthRecords = dbContext.MonthlyRecords.Include(m => m.UserInfo).ThenInclude(u => u.Department).Where(m => m.Month == month.Month && m.Year == month.Year).Include(m => m.DailyRecords);
-            foreach(var record in monthRecords)
-            {
-                record.UserInfo = dbContext.UserInfoes.Include(u => u.Department).FirstOrDefault(u => u.Id == record.UserId);
-            }
+            //foreach(var record in monthRecords)
+            //{
+            //    record.UserInfo = dbContext.UserInfoes.Include(u => u.Department).FirstOrDefault(u => u.Id == record.UserId);
+            //}
             return JsonConvert.SerializeObject(monthRecords);
         }
 

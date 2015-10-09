@@ -11,5 +11,15 @@
     "DefaultConnection": {
       "ConnectionString": "Server=10.9.1.100\\SQLSERVER2012;Database=HRMSDB;uid=dev;pwd=HRMS@124;MultipleActiveResultSets=true"
     }
+  },
+  "WorkingRule": {
+    "MinCheckInTime": "07:00:00",
+    "MaxCheckInTime": "09:00:00",
+    "MinCheckOutTime": "16:00:00",
+    "MaxCheckOutTime": "18:00:00",
+    "FullWorkingHour": "09:00:00",
+    "HalfWorkingHour": "04:00:00",
+    "NoonHour": "12:00:00",
+    "TotalLackTime" :  30
   }
 }

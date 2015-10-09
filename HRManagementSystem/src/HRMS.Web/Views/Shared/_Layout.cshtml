@@ -32,10 +32,10 @@
                 <a asp-controller="Home" asp-action="Index" class="navbar-brand"><span class="icon icon-users"></span> <strong>@AppSettings.Options.Title</strong></a>
             </div>
             <div class="navbar-collapse collapse navbar-right">
-                <ul class="nav nav-bordered text-uppercase">
-                    <li class="@(ViewBag.ActiveMenuItem == "Users" ? "active" : null)"><a asp-controller="Home" asp-action="Index">Users</a></li>
-                    <li class="@(ViewBag.ActiveMenuItem == "Report" ? "active" : null)"><a asp-controller="Home" asp-action="Report">Report</a></li>
-                    <li class=""><a asp-controller="Home" asp-action="">Hello @User.GetUserName() !</a></li>
+                <ul class="nav nav-bordered">
+                    <li class="@(ViewBag.ActiveMenuItem == "Users" ? "active" : null) text-uppercase"><a asp-controller="Home" asp-action="Index">Users</a></li>
+                    <li class="@(ViewBag.ActiveMenuItem == "Report" ? "active" : null) text-uppercase"><a asp-controller="Home" asp-action="Report">Report</a></li>
+                    <li class=""><a asp-controller="Home" asp-action="">Hello <strong>@User.GetUserName()</strong> !</a></li>
                 </ul>
             </div>
         </div>

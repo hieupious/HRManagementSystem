@@ -15,23 +15,23 @@ namespace HRMS.Web.Controllers
     public class UsersController : Controller
     {
         private readonly ApplicationDbContext dbContext;
-        private readonly IDailyWorkingProcessService _dailyWorkingProcess;
-        private readonly IMonthlyWorkingProcess _monthlyWorkingProcess;
+        private readonly IDailyWorkingProcessService dailyWorkingProcess;
+        private readonly IMonthlyWorkingProcess monthlyWorkingProcess;
 
         private static int[] activeDepts = { 2, 3, 6, 7, 8, 9, 10 };
 
         public UsersController(ApplicationDbContext dbContext, IDailyWorkingProcessService dailyWorkingProcess, IMonthlyWorkingProcess monthlyWorkingProcess)
         {
             this.dbContext = dbContext;
-            _dailyWorkingProcess = dailyWorkingProcess;
-            _monthlyWorkingProcess = monthlyWorkingProcess;
+            this.dailyWorkingProcess = dailyWorkingProcess;
+            this.monthlyWorkingProcess = monthlyWorkingProcess;
         }
 
         // GET: api/values
         [HttpGet]
         public string Get()
         {
-            var users = dbContext.UserInfoes.Include(u => u.Department).Where(u => activeDepts.Contains(u.DepartmentId)).ToList();
+            var users = dbContext.UserInfoes.Include(u => u.Department).Where(u => activeDepts.Contains(u.DepartmentId));
             return JsonConvert.SerializeObject(users);
         }
 
@@ -59,7 +59,7 @@ namespace HRMS.Web.Controllers
             {
                 if (day < DateTime.Now.AddDays(-1))
                 {
-                    var record = _dailyWorkingProcess.GetDailyWorkingReport(user.Id, day);
+                    var record = dailyWorkingProcess.GetDailyWorkingReport(user.Id, day);
                     if (record != null)
                         records.Add(record);
                 }
@@ -105,7 +105,7 @@ namespace HRMS.Web.Controllers
                     var records = dbContext.CheckInOutRecords.Where(u => u.UserId == user.Id && u.CheckTime.Date == day).ToList();
                     if (records != null && records.Count > 0)
                     {
-                        var dailyRecord = _dailyWorkingProcess.ProcessDailyWorking(user, records, day);
+                        var dailyRecord = dailyWorkingProcess.ProcessDailyWorking(user, records, day);
                         if (dailyRecord != null)
                             dbContext.DailyWorkingRecords.Add(dailyRecord);
                     }

@@ -10,10 +10,9 @@ namespace HRMS.Web.Models
         public int Id { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
-        public int UserId { get; set; }
-        public UserInfo UserInfo { get; set; }
-        public List<DailyWorkingRecord> DailyRecords { get; set; }
-        public double TotalLackTime { get; set; }
-        public WorkingType Type { get; set; }
+        public int? UserInfoId { get; set; }
+        public virtual UserInfo UserInfo { get; set; }
+        public ICollection<DailyWorkingRecord> DailyRecords { get; set; }
+        public double TotalLackTime { get; set; }        
     }
 }

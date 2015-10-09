@@ -9,7 +9,7 @@
         @* // TODO:: Revise *@
     </div>
     <div class="toolbox pull-right">
-        <a download='Timekeepking report' href="" onclick="GG.setUpExport()" id="export" title="Export to Excel" class="export"><span class="icon icon-export"></span> <sup>Excel</sup></a>
+        <a download='Timekeepking Report {{date | date: "MMMM, yyyy"}}' href="" onclick="GG.setUpExport()" id="export" title="Export to Excel" class="export"><span class="icon icon-export"></span> <sup>Excel</sup></a>
     </div>
     <header class="m-t-lg m-b-lg clearfix">
         <div class="pull-left">
@@ -35,7 +35,7 @@
         </div>
     </header>
     <div class="text-center m-b">
-        <i class="fa fa-spinner fa-pulse fa-4x" ng-hide="users.length > 0"></i>
+        <i class="fa fa-spinner fa-pulse fa-4x" ng-show="loading"></i>
     </div>
     <table class="table table-condensed table-hover" ng-show="users.length > 0">
         <thead>
@@ -71,6 +71,11 @@
     <div class="alert alert-info" ng-hide="date != null">
         <p>
             Please select a month to see the report.
+        </p>
+    </div>
+    <div class="alert alert-warning" ng-hide="users.length > 0 || loading">
+        <p>
+            No report data for this month.
         </p>
     </div>
 </div>

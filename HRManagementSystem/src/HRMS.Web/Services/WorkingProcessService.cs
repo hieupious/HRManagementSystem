@@ -34,7 +34,7 @@ namespace HRMS.Web.Services
             {
                 DailyWorkingRecord workingReport = new DailyWorkingRecord()
                 {
-                    UserId = user.Id,
+                    UserInfoId = user.Id,
                     WorkingDay = day
                 };
                 if (checkInOutTime != null && checkInOutTime.Count() > 0)
@@ -134,7 +134,7 @@ namespace HRMS.Web.Services
                 {
                     Month = month,
                     Year = year,
-                    UserId = user.Id
+                    UserInfoId = user.Id
                 };
                 var reportRecords = new List<DailyWorkingRecord>();
 

@@ -12,17 +12,18 @@
             $scope.month = (today.getMonth() + 1).toString();
             $scope.date = null;
             $scope.users = [];
-
+            $scope.loading = false;
             $scope.refreshUsers = function () {
                 if ($scope.year === "" || $scope.month === "") {
                     $scope.date = null;
                     $scope.users = [];
                 } else {
+                    $scope.loading = true;
                     $scope.date = new Date($scope.year, $scope.month - 1, 1);
                     var month = $filter('date')($scope.date, 'yyyy-MM-dd');
                     ReportResource.query({ month: month }, function (records) {
                         $scope.users = records;
-                        console.log($scope.users);
+                        $scope.loading = false;
                     });
                 }
                 $.each($scope.users, function (userIndex, user) {
@@ -105,14 +106,14 @@ var GG = {
            $element.html($element.data("date-value"));
            $element.attr("style", "mso-number-format:'dd/mm/yyyy;@'; text-align: center;" + $(element).attr("style"));
        });
-
+       var title = $('.toolbox a').attr("download");
        $("thead", table).prepend($("<tr></tr>").append($("<th></th>").attr("colspan", 13)
                                                                      .css({
                                                                          "text-align": "left",
                                                                          "font-size": "25px",
                                                                          "height": "50px"
                                                                      })
-                                                                     .append("TIMEKEEPING REPORT 10-2015")));
+                                                                     .append(title)));
        $("#export").prop("href", GG.tableToExcel(table, "2015"));       
    }
 }

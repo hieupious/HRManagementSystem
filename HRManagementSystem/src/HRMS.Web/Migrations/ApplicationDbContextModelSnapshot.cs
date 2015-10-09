@@ -29,6 +29,10 @@ namespace HRMS.Web.Migrations
                     b.Property<int>("UserId");
 
                     b.Key("Id");
+
+                    b.Index("CheckTime");
+
+                    b.Index("UserId", "CheckTime");
                 });
 
             modelBuilder.Entity("HRMS.Web.Models.DailyWorkingRecord", b =>
@@ -36,21 +40,31 @@ namespace HRMS.Web.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("ApprovedStatus");
+
+                    b.Property<string>("ApproverComment");
+
+                    b.Property<int?>("ApproverId");
+
                     b.Property<DateTime?>("CheckIn");
 
                     b.Property<DateTime?>("CheckOut");
 
+                    b.Property<string>("GetApprovedReason");
+
                     b.Property<double>("MinuteLate");
 
-                    b.Property<int>("MonthlyRecordId");
+                    b.Property<int?>("MonthlyRecordId");
 
-                    b.Property<int>("UserId");
+                    b.Property<int?>("UserInfoId");
 
                     b.Property<DateTime>("WorkingDay");
 
                     b.Property<int>("WorkingType");
 
                     b.Key("Id");
+
+                    b.Index("WorkingDay");
                 });
 
             modelBuilder.Entity("HRMS.Web.Models.Department", b =>
@@ -73,13 +87,13 @@ namespace HRMS.Web.Migrations
 
                     b.Property<double>("TotalLackTime");
 
-                    b.Property<int>("Type");
-
-                    b.Property<int>("UserId");
+                    b.Property<int?>("UserInfoId");
 
                     b.Property<int>("Year");
 
                     b.Key("Id");
+
+                    b.Index("Month", "Year");
                 });
 
             modelBuilder.Entity("HRMS.Web.Models.UserInfo", b =>
@@ -90,7 +104,15 @@ namespace HRMS.Web.Migrations
 
                     b.Property<string>("EmployeeId");
 
+                    b.Property<string>("FingerPrintId");
+
+                    b.Property<int?>("ManagerId");
+
                     b.Property<string>("Name");
+
+                    b.Property<int>("Role");
+
+                    b.Property<string>("WindowsAccount");
 
                     b.Key("Id");
                 });
@@ -108,20 +130,24 @@ namespace HRMS.Web.Migrations
 
             modelBuilder.Entity("HRMS.Web.Models.DailyWorkingRecord", b =>
                 {
+                    b.Reference("HRMS.Web.Models.UserInfo")
+                        .InverseCollection()
+                        .ForeignKey("ApproverId");
+
                     b.Reference("HRMS.Web.Models.MonthlyRecord")
                         .InverseCollection()
                         .ForeignKey("MonthlyRecordId");
 
                     b.Reference("HRMS.Web.Models.UserInfo")
                         .InverseCollection()
-                        .ForeignKey("UserId");
+                        .ForeignKey("UserInfoId");
                 });
 
             modelBuilder.Entity("HRMS.Web.Models.MonthlyRecord", b =>
                 {
                     b.Reference("HRMS.Web.Models.UserInfo")
                         .InverseCollection()
-                        .ForeignKey("UserId");
+                        .ForeignKey("UserInfoId");
                 });
 
             modelBuilder.Entity("HRMS.Web.Models.UserInfo", b =>
@@ -129,6 +155,10 @@ namespace HRMS.Web.Migrations
                     b.Reference("HRMS.Web.Models.Department")
                         .InverseCollection()
                         .ForeignKey("DepartmentId");
+
+                    b.Reference("HRMS.Web.Models.UserInfo")
+                        .InverseCollection()
+                        .ForeignKey("ManagerId");
                 });
         }
     }

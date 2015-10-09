@@ -13,6 +13,6 @@ namespace HRMS.Web.Models
         public string Name { get; set; }
         public string Office { get; set; }
         [JsonIgnore]
-        public List<UserInfo> UserInfoes { get; set; }
+        public ICollection<UserInfo> UserInfoes { get; set; }
     }
 }

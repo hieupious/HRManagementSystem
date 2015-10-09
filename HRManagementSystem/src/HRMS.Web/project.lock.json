@@ -3,15 +3,19 @@
   "version": 1,
   "targets": {
     "DNX,Version=v4.5.1": {
-      "Autofac/3.0.0": {
+      "Autofac/4.0.0-beta6-97": {
         "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
         "compile": {
-          "lib/net40/Autofac.Configuration.dll": {},
-          "lib/net40/Autofac.dll": {}
+          "lib/dnx451/Autofac.dll": {}
         },
         "runtime": {
-          "lib/net40/Autofac.Configuration.dll": {},
-          "lib/net40/Autofac.dll": {}
+          "lib/dnx451/Autofac.dll": {}
         }
       },
       "Autofac.Framework.DependencyInjection/4.0.0-beta6-97": {
@@ -169,19 +173,6 @@
           "Hangfire.Core": "[1.5.0]",
           "Hangfire.SqlServer": "[1.5.0]",
           "Microsoft.Owin.Host.SystemWeb": "3.0.0"
-        }
-      },
-      "Hangfire.Autofac/2.0.0": {
-        "type": "package",
-        "dependencies": {
-          "Autofac": "3.0.0",
-          "Hangfire.Core": "1.5.0"
-        },
-        "compile": {
-          "lib/net45/Hangfire.Autofac.dll": {}
-        },
-        "runtime": {
-          "lib/net45/Hangfire.Autofac.dll": {}
         }
       },
       "Hangfire.Core/1.5.0": {
@@ -2097,18 +2088,19 @@
     }
   },
   "libraries": {
-    "Autofac/3.0.0": {
+    "Autofac/4.0.0-beta6-97": {
       "type": "package",
-      "sha512": "MzwfKuvmltHX+7ty3ewZU3vbACIdLhK1/pHG4BS7YF+15rJ3e7sjG3Fsjyfys8ZMSNcHa4fUyh9TYzAZ6q4eBQ==",
+      "sha512": "4PJ5qIlGnoU8hxDlIYGTh3QlVmyuFkt4TS3tqupmEBVyQNg+eoB9mEuPbhpdCQdFBwB2wiB/E1mmuZqbdweQGQ==",
       "files": [
-        "Autofac.3.0.0.nupkg",
-        "Autofac.3.0.0.nupkg.sha512",
+        "Autofac.4.0.0-beta6-97.nupkg",
+        "Autofac.4.0.0-beta6-97.nupkg.sha512",
         "Autofac.nuspec",
-        "lib/net40/Autofac.Configuration.dll",
-        "lib/net40/Autofac.dll",
-        "lib/net40/Autofac.xml",
-        "lib/portable-win+net40+sl50+wp8/Autofac.dll",
-        "lib/portable-win+net40+sl50+wp8/Autofac.xml"
+        "lib/dnx451/Autofac.dll",
+        "lib/dnx451/Autofac.xml",
+        "lib/dnxcore50/Autofac.dll",
+        "lib/dnxcore50/Autofac.xml",
+        "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10/Autofac.dll",
+        "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10/Autofac.xml"
       ]
     },
     "Autofac.Framework.DependencyInjection/4.0.0-beta6-97": {
@@ -2229,17 +2221,6 @@
         "Hangfire.1.5.0.nupkg.sha512",
         "Hangfire.nuspec",
         "readme.txt"
-      ]
-    },
-    "Hangfire.Autofac/2.0.0": {
-      "type": "package",
-      "sha512": "Y3QZx1vpYoZsyV56toQsKekA98NjFRdVhOMV8/1Nu0xccu0rKkBAk42H0MP+GVIgXhqwNpv7sAVc8ZmPXt71Og==",
-      "files": [
-        "Hangfire.Autofac.2.0.0.nupkg",
-        "Hangfire.Autofac.2.0.0.nupkg.sha512",
-        "Hangfire.Autofac.nuspec",
-        "lib/net45/Hangfire.Autofac.dll",
-        "lib/net45/Hangfire.Autofac.xml"
       ]
     },
     "Hangfire.Core/1.5.0": {
@@ -4358,9 +4339,7 @@
       "Microsoft.AspNet.Mvc.WebApiCompatShim >= 6.0.0-beta7",
       "Microsoft.AspNet.Identity >= 3.0.0-beta7",
       "Hangfire >= 1.5.0",
-      "Hangfire.Autofac >= 2.0.0",
-      "Microsoft.AspNet.Owin >= 1.0.0-beta7",
-      "Autofac >= 3.0.0"
+      "Microsoft.AspNet.Owin >= 1.0.0-beta7"
     ],
     "DNX,Version=v4.5.1": []
   }

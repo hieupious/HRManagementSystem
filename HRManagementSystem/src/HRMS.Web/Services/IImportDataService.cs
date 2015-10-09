@@ -11,6 +11,6 @@ namespace HRMS.Web.Services
         IEnumerable<CheckInOutRecord> ImportAllCheckInOutFromAccessDB();
         IEnumerable<CheckInOutRecord> ImportDailyCheckInOutFromAccessDB();
         IEnumerable<CheckInOutRecord> ImportWithDayCheckInOutFromAccessDB(DateTime fromDay, DateTime? toDay);
-        bool CopyFileFromExternal(ref DateTime lastWriteTime);
+        bool CopyFileFromExternal();
     }
 }

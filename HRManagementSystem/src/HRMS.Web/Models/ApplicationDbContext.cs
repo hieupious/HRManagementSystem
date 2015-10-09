@@ -22,9 +22,18 @@ namespace HRMS.Web.Models
             modelBuilder.Entity<Department>().Key(d => d.Id);
             modelBuilder.Entity<Department>().Property(d => d.Id).ValueGeneratedNever();
             modelBuilder.Entity<CheckInOutRecord>().Key(c => c.Id);
-            modelBuilder.Entity<DailyWorkingRecord>().Key(d => d.Id);
-            //modelBuilder.Entity<CheckInOutRecord>().Index(c => c.CheckTime);
-            //modelBuilder.Entity<CheckInOutRecord>().Index(c => new { c.UserId, c.CheckTime });
+            modelBuilder.Entity<DailyWorkingRecord>().Key(d => d.Id);            
+            // Configure foreign key
+            modelBuilder.Entity<DailyWorkingRecord>().Reference(d => d.Approver).InverseCollection(u => u.Approvals).ForeignKey(d => d.ApproverId);
+            modelBuilder.Entity<DailyWorkingRecord>().Reference(d => d.UserInfo).InverseCollection(u => u.DailyRecords).ForeignKey(d => d.UserInfoId);
+            modelBuilder.Entity<UserInfo>().Reference(u => u.Manager).InverseCollection(u => u.Members).ForeignKey(u => u.ManagerId);
+            modelBuilder.Entity<DailyWorkingRecord>().Reference(d => d.MonthlyRecord).InverseCollection(m => m.DailyRecords).ForeignKey(d => d.MonthlyRecordId);
+            
+            // Create index
+            modelBuilder.Entity<MonthlyRecord>().Index(m => new { m.Month, m.Year });
+            modelBuilder.Entity<CheckInOutRecord>().Index(c => c.CheckTime);
+            modelBuilder.Entity<CheckInOutRecord>().Index(c => new { c.UserId, c.CheckTime });
+            modelBuilder.Entity<DailyWorkingRecord>().Index(d => d.WorkingDay);
         }
     }
 }
