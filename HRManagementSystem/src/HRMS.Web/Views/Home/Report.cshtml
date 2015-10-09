@@ -22,13 +22,13 @@
         <div class="form-inline pull-right-sm">
             <div class="form-group form-group-sm">
                 <select class="form-control" ng-model="month" ng-change="refreshUsers()">
-                    <option value="">Month</option>
+                    <option value="">[Select month]</option>
                     <option ng-repeat="index in [] | monthInYear: year">{{index + 1}}</option>
                 </select>
             </div>
             <div class="form-group form-group-sm">
                 <select class="form-control" ng-model="year" ng-change="refreshUsers()">
-                    <option value="">Year</option>
+                    <option value="">[Select year]</option>
                     <option ng-repeat="index in [] | range: endYear - startYear + 1">{{index + startYear}}</option>
                 </select>
             </div>
