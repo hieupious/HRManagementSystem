@@ -53,6 +53,11 @@ namespace HRMS.Web.Controllers
             return View();
         }
 
+        public IActionResult PendingApprovals()
+        {
+            return View();
+        }
+
         public IActionResult Error()
         {
 

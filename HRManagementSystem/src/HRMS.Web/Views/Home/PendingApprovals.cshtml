@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Pending Approvals";
+    ViewBag.ActiveMenuItem = "PendingApprovals";
+}
+
+<div>
+    <h2 class="m-t-lg m-b-lg text-uppercase">@ViewData["Title"]</h2>
+    <table class="table table-condensed table-hover" ng-show="records.length > 0">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th class="text-center">Date</th>
+                <th class="text-center">Check-in</th>
+                <th class="text-center">Check-out</th>
+                <th class="text-center">Lack Time (h:mm)</th>
+                <th class="text-center">Approval</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>ASWVN473</td>
+                <td>Nguyen Ngoc Minh</td>
+                <td class="text-center">15/09/2015</td>
+                <td class="text-center">7:50 AM</td>
+                <td class="text-center">11:58 AM</td>
+                <td class="text-center">4:51</td>
+                <td>
+                    <div>{{record.comments}}</div>
+                    <div ng-show="record.editMode">
+                        <div class="form-group form-group-sm">
+                            <textarea class="form-control" ng-model="record.approverComments" placeholder="Add comments..."></textarea>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <div class="radio-inline custom-control custom-radio">
+                                <label>
+                                    <input type="radio" name="approved">
+                                    <span class="custom-control-indicator"></span>
+                                    Approved
+                                </label>
+                            </div>
+                            <div class="radio-inline custom-control custom-radio">
+                                <label>
+                                    <input type="radio" name="approved">
+                                    <span class="custom-control-indicator"></span>
+                                    Disapproved
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td class="tight">
+                    <div ng-show="record.WorkingType == 4">
+                        <button ng-hide="record.editMode" ng-click="record.editMode = true" class="btn btn-sm btn-primary-outline"><span class="icon icon-typing"></span></button>
+                        <button ng-show="record.editMode" ng-click="record.editMode = false" class="btn btn-sm btn-success-outline"><span class="icon icon-check"></span></button>
+                        <br />
+                        <button ng-show="record.editMode" ng-click="record.editMode = false" class="btn btn-sm btn-danger-outline m-t"><span class="icon icon-cross"></span></button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

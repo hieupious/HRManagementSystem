@@ -17,19 +17,28 @@ th {
 }
 
 .nav-bordered {
-  > li {
-    > a {
-      &:hover,
-      &:focus {
-        color: @nav-bordered-color;
-      }
+    > li {
+        > a {
+            &:hover,
+            &:focus {
+                color: @nav-bordered-color;
+            }
+        }
+
+        &.active > a {
+            &,
+            &:hover,
+            &:focus {
+                border-bottom-color: @nav-bordered-color-active;
+            }
+        }
     }
-    &.active > a {
-      &,
-      &:hover,
-      &:focus {
-        border-bottom-color: @nav-bordered-color-active;
-      }
-    }
-  }
+}
+
+.custom-select {
+    -moz-appearance: none;
+}
+
+.custom-control-indicator {
+    top: 3px;
 }

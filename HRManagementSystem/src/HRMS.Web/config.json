@@ -1,6 +1,6 @@
 {
   "AppSettings": {
-    "Title": "ASWIG Solutions HR Management System"
+    "Title": "HRMS"
   },
   "ImportConfiguration": {
     "ImportedDBPath": "ImportedDB\\importedDB.mdb",
