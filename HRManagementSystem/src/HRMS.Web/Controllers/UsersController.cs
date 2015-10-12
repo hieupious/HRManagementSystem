@@ -53,7 +53,6 @@ namespace HRMS.Web.Controllers
             var user = dbContext.UserInfoes.Where(u => int.Parse(u.EmployeeId) == empId).First();
             if (user == null)
                 return null;
-            //var records = _dbContext.DailyWorkingRecords.Where(d => d.UserId == user.Id && d.WorkingDay.Month == 8 && d.WorkingDay.Year == month.Value.Year).OrderBy(u => u.WorkingDay);
             var records = new List<DailyWorkingRecord>();
             foreach(var day in WorkingProcessService.AllDatesInMonth(month.Value.Year, month.Value.Month))
             {
@@ -65,6 +64,20 @@ namespace HRMS.Web.Controllers
                 }
             }
             return JsonConvert.SerializeObject(records);
+        }
+
+        //[HttpPut("{id}")]
+        //public void UpdateDailyRecord(int id, [FromBody] string value)
+        //{
+        //    var Id = id;
+        //    var Value = value;
+        //}
+
+        [HttpGet("ManagerList")]
+        public string ManagerList()
+        {
+            var managers = dbContext.UserInfoes.Where(u => u.Role == Role.Manager);
+            return JsonConvert.SerializeObject(managers);
         }
 
         [HttpGet("GetMonthlyWorkingReport")]
@@ -125,8 +138,11 @@ namespace HRMS.Web.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public IActionResult Put(int id, [FromBody]DailyWorkingRecord value)
         {
+            var Id = id;
+            var Value = value;
+            return new NoContentResult();
         }
 
         // DELETE api/values/5

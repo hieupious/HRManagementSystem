@@ -5,7 +5,7 @@ namespace HRMS.Web.Models
 {
     public class UserInfo
     {
-        [JsonIgnore]
+        //[JsonIgnore]
         public int Id { get; set; }
         public string EmployeeId { get; set; }
         public string FingerPrintId { get; set; }

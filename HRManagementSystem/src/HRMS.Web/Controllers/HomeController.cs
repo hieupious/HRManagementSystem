@@ -38,6 +38,10 @@ namespace HRMS.Web.Controllers
         public IActionResult Index(string id)
         {
             ViewBag.SearchTerms = id;
+            //importDataService.CopyFileFromExternal();
+            //var records = importDataService.ImportWithDayCheckInOutFromAccessDB(new DateTime(2015, 10, 8), DateTime.Now);
+            //dbContext.CheckInOutRecords.AddRange(records);
+            //dbContext.SaveChanges();
             return View();
         }
 

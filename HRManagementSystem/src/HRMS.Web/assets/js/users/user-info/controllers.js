@@ -2,8 +2,8 @@
 
     var controllers = angular.module("hrmsUserInfoControllers", ["hrmsUserInfoServices"]);
 
-    controllers.controller("UserInfoController", ["$scope", "$filter", "UserLogResource",
-        function ($scope, $filter, UserLogResource) {
+    controllers.controller("UserInfoController", ["$scope", "$filter", "$http", "UserLogResource",
+        function ($scope, $filter, $http, UserLogResource) {
             var today = new Date();
 
             $scope.startYear = 2013;
@@ -31,6 +31,17 @@
                 $scope.refreshRecords();
             })
 
+            $scope.GetApproval = function (record) {
+                record.editMode = false;
+                record.ApproverId = record.approver.Id;
+                console.log(record);
+                $http.put("/api/Users/" + $scope.empId, record);
+            }
+
+            //$scope.managers = [{ id: 1, name: 'Mr. Khanh' }, { id: 2, name: 'Mr. Shane' }, { id: 3, name: 'Ms Suong' }, { id: 4, name: 'Mr Son' }];
+            $http.get("/api/Users/ManagerList/").success(function (response) {
+                $scope.managers = response;
+            });
         }
     ]);
 
