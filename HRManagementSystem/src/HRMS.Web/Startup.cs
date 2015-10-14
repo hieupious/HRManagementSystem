@@ -9,7 +9,6 @@ using Microsoft.Data.Entity;
 using HRMS.Web.Models;
 using HRMS.Web.Services;
 using Hangfire;
-
 using HRMS.Web.Configuration;
 
 namespace HRMS.Web
@@ -46,6 +45,7 @@ namespace HRMS.Web
             {
                 options.ApplicationBasePath = appBasePath;
             });
+
 
 
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
@@ -97,19 +97,10 @@ namespace HRMS.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
 
-                //routes.MapWebApiRoute(
-                //    name: "UserReportApi",
-                //    template: "api/{controller}/{empId}/{action}/{month?}",
-                //    defaults: null,
-                //    constraints: new
-                //    {
-                //        controller = "Users",
-                //        action = "Report"
-                //    });
-
                 routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
             });
-            
+
+            app.UseIdentity();
         }
     }
 

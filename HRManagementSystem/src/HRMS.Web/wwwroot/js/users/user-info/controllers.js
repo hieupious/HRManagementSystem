@@ -33,7 +33,7 @@
 
             $scope.GetApproval = function (record) {
                 record.editMode = false;
-                record.ApproverId = record.approver.Id;
+                record.ApproverId = record.Approver.Id;
                 console.log(record);
                 $http.put("/api/Users/" + $scope.empId, record);
             }

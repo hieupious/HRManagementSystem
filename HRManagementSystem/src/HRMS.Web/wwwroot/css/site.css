@@ -9105,6 +9105,12 @@ th {
 .nav-bordered > li.active > a:focus {
   border-bottom-color: #fff;
 }
+.custom-select {
+  -moz-appearance: none;
+}
+.custom-control-indicator {
+  top: 3px;
+}
 body {
   padding-top: 51px;
 }

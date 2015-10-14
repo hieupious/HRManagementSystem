@@ -33,12 +33,11 @@
 
             $scope.GetApproval = function (record) {
                 record.editMode = false;
-                record.ApproverId = record.approver.Id;
+                record.ApproverId = record.Approver.Id;
                 console.log(record);
                 $http.put("/api/Users/" + $scope.empId, record);
             }
-
-            //$scope.managers = [{ id: 1, name: 'Mr. Khanh' }, { id: 2, name: 'Mr. Shane' }, { id: 3, name: 'Ms Suong' }, { id: 4, name: 'Mr Son' }];
+            
             $http.get("/api/Users/ManagerList/").success(function (response) {
                 $scope.managers = response;
             });

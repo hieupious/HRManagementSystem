@@ -19,7 +19,6 @@ namespace HRMS.Web.Models
         public int? ApproverId { get; set; }
         public string ApproverComment { get; set; }
         public bool? Approved { get; set; }
-        [JsonIgnore]
         public virtual UserInfo UserInfo { get; set; }
         public virtual UserInfo Approver { get; set; }
         [JsonIgnore]

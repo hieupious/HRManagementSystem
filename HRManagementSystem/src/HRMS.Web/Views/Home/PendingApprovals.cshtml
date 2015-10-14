@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Pending Approvals";
+    ViewBag.ActiveMenuItem = "PendingApprovals";
+}
+
+<div ng-app="hrmsPendingApproval" ng-controller="PendingApprovalController">
+    <h2 class="m-t-lg m-b-lg text-uppercase">@ViewData["Title"]</h2>
+    <table class="table table-condensed table-hover" ng-show="records.length > 0">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th class="text-center">Date</th>
+                <th class="text-center">Check-in</th>
+                <th class="text-center">Check-out</th>
+                <th class="text-center">Lack Time (h:mm)</th>
+                <th class="text-center">Approval</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="record in records">
+                <td>ASWVN{{record.UserInfo.EmployeeId}}</td>
+                <td>{{record.UserInfo.Name}}</td>
+                <td class="text-center">{{record.WorkingDay | date: "dd/MM/yyyy"}}</td>
+                <td class="text-center">{{record.CheckIn | date: "shortTime"}}</td>
+                <td class="text-center">{{record.CheckOut | date: "shortTime"}}</td>
+                <td class="text-center">{{record.MinuteLate | timespan}}</td>
+                <td>
+                    <div>{{record.GetApprovedReason}}</div>
+                    <div ng-show="record.ApproverComment && !record.editMode">
+                        <span ng-show="record.Approved == null" class="text-warning">Waiting for approval from {{record.Approver.Name}}</span>
+                        <span ng-show="record.Approved === true" class="text-success">Approved by {{record.Approver.Name}}</span>
+                        <span ng-show="record.Approved === false" class="text-danger">Disapproved by {{record.Approver.Name}}</span>
+                        <span ng-show="record.ApproverComment"> with comments: '{{record.ApproverComment}}'</span>
+                    </div>
+                    <div ng-show="record.editMode">
+                        <div class="form-group form-group-sm">
+                            <textarea class="form-control" ng-model="record.ApproverComment" placeholder="Add comments..."></textarea>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <div class="radio-inline custom-control custom-radio">
+                                <label>
+                                    <input type="radio" name="approved" ng-model="record.Approved" ng-value="true">
+                                    <span class="custom-control-indicator"></span>
+                                    Approved
+                                </label>
+                            </div>
+                            <div class="radio-inline custom-control custom-radio">
+                                <label>
+                                    <input type="radio" name="approved" ng-model="record.Approved" ng-value="false">
+                                    <span class="custom-control-indicator"></span>
+                                    Disapproved
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td class="tight">
+                    <div>
+                        <button ng-hide="record.editMode" ng-click="record.editMode = true" class="btn btn-sm btn-primary-outline"><span class="icon icon-typing"></span></button>
+                        <button ng-show="record.editMode" ng-click="ApproveRequest(record)" class="btn btn-sm btn-success-outline"><span class="icon icon-check"></span></button>
+                        <br />
+                        <button ng-show="record.editMode" ng-click="record.editMode = false" class="btn btn-sm btn-danger-outline m-t"><span class="icon icon-cross"></span></button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+@section scripts {
+    <script src="~/js/users/approval/app.js" asp-append-version="true"></script>
+    <script src="~/js/users/approval/controllers.js" asp-append-version="true"></script>    
+}

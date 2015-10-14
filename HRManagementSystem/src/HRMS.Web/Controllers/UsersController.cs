@@ -56,22 +56,32 @@ namespace HRMS.Web.Controllers
             var records = new List<DailyWorkingRecord>();
             foreach(var day in WorkingProcessService.AllDatesInMonth(month.Value.Year, month.Value.Month))
             {
-                if (day < DateTime.Now.AddDays(-1))
+                
+                if (day <= DateTime.Now.Date.AddDays(-1))
                 {
-                    var record = dailyWorkingProcess.GetDailyWorkingReport(user.Id, day);
-                    if (record != null)
-                        records.Add(record);
+                    var dbRecord = dbContext.DailyWorkingRecords.FirstOrDefault(d => d.WorkingDay == day && d.UserInfoId == user.Id);
+                    if (dbRecord == null)
+                    {
+                        var record = dailyWorkingProcess.GetDailyWorkingReport(user.Id, day);
+                        if (record != null)
+                        {
+                            dbContext.DailyWorkingRecords.Add(record);
+                            dbContext.SaveChanges();
+                            records.Add(record);
+                        }
+                    } else
+                    {
+                        // TODO: Update new information of daily working record.
+                        if(dbRecord.ApproverId != null)
+                            dbRecord.Approver = dbContext.UserInfoes.FirstOrDefault(u => u.Id == dbRecord.ApproverId);
+                        records.Add(dbRecord);
+                    }
+                    
                 }
             }
             return JsonConvert.SerializeObject(records);
         }
 
-        //[HttpPut("{id}")]
-        //public void UpdateDailyRecord(int id, [FromBody] string value)
-        //{
-        //    var Id = id;
-        //    var Value = value;
-        //}
 
         [HttpGet("ManagerList")]
         public string ManagerList()
@@ -140,8 +150,13 @@ namespace HRMS.Web.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody]DailyWorkingRecord value)
         {
-            var Id = id;
-            var Value = value;
+            var record = dbContext.DailyWorkingRecords.FirstOrDefault(d => d.Id == value.Id);
+            if(record != null)
+            {
+                record.GetApprovedReason = value.GetApprovedReason;
+                record.ApproverId = value.ApproverId;
+                dbContext.SaveChanges();
+            }
             return new NoContentResult();
         }
 
@@ -149,6 +164,26 @@ namespace HRMS.Web.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+
+        [HttpGet("GetPendingApproval")]
+        public string GetPendingApproval()
+        {
+            var pendingRecords = dbContext.DailyWorkingRecords.Include(d => d.UserInfo).Include(d => d.Approver).Where(d => d.GetApprovedReason != null);
+            return JsonConvert.SerializeObject(pendingRecords);
+        }
+
+        [HttpPut("Approval")] 
+        public IActionResult Approval([FromBody] DailyWorkingRecord value)
+        {
+            var record = dbContext.DailyWorkingRecords.FirstOrDefault(d => d.Id == value.Id);
+            if(record != null)
+            {
+                record.Approved = value.Approved;
+                record.ApproverComment = value.ApproverComment;
+                dbContext.SaveChanges();
+            }
+            return new NoContentResult();
         }
     }
 }

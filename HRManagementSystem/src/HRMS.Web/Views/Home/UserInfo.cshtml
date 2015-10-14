@@ -8,7 +8,7 @@
     <div class="toolbox">
         <a asp-action="Index" asp-route-id="@ViewBag.SearchTerms" title="Back"><span class="icon icon-chevron-thin-left"></span></a>
     </div>
-    <header class="m-t-lg m-b-lg clearfix">
+    <div class="m-t-lg m-b-lg clearfix">
         <div class="pull-left">
             <h2 class="m-a-0 text-uppercase">@ViewData["Title"] <small class="text-muted">ASWVN@(Model.EmployeeId) - @Model.Department.Office</small></h2>
             <div class="h2 m-a-0 text-muted">
@@ -17,20 +17,16 @@
         </div>
         <div class="visible-xs m-b clearfix"></div>
         <div class="form-inline pull-right-sm">
-            <div class="form-group form-group-sm">
-                <select class="form-control" ng-model="month" ng-change="refreshRecords()">
-                    <option value="">[Select month]</option>
+            <select class="custom-select custom-select-sm" ng-model="month" ng-change="refreshRecords()">
+                <option value="">[month]</option>
                     <option ng-repeat="index in [] | monthInYear: year">{{index + 1}}</option>
                 </select>
-            </div>
-            <div class="form-group form-group-sm">
-                <select class="form-control" ng-model="year" ng-change="refreshRecords()">
-                    <option value="">[Select year]</option>
+            <select class="custom-select custom-select-sm" ng-model="year" ng-change="refreshRecords()">
+                <option value="">[year]</option>
                     <option ng-repeat="index in [] | range: endYear - startYear + 1">{{index + startYear}}</option>
                 </select>
             </div>
         </div>
-    </header>
     <div class="text-center m-b">
         <i class="fa fa-spinner fa-pulse fa-4x" ng-hide="records.length > 0"></i>
     </div>
@@ -43,7 +39,7 @@
                 <th class="text-center">Lacking Time (h:mm)</th>
                 <th class="text-center">Approval</th>
                 <th></th>
-            </tr>
+            </tr>   
         </thead>
         <tbody>
             <tr ng-repeat="record in records" ng-class="{ 'text-warning warning': record.MinuteLate > 0 }">
@@ -56,9 +52,9 @@
                         <div ng-hide="record.editMode">
                             <div>{{record.GetApprovedReason}}</div>
                             <div ng-show="record.GetApprovedReason">
-                                <span ng-show="record.Approved == null" class="text-warning">Waiting for approval from {{record.approver.Name}}</span>
-                                <span ng-show="record.Approved === true" class="text-success">Approved by {{record.approver.Name}}</span>
-                                <span ng-show="record.Approved === false" class="text-danger">Disapproved by {{record.approver.Name}}</span>
+                                <span ng-show="record.Approved == null" class="text-warning">Waiting for approval from {{record.Approver.Name}}</span>
+                                <span ng-show="record.Approved === true" class="text-success">Approved by {{record.Approver.Name}}</span>
+                                <span ng-show="record.Approved === false" class="text-danger">Disapproved by {{record.Approver.Name}}</span>
                                 <span ng-show="record.ApproverComment"> with comments: '{{record.ApproverComment}}'</span>
                             </div>
                         </div>
@@ -67,7 +63,7 @@
                                 <textarea class="form-control" ng-model="record.GetApprovedReason" placeholder="Add comments..."></textarea>
                             </div>
                             <div class="form-group form-group-sm m-b-0" ng-show="record.approved == null">
-                                <select class="form-control" ng-model="record.approver" ng-options="m as m.Name for m in managers" required>
+                                <select class="form-control" ng-model="record.Approver" ng-options="m as m.Name for m in managers" required>
                                     <option disabled value="">[Select approver]</option>
                                 </select>
                             </div>
