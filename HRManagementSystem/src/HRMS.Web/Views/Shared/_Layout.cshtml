@@ -1,6 +1,7 @@
 ﻿@using Microsoft.Framework.OptionsModel;
 @using HRMS.Web.Configuration;
 @using System.Security.Claims;
+@using Microsoft.AspNet.Http;
 
 @inject IOptions<AppSettings> AppSettings
 
@@ -35,7 +36,9 @@
                 <ul class="nav nav-bordered">
                     <li class="@(ViewBag.ActiveMenuItem == "Users" ? "active" : null) text-uppercase"><a asp-controller="Home" asp-action="Index">Users</a></li>
                     <li class="@(ViewBag.ActiveMenuItem == "Report" ? "active" : null) text-uppercase"><a asp-controller="Home" asp-action="Report">Report</a></li>
-                    <li class=""><a asp-controller="Home" asp-action="">Hello <strong>@User.GetUserName()</strong> !</a></li>
+                    <li class="@(ViewBag.ActiveMenuItem == "PendingApprovals" ? "active" : null) text-uppercase"><a asp-controller="Home" asp-action="PendingApprovals">Pending Approvals</a></li>
+                    <li class=""><a asp-controller="Home" asp-action="">Hello <strong>@User.Identity.Name</strong>!</a></li>
+                    <li class=""><a href="">Sign Out</a></li>
                 </ul>
             </div>
         </div>

@@ -40,7 +40,7 @@ namespace HRMS.Web.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ApprovedStatus");
+                    b.Property<bool?>("Approved");
 
                     b.Property<string>("ApproverComment");
 

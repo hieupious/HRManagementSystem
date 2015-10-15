@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace HRMS.Web.Models
 {
@@ -12,12 +13,12 @@ namespace HRMS.Web.Models
         public DateTime? CheckIn { get; set; }
         public DateTime? CheckOut { get; set; }
         public double MinuteLate { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public WorkingType WorkingType { get; set; }
         public string GetApprovedReason { get; set; }
         public int? ApproverId { get; set; }
         public string ApproverComment { get; set; }
-        public ApprovedStatus ApprovedStatus { get; set; }
-        [JsonIgnore]
+        public bool? Approved { get; set; }
         public virtual UserInfo UserInfo { get; set; }
         public virtual UserInfo Approver { get; set; }
         [JsonIgnore]

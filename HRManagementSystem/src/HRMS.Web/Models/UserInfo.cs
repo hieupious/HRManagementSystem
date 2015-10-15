@@ -5,7 +5,7 @@ namespace HRMS.Web.Models
 {
     public class UserInfo
     {
-        [JsonIgnore]
+        //[JsonIgnore]
         public int Id { get; set; }
         public string EmployeeId { get; set; }
         public string FingerPrintId { get; set; }
@@ -17,7 +17,9 @@ namespace HRMS.Web.Models
         public virtual UserInfo Manager { get; set; }
         public ICollection<UserInfo> Members { get; set; }
         public virtual Department Department { get; set; }
+        [JsonIgnore]
         public ICollection<DailyWorkingRecord> Approvals { get; set; }
+        [JsonIgnore]
         public ICollection<DailyWorkingRecord> DailyRecords { get; set; }
     }
 }

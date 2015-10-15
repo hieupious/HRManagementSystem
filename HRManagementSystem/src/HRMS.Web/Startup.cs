@@ -9,7 +9,6 @@ using Microsoft.Data.Entity;
 using HRMS.Web.Models;
 using HRMS.Web.Services;
 using Hangfire;
-
 using HRMS.Web.Configuration;
 using HRMS.Web.Jobs;
 
@@ -49,6 +48,7 @@ namespace HRMS.Web
             });
 
 
+
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
@@ -57,7 +57,8 @@ namespace HRMS.Web
             services.AddTransient<IImportDataService, ImportDataService>();
             services.AddTransient<IDailyWorkingProcessService, WorkingProcessService>();
             services.AddTransient<IMonthlyWorkingProcess, WorkingProcessService>();
-            services.AddTransient<ImportDataService, ImportDataService>();
+            //services.AddTransient<ImportDataService, ImportDataService>();
+            services.AddTransient<RegisteredJob, RegisteredJob>();
         }
 
         // Configure is called after ConfigureServices is called.
@@ -98,19 +99,11 @@ namespace HRMS.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
 
-                //routes.MapWebApiRoute(
-                //    name: "UserReportApi",
-                //    template: "api/{controller}/{empId}/{action}/{month?}",
-                //    defaults: null,
-                //    constraints: new
-                //    {
-                //        controller = "Users",
-                //        action = "Report"
-                //    });
-
                 routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
             });
-            
+
+            app.UseIdentity();
+            RegisteredJob.InitializeJobs();
         }
     }
 }

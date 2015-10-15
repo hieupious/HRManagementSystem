@@ -18,6 +18,7 @@ namespace HRMS.Web.Services
         private ApplicationDbContext efDbContext;
         // Query string 
         private const string queryUser = "SELECT [USERID], [Badgenumber], [Name], [DEFAULTDEPTID] from USERINFO";
+        private const string queryUserWithId = "SELECT [USERID], [Badgenumber], [Name], [DEFAULTDEPTID] from USERINFO WHERE ([USERID] = {0})";
         private const string queryDepartment = "SELECT [DEPTID], [DEPTNAME] FROM DEPARTMENTS";
         private const string queryAllCheckInOutRecord = "SELECT [USERID], [CHECKTIME] FROM CHECKINOUT";
         private const string queryCheckInOutRecordWithDay = "SELECT [USERID], [CHECKTIME] FROM CHECKINOUT WHERE (CHECKTIME >= #{0}#) AND (CHECKTIME <= #{1}#)";
@@ -51,9 +52,21 @@ namespace HRMS.Web.Services
         public void ImportDailyCheckInOutFromAccessDB()
         {
             var dailyCheckInOutRecords = GetDailyCheckInOutFromAccessDB();
-            efDbContext.CheckInOutRecords.AddRange(dailyCheckInOutRecords);
+            foreach(var record in dailyCheckInOutRecords)
+            {
+                if(!efDbContext.UserInfoes.Any(u => u.Id == record.UserId))
+                {
+                    if(!ImportUserInfoWithId(record.UserId))
+                        continue;
+                }
+                if(!efDbContext.CheckInOutRecords.Any(c => c.CheckTime == record.CheckTime && c.UserId == record.UserId))
+                {
+                    efDbContext.CheckInOutRecords.Add(record);
+                }
+            }
             efDbContext.SaveChanges();
         }
+
         public IEnumerable<CheckInOutRecord> GetDailyCheckInOutFromAccessDB()
         {
             return GetWithDayCheckInOutFromAccessDB(DateTime.Now, null);
@@ -79,15 +92,33 @@ namespace HRMS.Web.Services
             return Mapper.MapMany<UserInfo, UserMapping>(userInfo);
         }
 
-        public bool CopyFileFromExternal()
+        public UserInfo GetUserFromAccessDBWithId(int id)
+        {
+            var query = string.Format(queryUserWithId, id);
+            var userInfo = dbContext.ExecuteSingle(query);
+            return Mapper.Map<UserInfo, UserMapping>(userInfo);
+        }
+
+        public bool ImportUserInfoWithId(int id)
+        {
+            var userInfo = GetUserFromAccessDBWithId(id);
+            if(userInfo != null)
+            {
+                efDbContext.UserInfoes.Add(userInfo);
+                return efDbContext.SaveChanges() > 0;
+            }
+            return false;
+        }
+
+
+        public bool CopyFileFromExternal(ref DateTime lastWriteTime)
         {
             try
             {
                 string fullFilePath = importConfiguration.FileToCopyPath;
-                
                 File.Copy(fullFilePath, dbPath, true);
-                var lastWriteTime = File.GetLastWriteTime(dbPath);
-
+                lastWriteTime = File.GetLastWriteTime(dbPath);
+                return true;
             } catch (Exception e)
             {
                 

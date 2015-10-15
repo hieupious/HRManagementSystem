@@ -33,7 +33,6 @@
                     });
                 });
             };
-
             $scope.refreshUsers();
                        
         }

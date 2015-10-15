@@ -5,5 +5,4 @@
         "hrmsUserSearchControllers",
         "hrmsUserSearchServices"
     ]);
-
 })();
