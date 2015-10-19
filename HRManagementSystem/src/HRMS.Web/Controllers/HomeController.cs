@@ -10,7 +10,6 @@ namespace HRMS.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private IOptions<AppSettings> appSetting;
         private IOptions<ImportConfiguration> importConfig;
         private readonly ApplicationDbContext dbContext;
         private readonly IImportDataService importDataService;
