@@ -1,6 +1,6 @@
 {
   "AppSettings": {
-    "Title": "HRMS"
+    "Title": "Less Timesheet"
   },
   "ImportConfiguration": {
     "ImportedDBPath": "ImportedDB\\importedDB.mdb",
