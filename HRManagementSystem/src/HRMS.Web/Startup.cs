@@ -103,7 +103,7 @@ namespace HRMS.Web
 
 
             // Configure for Hangfire Server
-            GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration["Data:DefaultConnection:ConnectionString"]);
+            GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration["Data:HangfireServer:ConnectionString"]);
             GlobalConfiguration.Configuration.UseActivator(new ServiceJobActivator(app.ApplicationServices));
             app.UseHangfireServer();
             app.UseHangfireDashboard();
@@ -122,7 +122,8 @@ namespace HRMS.Web
             });
 
             app.UseIdentity();
-            RegisteredJob.InitializeJobs();
+
+            app.ApplicationServices.GetService<RegisteredJob>().InitializeJobs();       
         }
     }
 }

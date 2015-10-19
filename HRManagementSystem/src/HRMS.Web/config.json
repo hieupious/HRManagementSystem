@@ -5,28 +5,15 @@
   "ImportConfiguration": {
     "ImportedDBPath": "ImportedDB\\importedDB.mdb",
     "FileToCopyPath": "C:\\Users\\h.hoangt\\ownCloud\\TimeSheet\\att2000.mdb",
-    "TimeToImport" :  "21:30"
+    "TimeToImportAtNight": "21:30",
+    "TimeToImportAtNoon": "10:35"
   },
   "Data": {
     "DefaultConnection": {
       "ConnectionString": "Server=10.9.1.100\\SQLSERVER2012;Database=HRMSDB;uid=dev;pwd=HRMS@124;MultipleActiveResultSets=true"
+    },
+    "HangfireServer": {
+      "ConnectionString":  "Server=10.9.1.100\\SQLSERVER2012;Database=HRMSDB;uid=dev;pwd=HRMS@124;MultipleActiveResultSets=true"
     }
-  },
-  "WorkingRule": {
-    "CheckInTime": "08:00:00",
-    "CheckOutTime": "17:00:00",
-    "FullWorkingHour": "09:00:00",
-    "HalfWorkingHour": "04:00:00",
-    "StartNoonHour": "12:00:00",
-    "EndNoonHour": "13:00:00",
-    "TotalLackTime" : 30
-  },
-  "DevWorkingRule": {
-    "MinCheckInTime": "07:00:00",
-    "MaxCheckInTime": "09:00:00",
-    "MinCheckOutTime": "16:00:00",
-    "MaxCheckOutTime": "18:00:00",    
-    "StartNoonHour": "11:45:00",
-    "EndNoonHour": "13:00:00"
   }
 }

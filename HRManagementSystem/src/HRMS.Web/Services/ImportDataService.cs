@@ -69,9 +69,9 @@ namespace HRMS.Web.Services
 
         public IEnumerable<CheckInOutRecord> GetDailyCheckInOutFromAccessDB()
         {
-            return GetWithDayCheckInOutFromAccessDB(DateTime.Now, null);
+            return GetWithDayCheckInOutFromAccessDB(DateTime.Now);
         }
-        public IEnumerable<CheckInOutRecord> GetWithDayCheckInOutFromAccessDB(DateTime fromDay, DateTime? toDay)
+        public IEnumerable<CheckInOutRecord> GetWithDayCheckInOutFromAccessDB(DateTime fromDay, DateTime? toDay = null)
         {
             if (!toDay.HasValue)
                 toDay = fromDay.AddDays(1);

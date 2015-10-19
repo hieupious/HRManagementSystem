@@ -51,7 +51,7 @@ namespace HRMS.Web.Controllers
             {
                 var windowsAccountName = WindowsIdentity.GetCurrent().Name;
                 // base Identity Name >> get user >> check if user valid >> get Name, get Role, register
-                var user = dbContext.UserInfoes.FirstOrDefault(u => string.Equals(u.WindowsAccount, windowsAccountName));
+                var user = dbContext.UserInfoes.FirstOrDefault(u => string.Equals(u.WindowsAccount, windowsAccountName, System.StringComparison.CurrentCultureIgnoreCase));
                 if (user != null)
                 {
                     var role = user.Role.ToString();
