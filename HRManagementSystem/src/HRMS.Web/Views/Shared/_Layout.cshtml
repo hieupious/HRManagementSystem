@@ -34,8 +34,14 @@
             </div>
             <div class="navbar-collapse collapse navbar-right">
                 <ul class="nav nav-bordered">
-                    <li class="@(ViewBag.ActiveMenuItem == "Users" ? "active" : null) text-uppercase"><a asp-controller="Home" asp-action="Index">Users</a></li>
+
+                    <li class="@(ViewBag.ActiveMenuItem == "Users" ? "active" : null) text-uppercase"><a asp-controller="Home" asp-action="UserInfo">Users</a></li>
+                    @if (User.IsInRole("HRGroup") || User.IsInRole("Administrator"))
+                    {
                     <li class="@(ViewBag.ActiveMenuItem == "Report" ? "active" : null) text-uppercase"><a asp-controller="Home" asp-action="Report">Report</a></li>
+                    }
+                    @if (User.IsInRole("Manager") || User.IsInRole("HRGroup") || User.IsInRole("Administrator"))
+                    {
                     <li class="@(ViewBag.ActiveMenuItem == "PendingApprovals" ? "active" : null) text-uppercase"><a asp-controller="Home" asp-action="PendingApprovals">Pending Approvals</a></li>
                     <li class="dropdown">
                         <a title="@User.Identity.Name" class="dropdown-toggle" data-toggle="dropdown"><span class="icon icon-user"></span> <span class="fa fa-caret-down"></span></a>

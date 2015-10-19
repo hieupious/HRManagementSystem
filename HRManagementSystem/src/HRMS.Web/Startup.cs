@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNet.Builder;
+﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Dnx.Runtime;
 using Microsoft.Framework.Configuration;
@@ -47,6 +46,17 @@ namespace HRMS.Web
                 options.ApplicationBasePath = appBasePath;
             });
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Administrator", policy => policy.RequireRole("Administrator"));
+                options.AddPolicy("NormalUser", policy => policy.RequireRole("NormalUser"));
+                options.AddPolicy("HRGroup", policy => policy.RequireRole("HRGroup"));
+                options.AddPolicy("Cookie", policy =>
+                {
+                    policy.ActiveAuthenticationSchemes.Add("Cookie");
+                    policy.RequireAuthenticatedUser();
+                });
+            });
 
 
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
@@ -83,8 +93,17 @@ namespace HRMS.Web
                 app.UseErrorHandler("/Home/Error");
             }
 
+            app.UseCookieAuthentication(options =>
+            {
+                options.AuthenticationScheme = "Cookie";
+                options.LoginPath = "/Home/SignIn";
+                options.AccessDeniedPath = "/Home/Error";
+                options.AutomaticAuthentication = true;
+            });
+
+
             // Configure for Hangfire Server
-            GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration["Data:DefaultConnection:ConnectionString"]);
+            GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration["Data:HangfireServer:ConnectionString"]);
             GlobalConfiguration.Configuration.UseActivator(new ServiceJobActivator(app.ApplicationServices));
             app.UseHangfireServer();
             app.UseHangfireDashboard();
@@ -103,7 +122,8 @@ namespace HRMS.Web
             });
 
             app.UseIdentity();
-            RegisteredJob.InitializeJobs();
+
+            app.ApplicationServices.GetService<RegisteredJob>().InitializeJobs();       
         }
     }
 }

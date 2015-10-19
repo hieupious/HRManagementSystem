@@ -8,11 +8,13 @@ using Newtonsoft.Json;
 using Microsoft.Data.Entity;
 using Hangfire;
 using HRMS.Web.Services;
+using Microsoft.AspNet.Authorization;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace HRMS.Web.Controllers
 {
+    [Authorize(Roles = "HRGroup")]
     [Route("api/[controller]")]
     public class ReportsController : Controller
     {
@@ -35,19 +37,12 @@ namespace HRMS.Web.Controllers
         public string Get(DateTime month)
         {
             var monthRecords = dbContext.MonthlyRecords.Include(m => m.UserInfo).ThenInclude(u => u.Department).Where(m => m.Month == month.Month && m.Year == month.Year).Include(m => m.DailyRecords);
-            //foreach(var record in monthRecords)
-            //{
-            //    record.UserInfo = dbContext.UserInfoes.Include(u => u.Department).FirstOrDefault(u => u.Id == record.UserId);
-            //}
             return JsonConvert.SerializeObject(monthRecords);
         }
 
         [HttpGet("RunDailyImport")]
         public string RunDailyImport()
         {
-            
-            //RecurringJob.AddOrUpdate(() => importDataService.ImportDailyCheckInOutFromAccessDB(), Cron.Daily);
-
             return "Success";
         }
 

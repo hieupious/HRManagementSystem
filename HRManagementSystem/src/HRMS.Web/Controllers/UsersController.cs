@@ -7,10 +7,12 @@ using HRMS.Web.Models;
 using HRMS.Web.Services;
 using Microsoft.Data.Entity;
 using Newtonsoft.Json;
-
+using System.Security.Claims;
+using Microsoft.AspNet.Authorization;
 
 namespace HRMS.Web.Controllers
 {
+    [Authorize(Roles = "NormalUser,Manager,Administrator,HRGroup")]
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
@@ -48,6 +50,10 @@ namespace HRMS.Web.Controllers
         [HttpGet("{empId}/{Report}/{month?}")]
         public string Report(int empId, DateTime? month)
         {
+            if(User.IsInRole("NormalUser"))
+            {
+                empId = int.Parse(User.FindFirstValue(ClaimTypes.Sid));
+            }
             if (!month.HasValue)
                 month = DateTime.Now;
             var user = dbContext.UserInfoes.Where(u => int.Parse(u.EmployeeId) == empId).First();
@@ -57,7 +63,7 @@ namespace HRMS.Web.Controllers
             foreach(var day in WorkingProcessService.AllDatesInMonth(month.Value.Year, month.Value.Month))
             {
                 
-                if (day <= DateTime.Now.Date.AddDays(-1))
+                if (day <= DateTime.Now.Date)
                 {
                     var dbRecord = dbContext.DailyWorkingRecords.FirstOrDefault(d => d.WorkingDay == day && d.UserInfoId == user.Id);
                     if (dbRecord == null)

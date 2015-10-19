@@ -4,7 +4,7 @@
     {
         NormalUser = 1,
         Manager = 2,
-        HR = 3,
-        Admin = 4
+        HRGroup = 3,
+        Administrator = 4
     }
 }

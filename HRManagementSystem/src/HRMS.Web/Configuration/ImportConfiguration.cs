@@ -9,7 +9,8 @@ namespace HRMS.Web.Configuration
     {
         public string ImportedDBPath { get; set; }
         public string FileToCopyPath { get; set; }
-        public DateTime TimeToImport { get; set; }
+        public TimeSpan TimeToImportAtNight { get; set; }
+        public TimeSpan TimeToImportAtNoon { get; set; }
         public string ApplicationBasePath { get; set; }
     }
 }
