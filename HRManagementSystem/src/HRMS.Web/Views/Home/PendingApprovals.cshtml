@@ -13,7 +13,7 @@
                 <th class="text-center">Date</th>
                 <th class="text-center">Check-in</th>
                 <th class="text-center">Check-out</th>
-                <th class="text-center">Lack Time (h:mm)</th>
+                <th class="text-center">Lacking Time (h:mm)</th>
                 <th class="text-center">Approval</th>
                 <th></th>
             </tr>
@@ -26,7 +26,7 @@
                 <td class="text-center">{{record.CheckIn | date: "shortTime"}}</td>
                 <td class="text-center">{{record.CheckOut | date: "shortTime"}}</td>
                 <td class="text-center">{{record.MinuteLate | timespan}}</td>
-                <td>
+                <td class="w-sm">
                     <div>{{record.GetApprovedReason}}</div>
                     <div ng-show="record.ApproverComment && !record.editMode">
                         <span ng-show="record.Approved == null" class="text-warning">Waiting for approval from {{record.Approver.Name}}</span>

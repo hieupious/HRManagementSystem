@@ -52,14 +52,14 @@ namespace HRMS.Web.Services
         public void ImportDailyCheckInOutFromAccessDB()
         {
             var dailyCheckInOutRecords = GetDailyCheckInOutFromAccessDB();
-            foreach(var record in dailyCheckInOutRecords)
+            foreach (var record in dailyCheckInOutRecords)
             {
-                if(!efDbContext.UserInfoes.Any(u => u.Id == record.UserId))
+                if (!efDbContext.UserInfoes.Any(u => u.Id == record.UserId))
                 {
-                    if(!ImportUserInfoWithId(record.UserId))
+                    if (!ImportUserInfoWithId(record.UserId))
                         continue;
                 }
-                if(!efDbContext.CheckInOutRecords.Any(c => c.CheckTime == record.CheckTime && c.UserId == record.UserId))
+                if (!efDbContext.CheckInOutRecords.Any(c => c.CheckTime == record.CheckTime && c.UserId == record.UserId))
                 {
                     efDbContext.CheckInOutRecords.Add(record);
                 }
@@ -102,7 +102,7 @@ namespace HRMS.Web.Services
         public bool ImportUserInfoWithId(int id)
         {
             var userInfo = GetUserFromAccessDBWithId(id);
-            if(userInfo != null)
+            if (userInfo != null)
             {
                 efDbContext.UserInfoes.Add(userInfo);
                 return efDbContext.SaveChanges() > 0;
@@ -119,13 +119,11 @@ namespace HRMS.Web.Services
                 File.Copy(fullFilePath, dbPath, true);
                 lastWriteTime = File.GetLastWriteTime(dbPath);
                 return true;
-            } catch (Exception e)
+            }
+            catch
             {
-                
                 return false;
             }
-
-            return false;
         }
     }
 
