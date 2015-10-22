@@ -14,23 +14,39 @@ namespace HRMS.Web.Models
         public DbSet<DailyWorkingRecord> DailyWorkingRecords { get; set; }
         public DbSet<MonthlyRecord> MonthlyRecords { get; set; }
 
+        public DbSet<WorkingPoliciesGroup> WorkingPoliciesGroups { get; set; }
+        public DbSet<WorkingHoursRuleBase> WorkingHoursRuleBases { get; set; }
+        public DbSet<BaseTimeWorkingHoursRule> BaseTimeWorkingHoursRules { get; set; }
+        public DbSet<ToleranceWorkingHoursRuleBase> ToleranceWorkingHoursRuleBases { get; set; }
+        public DbSet<LateToleranceWorkingHoursRule> LateToleranceWorkingHoursRules { get; set; }
+        public DbSet<EarlyToleranceWorkingHoursRule> EarlyToleranceWorkingHoursRules { get; set; }
+
+        public DbSet<WorkingPoliciesGroup> GetWorkingPoliciesGroups()
+        {
+            foreach (var userGroup in WorkingPoliciesGroups)
+            {
+                var baseTime = BaseTimeWorkingHoursRules.Include(b => b.WorkingPoliciesGroups).SingleOrDefault(b => b.WorkingPoliciesGroups.Contains(userGroup));
+                if (baseTime != null)
+                    userGroup.WorkingHoursRules.Add(baseTime);
+                var earlyTolerance = EarlyToleranceWorkingHoursRules.Include(e => e.WorkingPoliciesGroups).SingleOrDefault(e => e.WorkingPoliciesGroups.Contains(userGroup));
+                if (earlyTolerance != null)
+                    userGroup.WorkingHoursRules.Add(earlyTolerance);
+                var lateTolerance = LateToleranceWorkingHoursRules.Include(l => l.WorkingPoliciesGroups).SingleOrDefault(l => l.WorkingPoliciesGroups.Contains(userGroup));
+                if (lateTolerance != null)
+                    userGroup.WorkingHoursRules.Add(lateTolerance);
+            }
+            return WorkingPoliciesGroups;
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
-            modelBuilder.Entity<UserInfo>().Key(u => u.Id);
-            modelBuilder.Entity<UserInfo>().Property(u => u.Id).ValueGeneratedNever();
-            modelBuilder.Entity<Department>().Key(d => d.Id);
-            modelBuilder.Entity<Department>().Property(d => d.Id).ValueGeneratedNever();
-            modelBuilder.Entity<CheckInOutRecord>().Key(c => c.Id);
-            modelBuilder.Entity<DailyWorkingRecord>().Key(d => d.Id);            
             // Configure foreign key
             modelBuilder.Entity<DailyWorkingRecord>().Reference(d => d.Approver).InverseCollection(u => u.Approvals).ForeignKey(d => d.ApproverId);
-            modelBuilder.Entity<DailyWorkingRecord>().Reference(d => d.UserInfo).InverseCollection(u => u.DailyRecords).ForeignKey(d => d.UserInfoId);
-            modelBuilder.Entity<UserInfo>().Reference(u => u.Manager).InverseCollection(u => u.Members).ForeignKey(u => u.ManagerId);
+            modelBuilder.Entity<DailyWorkingRecord>().Reference(d => d.UserInfo).InverseCollection(u => u.DailyRecords).ForeignKey(d => d.UserInfoId);            
             modelBuilder.Entity<DailyWorkingRecord>().Reference(d => d.MonthlyRecord).InverseCollection(m => m.DailyRecords).ForeignKey(d => d.MonthlyRecordId);
-            
+            modelBuilder.Entity<CheckInOutRecord>().Reference(c => c.User).InverseCollection(u => u.CheckInOutRecords).ForeignKey(c => c.UserId).PrincipalKey(u => u.ExternalId);
+            modelBuilder.Entity<CheckInOutRecord>().Reference(c => c.DailyRecord).InverseCollection(d => d.CheckInOutRecords).ForeignKey(c => c.DailyRecordId);
             // Create index
-            modelBuilder.Entity<MonthlyRecord>().Index(m => new { m.Month, m.Year });
             modelBuilder.Entity<CheckInOutRecord>().Index(c => c.CheckTime);
             modelBuilder.Entity<CheckInOutRecord>().Index(c => new { c.UserId, c.CheckTime });
             modelBuilder.Entity<DailyWorkingRecord>().Index(d => d.WorkingDay);

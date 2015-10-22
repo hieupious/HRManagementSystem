@@ -25,7 +25,6 @@ namespace HRMS.Web.Services
 
         public ImportDataService()
         {
-
         }
 
         public ImportDataService(IOptions<ImportConfiguration> options, ApplicationDbContext efDbContext)
@@ -33,7 +32,7 @@ namespace HRMS.Web.Services
             this.efDbContext = efDbContext;
             importConfiguration = options.Options;
             dbPath = importConfiguration.ApplicationBasePath + "\\" + importConfiguration.ImportedDBPath;
-            dbContext = Db.Open(this.dbPath);
+            dbContext = Db.Open(dbPath);
         }
 
         public void ImportAllCheckInOutFromAccessDB()
@@ -49,35 +48,37 @@ namespace HRMS.Web.Services
             return Mapper.MapMany<CheckInOutRecord, CheckInOutMapping>(checkInOutInfo);
         }
 
-        public void ImportDailyCheckInOutFromAccessDB()
+        public int ImportDailyCheckInOutFromAccessDB()
         {
-            var dailyCheckInOutRecords = GetDailyCheckInOutFromAccessDB();
-            foreach (var record in dailyCheckInOutRecords)
-            {
-                if (!efDbContext.UserInfoes.Any(u => u.Id == record.UserId))
-                {
-                    if (!ImportUserInfoWithId(record.UserId))
-                        continue;
-                }
-                if (!efDbContext.CheckInOutRecords.Any(c => c.CheckTime == record.CheckTime && c.UserId == record.UserId))
-                {
-                    efDbContext.CheckInOutRecords.Add(record);
-                }
-            }
-            efDbContext.SaveChanges();
+            // only get records have userId in the system
+            var dailyCheckInOutRecords = GetDailyCheckInOutFromAccessDB().Where(r => efDbContext.UserInfoes.Any(u => u.ExternalId == r.UserId));
+            // filter duplicated records
+            var filteredRecords = dailyCheckInOutRecords.Where(r => !efDbContext.CheckInOutRecords.Any(c => c.CheckTime == r.CheckTime && c.UserId == r.UserId));
+            efDbContext.CheckInOutRecords.AddRange(filteredRecords);
+            return efDbContext.SaveChanges();
         }
 
         public IEnumerable<CheckInOutRecord> GetDailyCheckInOutFromAccessDB()
         {
-            return GetWithDayCheckInOutFromAccessDB(DateTime.Now);
+            return GetCheckInOutRecordWithDayFromAccessDB(DateTime.Now);
         }
-        public IEnumerable<CheckInOutRecord> GetWithDayCheckInOutFromAccessDB(DateTime fromDay, DateTime? toDay = null)
+        public IEnumerable<CheckInOutRecord> GetCheckInOutRecordWithDayFromAccessDB(DateTime fromDay, DateTime? toDay = null)
         {
             if (!toDay.HasValue)
                 toDay = fromDay.AddDays(1);
             var query = string.Format(queryCheckInOutRecordWithDay, fromDay.Date.ToShortDateString(), toDay.Value.Date.ToShortDateString());
             var checkInOutInfo = dbContext.ExecuteMany(query);
             return Mapper.MapMany<CheckInOutRecord, CheckInOutMapping>(checkInOutInfo);
+        }
+
+        public int ImportCheckInOutRecordWithDay(DateTime fromDay, DateTime? toDay = null)
+        {
+            // only get records have userId in the system
+            var records = GetCheckInOutRecordWithDayFromAccessDB(fromDay, toDay).Where(r => efDbContext.UserInfoes.Any(u => u.ExternalId == r.UserId));
+            // filter duplicated records
+            var filteredRecords = records.Where(r => !efDbContext.CheckInOutRecords.Any(c => c.CheckTime == r.CheckTime && c.UserId == r.UserId));
+            efDbContext.CheckInOutRecords.AddRange(filteredRecords);
+            return efDbContext.SaveChanges();
         }
 
         public IEnumerable<Department> GetDepartmentFromAccessDB()

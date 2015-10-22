@@ -10,8 +10,9 @@ namespace HRMS.Web.Services
         IEnumerable<Department> GetDepartmentFromAccessDB();
         IEnumerable<CheckInOutRecord> GetAllCheckInOutFromAccessDB();
         IEnumerable<CheckInOutRecord> GetDailyCheckInOutFromAccessDB();
-        IEnumerable<CheckInOutRecord> GetWithDayCheckInOutFromAccessDB(DateTime fromDay, DateTime? toDay);
-        void ImportDailyCheckInOutFromAccessDB();
+        IEnumerable<CheckInOutRecord> GetCheckInOutRecordWithDayFromAccessDB(DateTime fromDay, DateTime? toDay);
+        int ImportDailyCheckInOutFromAccessDB();
+        int ImportCheckInOutRecordWithDay(DateTime fromDay, DateTime? toDay = null);
         bool CopyFileFromExternal(ref DateTime lastWriteTime);
     }
 }

@@ -17,6 +17,22 @@ namespace HRMS.Web.Migrations
                 .Annotation("ProductVersion", "7.0.0-beta7-15540")
                 .Annotation("SqlServer:ValueGenerationStrategy", SqlServerIdentityStrategy.IdentityColumn);
 
+            modelBuilder.Entity("HRMS.Web.Models.BaseTimeWorkingHoursRule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<TimeSpan>("BreaktimeEnd");
+
+                    b.Property<TimeSpan>("BreaktimeStart");
+
+                    b.Property<TimeSpan>("WorkingTimeEnd");
+
+                    b.Property<TimeSpan>("WorkingTimeStart");
+
+                    b.Key("Id");
+                });
+
             modelBuilder.Entity("HRMS.Web.Models.CheckInOutRecord", b =>
                 {
                     b.Property<int>("Id")
@@ -60,8 +76,6 @@ namespace HRMS.Web.Migrations
 
                     b.Property<DateTime>("WorkingDay");
 
-                    b.Property<int>("WorkingType");
-
                     b.Key("Id");
 
                     b.Index("WorkingDay");
@@ -69,11 +83,30 @@ namespace HRMS.Web.Migrations
 
             modelBuilder.Entity("HRMS.Web.Models.Department", b =>
                 {
-                    b.Property<int>("Id");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name");
 
-                    b.Property<string>("Office");
+                    b.Key("Id");
+                });
+
+            modelBuilder.Entity("HRMS.Web.Models.EarlyToleranceWorkingHoursRule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<TimeSpan>("Tolerance");
+
+                    b.Key("Id");
+                });
+
+            modelBuilder.Entity("HRMS.Web.Models.LateToleranceWorkingHoursRule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<TimeSpan>("Tolerance");
 
                     b.Key("Id");
                 });
@@ -92,27 +125,68 @@ namespace HRMS.Web.Migrations
                     b.Property<int>("Year");
 
                     b.Key("Id");
+                });
 
-                    b.Index("Month", "Year");
+            modelBuilder.Entity("HRMS.Web.Models.ToleranceWorkingHoursRuleBase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<TimeSpan>("Tolerance");
+
+                    b.Key("Id");
                 });
 
             modelBuilder.Entity("HRMS.Web.Models.UserInfo", b =>
                 {
-                    b.Property<int>("Id");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("DepartmentId");
 
                     b.Property<string>("EmployeeId");
 
+                    b.Property<string>("EnglishName");
+
+                    b.Property<int>("ExternalId");
+
                     b.Property<string>("FingerPrintId");
 
-                    b.Property<int?>("ManagerId");
-
                     b.Property<string>("Name");
+
+                    b.Property<int>("Office");
 
                     b.Property<int>("Role");
 
                     b.Property<string>("WindowsAccount");
+
+                    b.Property<int?>("WorkingPoliciesGroupId");
+
+                    b.Key("Id");
+                });
+
+            modelBuilder.Entity("HRMS.Web.Models.WorkingHoursRuleBase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Key("Id");
+                });
+
+            modelBuilder.Entity("HRMS.Web.Models.WorkingPoliciesGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int?>("BaseTimeWorkingHoursRuleId");
+
+                    b.Property<int?>("EarlyToleranceWorkingHoursRuleId");
+
+                    b.Property<int?>("LateToleranceWorkingHoursRuleId");
+
+                    b.Property<string>("Name");
+
+                    b.Property<int?>("ToleranceWorkingHoursRuleBaseId");
 
                     b.Key("Id");
                 });
@@ -125,7 +199,8 @@ namespace HRMS.Web.Migrations
 
                     b.Reference("HRMS.Web.Models.UserInfo")
                         .InverseCollection()
-                        .ForeignKey("UserId");
+                        .ForeignKey("UserId")
+                        .PrincipalKey("ExternalId");
                 });
 
             modelBuilder.Entity("HRMS.Web.Models.DailyWorkingRecord", b =>
@@ -156,9 +231,28 @@ namespace HRMS.Web.Migrations
                         .InverseCollection()
                         .ForeignKey("DepartmentId");
 
-                    b.Reference("HRMS.Web.Models.UserInfo")
+                    b.Reference("HRMS.Web.Models.WorkingPoliciesGroup")
                         .InverseCollection()
-                        .ForeignKey("ManagerId");
+                        .ForeignKey("WorkingPoliciesGroupId");
+                });
+
+            modelBuilder.Entity("HRMS.Web.Models.WorkingPoliciesGroup", b =>
+                {
+                    b.Reference("HRMS.Web.Models.BaseTimeWorkingHoursRule")
+                        .InverseCollection()
+                        .ForeignKey("BaseTimeWorkingHoursRuleId");
+
+                    b.Reference("HRMS.Web.Models.EarlyToleranceWorkingHoursRule")
+                        .InverseCollection()
+                        .ForeignKey("EarlyToleranceWorkingHoursRuleId");
+
+                    b.Reference("HRMS.Web.Models.LateToleranceWorkingHoursRule")
+                        .InverseCollection()
+                        .ForeignKey("LateToleranceWorkingHoursRuleId");
+
+                    b.Reference("HRMS.Web.Models.ToleranceWorkingHoursRuleBase")
+                        .InverseCollection()
+                        .ForeignKey("ToleranceWorkingHoursRuleBaseId");
                 });
         }
     }

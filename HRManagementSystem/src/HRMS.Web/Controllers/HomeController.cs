@@ -1,10 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.AspNet.Mvc;
 using HRMS.Web.Models;
-using HRMS.Web.Services;
 using Microsoft.Data.Entity;
-using HRMS.Web.Configuration;
-using Microsoft.Framework.OptionsModel;
 using Microsoft.AspNet.Authorization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -56,15 +53,8 @@ namespace HRMS.Web.Controllers
                     await Context.Authentication.SignInAsync("Cookie", principal);
                     return RedirectToAction(nameof(HomeController.Index), "Home");
                 }
-                else
-                {
-                    return RedirectToAction(nameof(HomeController.Error), "Home");
-                }
             }
-            else
-            {
-                return RedirectToAction(nameof(HomeController.Error), "Home");
-            }
+            return RedirectToAction(nameof(HomeController.PermissionDenied), "Home");
         }
 
         public async Task<IActionResult> SignOut()
@@ -101,6 +91,11 @@ namespace HRMS.Web.Controllers
         {
 
             return View("~/Views/Shared/Error.cshtml");
+        }
+
+        public IActionResult PermissionDenied()
+        {
+            return View("~/Views/Shared/PermissionDenied.cshtml");
         }
 
     }

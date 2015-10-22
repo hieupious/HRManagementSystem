@@ -11,12 +11,15 @@ namespace HRMS.Web.Services
         public int Validate(UserInfo user, DateTime date)
         {
             // TODO:: Validate start > end, in > out...
-
             var record = user.DailyRecords.SingleOrDefault(m => m.WorkingDay == date);
-            var baseTimeRule = user.Group.WorkingHoursRules.SingleOrDefault(m => m is BaseTimeWorkingHoursRule) as BaseTimeWorkingHoursRule;
-            var earlyToleranceRule = user.Group.WorkingHoursRules.SingleOrDefault(m => m is EarlyToleranceWorkingHoursRule) as EarlyToleranceWorkingHoursRule;
-            var lateToleranceRule = user.Group.WorkingHoursRules.SingleOrDefault(m => m is LateToleranceWorkingHoursRule) as LateToleranceWorkingHoursRule;
+            return ValidateRule(record, user.WorkingPoliciesGroup, date);
+        }
 
+        public int ValidateRule(DailyWorkingRecord record, WorkingPoliciesGroup policy, DateTime date)
+        {
+            var baseTimeRule = policy.WorkingHoursRules.SingleOrDefault(m => m is BaseTimeWorkingHoursRule) as BaseTimeWorkingHoursRule;
+            var earlyToleranceRule = policy.WorkingHoursRules.SingleOrDefault(m => m is EarlyToleranceWorkingHoursRule) as EarlyToleranceWorkingHoursRule;
+            var lateToleranceRule = policy.WorkingHoursRules.SingleOrDefault(m => m is LateToleranceWorkingHoursRule) as LateToleranceWorkingHoursRule;
             if (record == null || baseTimeRule == null)
             {
                 throw new InvalidOperationException();
@@ -80,6 +83,10 @@ namespace HRMS.Web.Services
 
             var lackingTime = requiredTimeAmount - workedTime;
             return Math.Max((int)lackingTime.TotalMinutes, 0);
+        }
+        public int ValidateDailyRecord(DailyWorkingRecord dailyWorkingRecord, WorkingPoliciesGroup workingPolicyGroup, DateTime day)
+        {
+            return ValidateRule(dailyWorkingRecord, workingPolicyGroup, day);
         }
     }
 }

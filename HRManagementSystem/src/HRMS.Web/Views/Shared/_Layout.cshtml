@@ -42,13 +42,14 @@
                     @if (User.IsInRole("Manager") || User.IsInRole("HRGroup") || User.IsInRole("Administrator"))
                     {
                     <li class="@(ViewBag.ActiveMenuItem == "PendingApprovals" ? "active" : null) text-uppercase"><a asp-controller="Home" asp-action="PendingApprovals">Pending Approvals</a></li>
+                    }
                     <li class="dropdown">
                         <a title="@User.Identity.Name" class="dropdown-toggle" data-toggle="dropdown"><span class="icon icon-user"></span> <span class="fa fa-caret-down"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="javascript:void(0)">@string.Format("Hello {0}!", User.Identity.Name)</a></li>
+                            <li><a href="javascript:void(0)">@string.Format("Hello {0}!", User.GetUserName())</a></li>
                             <li><a href="javascript:void(0)"><span class="icon icon-help-with-circle"></span> Help (comming soon)</a></li>
                             @*<li><a asp-controller="Account" asp-action="Manage"><span class="icon icon-cog"></span> Manage your account</a></li>*@
-                            <li><a href="javascript:void(0)"><span class="icon icon-log-out"></span> Log Out (comming soon)</a></li>
+                            <li><a asp-controller="Home" asp-action="SignOut"><span class="icon icon-log-out"></span> Log Out (comming soon)</a></li>
                         </ul>
                     </li>
                 </ul>

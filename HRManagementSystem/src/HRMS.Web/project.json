@@ -22,7 +22,7 @@
     "Microsoft.Framework.Configuration.UserSecrets": "1.0.0-beta7",
     "Microsoft.AspNet.Mvc.WebApiCompatShim": "6.0.0-beta7",
     "Microsoft.AspNet.Identity": "3.0.0-beta7",
-    "Hangfire": "1.5.0",
+    "Hangfire": "1.5.2",
     "Microsoft.AspNet.Owin": "1.0.0-beta7"
   },
 

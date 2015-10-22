@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HRMS.Web.Models
 {
     public abstract class WorkingHoursRuleBase
     {
-        public ICollection<UserGroup> UserGroups { get; set; }
+        public int Id { get; set; }
+        public ICollection<WorkingPoliciesGroup> WorkingPoliciesGroups { get; set; }
     }
 
     public class BaseTimeWorkingHoursRule : WorkingHoursRuleBase
@@ -43,16 +42,16 @@ namespace HRMS.Web.Models
         }
     }
 
-    public class ToleranceWorkingHoursRule : WorkingHoursRuleBase
+    public abstract class ToleranceWorkingHoursRuleBase : WorkingHoursRuleBase
     {
         public TimeSpan Tolerance { get; set; }
     }
 
-    public class EarlyToleranceWorkingHoursRule : ToleranceWorkingHoursRule
+    public class EarlyToleranceWorkingHoursRule : ToleranceWorkingHoursRuleBase
     {
     }
 
-    public class LateToleranceWorkingHoursRule : ToleranceWorkingHoursRule
+    public class LateToleranceWorkingHoursRule : ToleranceWorkingHoursRuleBase
     {
     }
 }

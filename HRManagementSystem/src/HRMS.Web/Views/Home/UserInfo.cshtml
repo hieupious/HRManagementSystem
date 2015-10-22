@@ -10,7 +10,7 @@
     </div>
     <div class="m-t-lg m-b-lg clearfix">
         <div class="pull-left">
-            <h2 class="m-a-0 text-uppercase">@ViewData["Title"] <small class="text-muted">ASWVN@(Model.EmployeeId) - @Model.Department.Office</small></h2>
+            <h2 class="m-a-0 text-uppercase">@ViewData["Title"] <small class="text-muted">ASWVN@(Model.EmployeeId) - @Model.Office</small></h2>
             <div class="h2 m-a-0 text-muted">
                 <small>{{date | date: "MMMM, yyyy"}}</small>
             </div>
@@ -28,7 +28,7 @@
             </div>
         </div>
     <div class="text-center m-b">
-        <i class="fa fa-spinner fa-pulse fa-4x" ng-hide="records.length > 0"></i>
+        <i class="fa fa-spinner fa-pulse fa-4x" ng-show="loading"></i>
     </div>
     <table class="table table-condensed table-hover" ng-show="records.length > 0">
         <thead>
@@ -92,6 +92,11 @@
     <div class="alert alert-info" ng-hide="date != null">
         <p>
             Please select a month to see the report.
+        </p>
+    </div>
+    <div class="alert alert-warning" ng-hide="records.length > 0 || loading">
+        <p>
+            No report data for this month.
         </p>
     </div>
 </div>

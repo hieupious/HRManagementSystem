@@ -18,22 +18,22 @@ namespace HRMS.Web.Controllers
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IDailyWorkingProcessService dailyWorkingProcess;
-        private readonly IMonthlyWorkingProcess monthlyWorkingProcess;
+        private readonly IWorkingHoursValidator workingHoursValidator;
+        private DbSet<WorkingPoliciesGroup> WorkingPoliciesGroup;
 
-        private static int[] activeDepts = { 2, 3, 6, 7, 8, 9, 10 };
-
-        public UsersController(ApplicationDbContext dbContext, IDailyWorkingProcessService dailyWorkingProcess, IMonthlyWorkingProcess monthlyWorkingProcess)
+        public UsersController(ApplicationDbContext dbContext, IDailyWorkingProcessService dailyWorkingProcess, IWorkingHoursValidator workingHoursValidator)
         {
             this.dbContext = dbContext;
             this.dailyWorkingProcess = dailyWorkingProcess;
-            this.monthlyWorkingProcess = monthlyWorkingProcess;
+            WorkingPoliciesGroup = dbContext.GetWorkingPoliciesGroups();
+            this.workingHoursValidator = workingHoursValidator;
         }
 
         // GET: api/values
         [HttpGet]
         public string Get()
         {
-            var users = dbContext.UserInfoes.Include(u => u.Department).Where(u => activeDepts.Contains(u.DepartmentId));
+            var users = dbContext.UserInfoes.Include(u => u.Department);
             return JsonConvert.SerializeObject(users);
         }
 
@@ -50,7 +50,7 @@ namespace HRMS.Web.Controllers
         [HttpGet("{empId}/{Report}/{month?}")]
         public string Report(int empId, DateTime? month)
         {
-            if(User.IsInRole("NormalUser"))
+            if (User.IsInRole("NormalUser"))
             {
                 empId = int.Parse(User.FindFirstValue(ClaimTypes.Sid));
             }
@@ -59,30 +59,19 @@ namespace HRMS.Web.Controllers
             var user = dbContext.UserInfoes.Where(u => int.Parse(u.EmployeeId) == empId).First();
             if (user == null)
                 return null;
+            if (user.WorkingPoliciesGroupId.HasValue)
+                user.WorkingPoliciesGroup = WorkingPoliciesGroup.SingleOrDefault(w => w.Id == user.WorkingPoliciesGroupId.Value);
             var records = new List<DailyWorkingRecord>();
-            foreach(var day in WorkingProcessService.AllDatesInMonth(month.Value.Year, month.Value.Month))
+            foreach (var day in WorkingProcessService.AllDatesInMonth(month.Value.Year, month.Value.Month))
             {
-                
-                if (day <= DateTime.Now.Date)
+                if (day <= DateTime.Now.Date && WorkingProcessService.IsWorkingDay(day))
                 {
-                    var dbRecord = dbContext.DailyWorkingRecords.FirstOrDefault(d => d.WorkingDay == day && d.UserInfoId == user.Id);
-                    if (dbRecord == null)
-                    {
-                        var record = dailyWorkingProcess.GetDailyWorkingReport(user.Id, day);
-                        if (record != null)
-                        {
-                            dbContext.DailyWorkingRecords.Add(record);
-                            dbContext.SaveChanges();
-                            records.Add(record);
-                        }
-                    } else
-                    {
-                        // TODO: Update new information of daily working record.
-                        if(dbRecord.ApproverId != null)
-                            dbRecord.Approver = dbContext.UserInfoes.FirstOrDefault(u => u.Id == dbRecord.ApproverId);
-                        records.Add(dbRecord);
+                    var record = dailyWorkingProcess.HandleWorkingReport(user.Id, day);
+                    if(user.WorkingPoliciesGroupId.HasValue)
+                    {                        
+                        record.MinuteLate = workingHoursValidator.ValidateDailyRecord(record, user.WorkingPoliciesGroup, day);
                     }
-                    
+                    records.Add(record);
                 }
             }
             return JsonConvert.SerializeObject(records);
@@ -99,22 +88,6 @@ namespace HRMS.Web.Controllers
         [HttpGet("GetMonthlyWorkingReport")]
         public string GetMonthlyWorkingReport(int year, int month)
         {
-            //var monthRecords = new List<MonthlyRecord>();
-            //var users = _dbContext.UserInfoes.Include(u => u.Department).Where(u => activeDepts.Contains(u.DepartmentId)).ToList();
-            //foreach (var user in users)
-            //{
-            //    var days = WorkingProcessService.AllDatesInMonth(year, month);
-            //    var dailyRecords = _dbContext.DailyWorkingRecords.Where(d => d.WorkingDay.Month == month && d.WorkingDay.Year == year && d.UserId == user.Id).ToList();
-
-            //    var monthRecord = _monthlyWorkingProcess.GetMonthlyRecord(year, month, user, dailyRecords);
-            //    if (monthRecord != null)
-            //    {
-            //        monthRecords.Add(monthRecord);
-            //        _dbContext.MonthlyRecords.Add(monthRecord);
-            //        _dbContext.SaveChanges();
-            //    }
-
-            //}
             var monthRecords = dbContext.MonthlyRecords.Where(m => m.Month == month && m.Year == year);
 
             return JsonConvert.SerializeObject(monthRecords);
@@ -157,7 +130,7 @@ namespace HRMS.Web.Controllers
         public IActionResult Put(int id, [FromBody]DailyWorkingRecord value)
         {
             var record = dbContext.DailyWorkingRecords.FirstOrDefault(d => d.Id == value.Id);
-            if(record != null)
+            if (record != null)
             {
                 record.GetApprovedReason = value.GetApprovedReason;
                 record.ApproverId = value.ApproverId;
@@ -179,11 +152,11 @@ namespace HRMS.Web.Controllers
             return JsonConvert.SerializeObject(pendingRecords);
         }
 
-        [HttpPut("Approval")] 
+        [HttpPut("Approval")]
         public IActionResult Approval([FromBody] DailyWorkingRecord value)
         {
             var record = dbContext.DailyWorkingRecords.FirstOrDefault(d => d.Id == value.Id);
-            if(record != null)
+            if (record != null)
             {
                 record.Approved = value.Approved;
                 record.ApproverComment = value.ApproverComment;

@@ -67,7 +67,7 @@ namespace HRMS.Web
             services.AddTransient<IImportDataService, ImportDataService>();
             services.AddTransient<IDailyWorkingProcessService, WorkingProcessService>();
             services.AddTransient<IMonthlyWorkingProcess, WorkingProcessService>();
-            //services.AddTransient<ImportDataService, ImportDataService>();
+            services.AddTransient<IWorkingHoursValidator, WorkingHoursValidator>();
             services.AddTransient<RegisteredJob, RegisteredJob>();
         }
 
@@ -97,7 +97,7 @@ namespace HRMS.Web
             {
                 options.AuthenticationScheme = "Cookie";
                 options.LoginPath = "/Home/SignIn";
-                options.AccessDeniedPath = "/Home/Error";
+                options.AccessDeniedPath = "/Home/PermissionDenied";
                 options.AutomaticAuthentication = true;
             });
 
@@ -123,7 +123,8 @@ namespace HRMS.Web
 
             app.UseIdentity();
 
-            app.ApplicationServices.GetService<RegisteredJob>().InitializeJobs();       
+            //app.ApplicationServices.GetService<RegisteredJob>().InitializeJobs();
+            //app.ApplicationServices.GetService<RegisteredJob>().MigrationJobs();
         }
     }
 }

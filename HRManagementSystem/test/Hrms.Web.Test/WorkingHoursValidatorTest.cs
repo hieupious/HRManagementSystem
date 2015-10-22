@@ -22,7 +22,7 @@ namespace Hrms.Web.Test
             BreaktimeEnd = new TimeSpan(13, 0, 0)
         };
 
-        public static UserGroup _standard_Group = new UserGroup()
+        public static WorkingPoliciesGroup _standard_Group = new WorkingPoliciesGroup()
         {
             WorkingHoursRules = new WorkingHoursRuleBase[]
             {
@@ -109,7 +109,7 @@ namespace Hrms.Web.Test
             BreaktimeEnd = new TimeSpan(13, 0, 0)
         };
 
-        public static UserGroup _standard_ml_Group = new UserGroup()
+        public static WorkingPoliciesGroup _standard_ml_Group = new WorkingPoliciesGroup()
         {
             WorkingHoursRules = new WorkingHoursRuleBase[]
             {
@@ -196,7 +196,7 @@ namespace Hrms.Web.Test
             BreaktimeEnd = new TimeSpan(13, 0, 0)
         };
 
-        public static UserGroup _standard_me_Group = new UserGroup()
+        public static WorkingPoliciesGroup _standard_me_Group = new WorkingPoliciesGroup()
         {
             WorkingHoursRules = new WorkingHoursRuleBase[]
             {
@@ -293,7 +293,7 @@ namespace Hrms.Web.Test
             Tolerance = new TimeSpan(1, 0, 0)
         };
 
-        public static UserGroup _devsqas_Group = new UserGroup()
+        public static WorkingPoliciesGroup _devsqas_Group = new WorkingPoliciesGroup()
         {
             WorkingHoursRules = new WorkingHoursRuleBase[]
             {
@@ -508,7 +508,7 @@ namespace Hrms.Web.Test
             Tolerance = new TimeSpan(1, 0, 0)
         };
 
-        public static UserGroup _devsqas_ml_Group = new UserGroup()
+        public static WorkingPoliciesGroup _devsqas_ml_Group = new WorkingPoliciesGroup()
         {
             WorkingHoursRules = new WorkingHoursRuleBase[]
             {
@@ -723,7 +723,7 @@ namespace Hrms.Web.Test
             Tolerance = new TimeSpan(1, 0, 0)
         };
 
-        public static UserGroup _devsqas_me_Group = new UserGroup()
+        public static WorkingPoliciesGroup _devsqas_me_Group = new WorkingPoliciesGroup()
         {
             WorkingHoursRules = new WorkingHoursRuleBase[]
             {
@@ -933,7 +933,7 @@ namespace Hrms.Web.Test
             Tolerance = new TimeSpan(0, 30, 0)
         };
 
-        public static UserGroup _special2_Group = new UserGroup()
+        public static WorkingPoliciesGroup _special2_Group = new WorkingPoliciesGroup()
         {
             WorkingHoursRules = new WorkingHoursRuleBase[]
             {
@@ -1076,7 +1076,7 @@ namespace Hrms.Web.Test
             Tolerance = new TimeSpan(0, 30, 0)
         };
 
-        public static UserGroup _special2_ml_Group = new UserGroup()
+        public static WorkingPoliciesGroup _special2_ml_Group = new WorkingPoliciesGroup()
         {
             WorkingHoursRules = new WorkingHoursRuleBase[]
             {
@@ -1219,7 +1219,7 @@ namespace Hrms.Web.Test
             Tolerance = new TimeSpan(0, 30, 0)
         };
 
-        public static UserGroup _special2_me_Group = new UserGroup()
+        public static WorkingPoliciesGroup _special2_me_Group = new WorkingPoliciesGroup()
         {
             WorkingHoursRules = new WorkingHoursRuleBase[]
             {
@@ -1347,13 +1347,13 @@ namespace Hrms.Web.Test
 
         #region Helpers
 
-        private void LackingTime(int checkInHour, int checkInMinute, int checkOutHour, int checkOutMinute, int lackingTime, UserGroup group)
+        private void LackingTime(int checkInHour, int checkInMinute, int checkOutHour, int checkOutMinute, int lackingTime, WorkingPoliciesGroup group)
         {
             var date = new DateTime(2015, 1, 1);
 
             var user = new UserInfo()
             {
-                Group = group,
+                WorkingPoliciesGroup = group,
                 DailyRecords = new DailyWorkingRecord[]
                 {
                     new DailyWorkingRecord { WorkingDay = date, CheckIn = date.AddHours(checkInHour).AddMinutes(checkInMinute), CheckOut = date.AddHours(checkOutHour).AddMinutes(checkOutMinute) }
