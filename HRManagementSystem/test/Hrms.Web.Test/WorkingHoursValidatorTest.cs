@@ -916,6 +916,267 @@ namespace Hrms.Web.Test
 
         #endregion
 
+        #region Special 1
+
+        #region WorkingHoursRules
+
+        public static WorkingHoursRuleBase _special1_BaseTimeWorkingHoursRule = new BaseTimeWorkingHoursRule()
+        {
+            WorkingTimeStart = new TimeSpan(8, 30, 0),
+            WorkingTimeEnd = new TimeSpan(17, 30, 0),
+            BreaktimeStart = new TimeSpan(12, 0, 0),
+            BreaktimeEnd = new TimeSpan(13, 0, 0)
+        };
+
+        public static UserGroup _special1_Group = new UserGroup()
+        {
+            WorkingHoursRules = new WorkingHoursRuleBase[]
+            {
+                _special1_BaseTimeWorkingHoursRule
+            }
+        };
+
+        #endregion
+
+        [Theory]
+        #region InlineData
+        [InlineData(8, 20, 8, 30, 480)]
+        [InlineData(8, 20, 8, 40, 470)]
+        [InlineData(8, 20, 11, 50, 280)]
+        [InlineData(8, 20, 12, 0, 270)]
+        [InlineData(8, 20, 12, 30, 270)]
+        [InlineData(8, 20, 13, 0, 270)]
+        [InlineData(8, 20, 13, 10, 260)]
+        [InlineData(8, 20, 17, 20, 10)]
+        [InlineData(8, 20, 17, 30, 0)]
+        [InlineData(8, 20, 17, 40, 0)]
+        [InlineData(8, 30, 8, 40, 470)]
+        [InlineData(8, 30, 11, 50, 280)]
+        [InlineData(8, 30, 12, 0, 270)]
+        [InlineData(8, 30, 12, 30, 270)]
+        [InlineData(8, 30, 13, 0, 270)]
+        [InlineData(8, 30, 13, 10, 260)]
+        [InlineData(8, 30, 17, 20, 10)]
+        [InlineData(8, 30, 17, 30, 0)]
+        [InlineData(8, 30, 17, 40, 0)]
+        [InlineData(8, 40, 11, 50, 290)]
+        [InlineData(8, 40, 12, 0, 280)]
+        [InlineData(8, 40, 12, 30, 280)]
+        [InlineData(8, 40, 13, 0, 280)]
+        [InlineData(8, 40, 13, 10, 270)]
+        [InlineData(8, 40, 17, 20, 20)]
+        [InlineData(8, 40, 17, 30, 10)]
+        [InlineData(8, 40, 17, 40, 10)]
+        [InlineData(11, 50, 12, 0, 470)]
+        [InlineData(11, 50, 12, 30, 470)]
+        [InlineData(11, 50, 13, 0, 470)]
+        [InlineData(11, 50, 13, 10, 460)]
+        [InlineData(11, 50, 17, 20, 210)]
+        [InlineData(11, 50, 17, 30, 200)]
+        [InlineData(11, 50, 17, 40, 200)]
+        [InlineData(12, 0, 12, 30, 480)]
+        [InlineData(12, 0, 13, 0, 480)]
+        [InlineData(12, 0, 13, 10, 470)]
+        [InlineData(12, 0, 17, 20, 220)]
+        [InlineData(12, 0, 17, 30, 210)]
+        [InlineData(12, 0, 17, 40, 210)]
+        [InlineData(12, 30, 13, 0, 480)]
+        [InlineData(12, 30, 13, 10, 470)]
+        [InlineData(12, 30, 17, 20, 220)]
+        [InlineData(12, 30, 17, 30, 210)]
+        [InlineData(12, 30, 17, 40, 210)]
+        [InlineData(13, 0, 13, 10, 470)]
+        [InlineData(13, 0, 17, 20, 220)]
+        [InlineData(13, 0, 17, 30, 210)]
+        [InlineData(13, 0, 17, 40, 210)]
+        [InlineData(13, 10, 17, 20, 230)]
+        [InlineData(13, 10, 17, 30, 220)]
+        [InlineData(13, 10, 17, 40, 220)]
+        [InlineData(17, 20, 17, 30, 470)]
+        [InlineData(17, 20, 17, 40, 470)]
+        [InlineData(17, 30, 17, 40, 480)]
+        #endregion
+        public void WorkingHoursValidator_Special1_LackingTime(int checkInHour, int checkInMinute, int checkOutHour, int checkOutMinute, int lackingTime)
+        {
+            LackingTime(checkInHour, checkInMinute, checkOutHour, checkOutMinute, lackingTime, _special1_Group);
+        }
+
+        #endregion
+
+        #region Special 1 Maternity Arrive Late
+
+        #region WorkingHoursRules
+
+        public static WorkingHoursRuleBase _special1_ml_BaseTimeWorkingHoursRule = new BaseTimeWorkingHoursRule()
+        {
+            WorkingTimeStart = new TimeSpan(9, 30, 0),
+            WorkingTimeEnd = new TimeSpan(17, 30, 0),
+            BreaktimeStart = new TimeSpan(12, 0, 0),
+            BreaktimeEnd = new TimeSpan(13, 0, 0)
+        };
+
+        public static UserGroup _special1_ml_Group = new UserGroup()
+        {
+            WorkingHoursRules = new WorkingHoursRuleBase[]
+            {
+                _special1_ml_BaseTimeWorkingHoursRule
+            }
+        };
+
+        #endregion
+
+        [Theory]
+        #region InlineData
+        [InlineData(9, 20, 9, 30, 420)]
+        [InlineData(9, 20, 9, 40, 410)]
+        [InlineData(9, 20, 11, 50, 280)]
+        [InlineData(9, 20, 12, 0, 270)]
+        [InlineData(9, 20, 12, 30, 270)]
+        [InlineData(9, 20, 13, 0, 270)]
+        [InlineData(9, 20, 13, 10, 260)]
+        [InlineData(9, 20, 17, 20, 10)]
+        [InlineData(9, 20, 17, 30, 0)]
+        [InlineData(9, 20, 17, 40, 0)]
+        [InlineData(9, 30, 9, 40, 410)]
+        [InlineData(9, 30, 11, 50, 280)]
+        [InlineData(9, 30, 12, 0, 270)]
+        [InlineData(9, 30, 12, 30, 270)]
+        [InlineData(9, 30, 13, 0, 270)]
+        [InlineData(9, 30, 13, 10, 260)]
+        [InlineData(9, 30, 17, 20, 10)]
+        [InlineData(9, 30, 17, 30, 0)]
+        [InlineData(9, 30, 17, 40, 0)]
+        [InlineData(9, 40, 11, 50, 290)]
+        [InlineData(9, 40, 12, 0, 280)]
+        [InlineData(9, 40, 12, 30, 280)]
+        [InlineData(9, 40, 13, 0, 280)]
+        [InlineData(9, 40, 13, 10, 270)]
+        [InlineData(9, 40, 17, 20, 20)]
+        [InlineData(9, 40, 17, 30, 10)]
+        [InlineData(9, 40, 17, 40, 10)]
+        [InlineData(11, 50, 12, 0, 410)]
+        [InlineData(11, 50, 12, 30, 410)]
+        [InlineData(11, 50, 13, 0, 410)]
+        [InlineData(11, 50, 13, 10, 400)]
+        [InlineData(11, 50, 17, 20, 150)]
+        [InlineData(11, 50, 17, 30, 140)]
+        [InlineData(11, 50, 17, 40, 140)]
+        [InlineData(12, 0, 12, 30, 420)]
+        [InlineData(12, 0, 13, 0, 420)]
+        [InlineData(12, 0, 13, 10, 410)]
+        [InlineData(12, 0, 17, 20, 160)]
+        [InlineData(12, 0, 17, 30, 150)]
+        [InlineData(12, 0, 17, 40, 150)]
+        [InlineData(12, 30, 13, 0, 420)]
+        [InlineData(12, 30, 13, 10, 410)]
+        [InlineData(12, 30, 17, 20, 160)]
+        [InlineData(12, 30, 17, 30, 150)]
+        [InlineData(12, 30, 17, 40, 150)]
+        [InlineData(13, 0, 13, 10, 410)]
+        [InlineData(13, 0, 17, 20, 160)]
+        [InlineData(13, 0, 17, 30, 150)]
+        [InlineData(13, 0, 17, 40, 150)]
+        [InlineData(13, 10, 17, 20, 170)]
+        [InlineData(13, 10, 17, 30, 160)]
+        [InlineData(13, 10, 17, 40, 160)]
+        [InlineData(17, 20, 17, 30, 410)]
+        [InlineData(17, 20, 17, 40, 410)]
+        [InlineData(17, 30, 17, 40, 420)]
+        #endregion
+        public void WorkingHoursValidator_Special1_ML_LackingTime(int checkInHour, int checkInMinute, int checkOutHour, int checkOutMinute, int lackingTime)
+        {
+            LackingTime(checkInHour, checkInMinute, checkOutHour, checkOutMinute, lackingTime, _special1_ml_Group);
+        }
+
+        #endregion
+
+        #region Special 1 Maternity Arrive Late
+
+        #region WorkingHoursRules
+
+        public static WorkingHoursRuleBase _special1_me_BaseTimeWorkingHoursRule = new BaseTimeWorkingHoursRule()
+        {
+            WorkingTimeStart = new TimeSpan(8, 30, 0),
+            WorkingTimeEnd = new TimeSpan(16, 30, 0),
+            BreaktimeStart = new TimeSpan(12, 0, 0),
+            BreaktimeEnd = new TimeSpan(13, 0, 0)
+        };
+
+        public static UserGroup _special1_me_Group = new UserGroup()
+        {
+            WorkingHoursRules = new WorkingHoursRuleBase[]
+            {
+                _special1_me_BaseTimeWorkingHoursRule
+            }
+        };
+
+        #endregion
+
+        [Theory]
+        #region InlineData
+        [InlineData(8, 20, 8, 30, 420)]
+        [InlineData(8, 20, 8, 40, 410)]
+        [InlineData(8, 20, 11, 50, 220)]
+        [InlineData(8, 20, 12, 0, 210)]
+        [InlineData(8, 20, 12, 30, 210)]
+        [InlineData(8, 20, 13, 0, 210)]
+        [InlineData(8, 20, 13, 10, 200)]
+        [InlineData(8, 20, 16, 20, 10)]
+        [InlineData(8, 20, 16, 30, 0)]
+        [InlineData(8, 20, 16, 40, 0)]
+        [InlineData(8, 30, 8, 40, 410)]
+        [InlineData(8, 30, 11, 50, 220)]
+        [InlineData(8, 30, 12, 0, 210)]
+        [InlineData(8, 30, 12, 30, 210)]
+        [InlineData(8, 30, 13, 0, 210)]
+        [InlineData(8, 30, 13, 10, 200)]
+        [InlineData(8, 30, 16, 20, 10)]
+        [InlineData(8, 30, 16, 30, 0)]
+        [InlineData(8, 30, 16, 40, 0)]
+        [InlineData(8, 40, 11, 50, 230)]
+        [InlineData(8, 40, 12, 0, 220)]
+        [InlineData(8, 40, 12, 30, 220)]
+        [InlineData(8, 40, 13, 0, 220)]
+        [InlineData(8, 40, 13, 10, 210)]
+        [InlineData(8, 40, 16, 20, 20)]
+        [InlineData(8, 40, 16, 30, 10)]
+        [InlineData(8, 40, 16, 40, 10)]
+        [InlineData(11, 50, 12, 0, 410)]
+        [InlineData(11, 50, 12, 30, 410)]
+        [InlineData(11, 50, 13, 0, 410)]
+        [InlineData(11, 50, 13, 10, 400)]
+        [InlineData(11, 50, 16, 20, 210)]
+        [InlineData(11, 50, 16, 30, 200)]
+        [InlineData(11, 50, 16, 40, 200)]
+        [InlineData(12, 0, 12, 30, 420)]
+        [InlineData(12, 0, 13, 0, 420)]
+        [InlineData(12, 0, 13, 10, 410)]
+        [InlineData(12, 0, 16, 20, 220)]
+        [InlineData(12, 0, 16, 30, 210)]
+        [InlineData(12, 0, 16, 40, 210)]
+        [InlineData(12, 30, 13, 0, 420)]
+        [InlineData(12, 30, 13, 10, 410)]
+        [InlineData(12, 30, 16, 20, 220)]
+        [InlineData(12, 30, 16, 30, 210)]
+        [InlineData(12, 30, 16, 40, 210)]
+        [InlineData(13, 0, 13, 10, 410)]
+        [InlineData(13, 0, 16, 20, 220)]
+        [InlineData(13, 0, 16, 30, 210)]
+        [InlineData(13, 0, 16, 40, 210)]
+        [InlineData(13, 10, 16, 20, 230)]
+        [InlineData(13, 10, 16, 30, 220)]
+        [InlineData(13, 10, 16, 40, 220)]
+        [InlineData(16, 20, 16, 30, 410)]
+        [InlineData(16, 20, 16, 40, 410)]
+        [InlineData(16, 30, 16, 40, 420)]
+        #endregion
+        public void WorkingHoursValidator_Special1_ME_LackingTime(int checkInHour, int checkInMinute, int checkOutHour, int checkOutMinute, int lackingTime)
+        {
+            LackingTime(checkInHour, checkInMinute, checkOutHour, checkOutMinute, lackingTime, _special1_me_Group);
+        }
+
+        #endregion
+
         #region Special 2
 
         #region WorkingHoursRules
