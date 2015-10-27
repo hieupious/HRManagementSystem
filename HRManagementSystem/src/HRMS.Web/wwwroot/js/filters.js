@@ -25,7 +25,7 @@
     filters.filter("sum", function () {
         return function (records, property) {
             var sum = 0;
-            for(var i = 0; i < records.length; i++) {
+            for (var i = 0; i < records.length; i++) {
                 sum = sum + records[i][property];
             }
             return sum;

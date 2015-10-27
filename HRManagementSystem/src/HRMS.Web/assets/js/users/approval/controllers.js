@@ -10,6 +10,10 @@
             });
                         
             $scope.ApproveRequest = function (record) {
+                if (record.ApproverComment == null || record.ApproverComment == "") {
+                    alert('Please enter your comment.');
+                    return;
+                }
                 if (record.Approved == null) {
                     alert('Please select your choice.');
                     return;

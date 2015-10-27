@@ -7,6 +7,9 @@ using HRMS.Web.Services;
 using HRMS.Web.Models;
 using HRMS.Web.Configuration;
 using Microsoft.Framework.OptionsModel;
+using Microsoft.AspNet.Builder;
+using Microsoft.Framework.DependencyInjection;
+
 
 namespace HRMS.Web.Jobs
 {
@@ -16,13 +19,15 @@ namespace HRMS.Web.Jobs
         private ApplicationDbContext dbContext;
         private ImportConfiguration importConfiguration;
         private IDailyWorkingProcessService dailyWorkingProcess;
-        public RegisteredJob(IImportDataService importDataService, ApplicationDbContext dbContext,
-            IOptions<ImportConfiguration> importConfiguration, IDailyWorkingProcessService dailyWorkingProcess)
+        IServiceProvider app;
+        public RegisteredJob(IOptions<ImportConfiguration> importConfiguration,
+            IServiceProvider app, ApplicationDbContext dbContext)
         {
-            this.importDataService = importDataService;
-            this.dbContext = dbContext;
+            this.app = app;
             this.importConfiguration = importConfiguration.Options;
-            this.dailyWorkingProcess = dailyWorkingProcess;
+            importDataService = app.GetService<IImportDataService>();
+            dailyWorkingProcess = app.GetService<IDailyWorkingProcessService>();
+            this.dbContext = dbContext;
         }
 
         public RegisteredJob()
@@ -41,8 +46,7 @@ namespace HRMS.Web.Jobs
 
         public void MigrationJobs()
         {
-            var id = BackgroundJob.Enqueue<RegisteredJob>(r => r.MigrateCheckInOutData());
-            
+            BackgroundJob.Enqueue<RegisteredJob>(r => r.ImportAndHandleData());
         }
 
         public void DailyCopyExternalFile()
@@ -51,33 +55,69 @@ namespace HRMS.Web.Jobs
             var copySuccessful = importDataService.CopyFileFromExternal(ref lastWriteTime);
             if (copySuccessful)
             {
+                dbContext = app.GetService<ApplicationDbContext>();
                 // write down latest import time.                
-                importDataService.ImportDailyCheckInOutFromAccessDB();
+                var result = importDataService.ImportCheckInOutRecordWithDay(DateTime.Now, null, dbContext);
+                if (result > 0)
+                {
+                    ProcessDailyWorkingReportJobWithDay(DateTime.Now);
+                }
+                dbContext.Dispose();
             }
         }
 
         public void DailyImportJob()
         {
-            importDataService.ImportDailyCheckInOutFromAccessDB();
+            importDataService.ImportCheckInOutFromAccessDBDaily();
         }
 
-        public void MigrateCheckInOutData()
+        public void ImportDataJobWithDay(DateTime day)
         {
-            importDataService.ImportCheckInOutRecordWithDay(new DateTime(2015, 10, 21), DateTime.Now);
+            importDataService.ImportCheckInOutRecordWithDay(day);
+        }
+
+        public void ProcessDailyWorkingReportJobWithDay(DateTime day)
+        {
+            var userIds = dbContext.UserInfoes.ToList();
+            foreach (var userId in userIds)
+            {
+                dailyWorkingProcess.ProcessDailyWorkingReport(userId.Id, day, dbContext);
+            }
+        }
+
+        public void ProcessDailyWorkingReportJob()
+        {
+            ProcessDailyWorkingReportJobWithDay(DateTime.Now);
         }
 
         public void ImportAndHandleData()
         {
-            var fromDay = new DateTime(2015, 21, 10);
-            var toDay = DateTime.Now;
-            
-            var result = importDataService.ImportCheckInOutRecordWithDay(fromDay, toDay);
-            if(result > 0)
+            foreach (var day in WorkingProcessService.AllDatesInMonth(2015, 10))
             {
+                if (day.Date < DateTime.Now.Date)
+                {
+                    
+                    dbContext = app.GetService<ApplicationDbContext>();
 
-                //dailyWorkingProcess.HandleWorkingReport
+                    var result = importDataService.ImportCheckInOutRecordWithDay(day, null, dbContext);
+                    if (result > 0)
+                    {
+                        ProcessDailyWorkingReportJobWithDay(day);
+                    }
+                    dbContext.Dispose();
+
+                }
             }
+
         }
+
+
+
+        public void ProcessMonthlyReport(DateTime month)
+        {
+
+        }
+
 
         public void BootstapData()
         {

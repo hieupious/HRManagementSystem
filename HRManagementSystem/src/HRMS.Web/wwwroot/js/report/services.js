@@ -4,7 +4,8 @@
 
     services.factory("ReportResource", ["Resource",
         function ($resource) {
-            return $resource("/api/Reports/:month", { month: '@month' });
+            return $resource("/api/Users/GetMonthlyWorkingReport?month=:month", {
+            month: '@month' });
         }
     ]);
 })();

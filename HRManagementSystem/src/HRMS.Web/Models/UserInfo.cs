@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
 
 namespace HRMS.Web.Models
 {
@@ -15,10 +16,12 @@ namespace HRMS.Web.Models
         public int DepartmentId { get; set; }
         public string EnglishName { get; set; }
         public string WindowsAccount { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public Role Role { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
         public Office Office { get; set; }
         public int? WorkingPoliciesGroupId { get; set; }
+        public DateTime? StartWorkingDay { get; set; }
         public virtual Department Department { get; set; }
         [JsonIgnore]
         public virtual WorkingPoliciesGroup WorkingPoliciesGroup { get; set; }

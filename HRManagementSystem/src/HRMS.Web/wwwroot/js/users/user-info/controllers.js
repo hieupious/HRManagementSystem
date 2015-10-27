@@ -34,12 +34,21 @@
             })
 
             $scope.GetApproval = function (record) {
+                if (record.GetApprovedReason == null || record.GetApprovedReason == "") {
+                    alert('Please enter your reason to get approval');
+                    return;
+                }
+                if (record.Approver == null) {
+                    alert("Please select Approver.");
+                    return;
+                }
                 record.editMode = false;
+
                 record.ApproverId = record.Approver.Id;
-                console.log(record);
+
                 $http.put("/api/Users/" + $scope.empId, record);
             }
-            
+
             $http.get("/api/Users/ManagerList/").success(function (response) {
                 $scope.managers = response;
             });

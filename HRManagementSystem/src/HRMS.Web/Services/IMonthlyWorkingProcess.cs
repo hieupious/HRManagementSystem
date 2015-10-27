@@ -8,6 +8,6 @@ namespace HRMS.Web.Services
 {
     public interface IMonthlyWorkingProcess
     {
-        MonthlyRecord GetMonthlyRecord(int year, int month, UserInfo user, IEnumerable<DailyWorkingRecord> dailyRecords);
+        ICollection<MonthlyRecord> GetMonthlyRecords(int year, int month);
     }
 }

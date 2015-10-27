@@ -48,14 +48,15 @@ namespace HRMS.Web.Services
             return Mapper.MapMany<CheckInOutRecord, CheckInOutMapping>(checkInOutInfo);
         }
 
-        public int ImportDailyCheckInOutFromAccessDB()
+        public int ImportCheckInOutFromAccessDBDaily()
         {
-            // only get records have userId in the system
-            var dailyCheckInOutRecords = GetDailyCheckInOutFromAccessDB().Where(r => efDbContext.UserInfoes.Any(u => u.ExternalId == r.UserId));
-            // filter duplicated records
-            var filteredRecords = dailyCheckInOutRecords.Where(r => !efDbContext.CheckInOutRecords.Any(c => c.CheckTime == r.CheckTime && c.UserId == r.UserId));
-            efDbContext.CheckInOutRecords.AddRange(filteredRecords);
-            return efDbContext.SaveChanges();
+            //// only get records have userId in the system
+            //var dailyCheckInOutRecords = GetDailyCheckInOutFromAccessDB().Where(r => efDbContext.UserInfoes.Any(u => u.ExternalId == r.UserId));
+            //// filter duplicated records
+            //var filteredRecords = dailyCheckInOutRecords.Where(r => !efDbContext.CheckInOutRecords.Any(c => c.CheckTime == r.CheckTime && c.UserId == r.UserId));
+            //efDbContext.CheckInOutRecords.AddRange(filteredRecords);
+            //return efDbContext.SaveChanges();
+            return ImportCheckInOutRecordWithDay(DateTime.Now);
         }
 
         public IEnumerable<CheckInOutRecord> GetDailyCheckInOutFromAccessDB()
@@ -71,13 +72,17 @@ namespace HRMS.Web.Services
             return Mapper.MapMany<CheckInOutRecord, CheckInOutMapping>(checkInOutInfo);
         }
 
-        public int ImportCheckInOutRecordWithDay(DateTime fromDay, DateTime? toDay = null)
+        public int ImportCheckInOutRecordWithDay(DateTime fromDay, DateTime? toDay = null, ApplicationDbContext exDbContext = null)
         {
+            if(exDbContext != null)
+            {
+                efDbContext = exDbContext;
+            }
             // only get records have userId in the system
             var records = GetCheckInOutRecordWithDayFromAccessDB(fromDay, toDay).Where(r => efDbContext.UserInfoes.Any(u => u.ExternalId == r.UserId));
             // filter duplicated records
             var filteredRecords = records.Where(r => !efDbContext.CheckInOutRecords.Any(c => c.CheckTime == r.CheckTime && c.UserId == r.UserId));
-            efDbContext.CheckInOutRecords.AddRange(filteredRecords);
+            efDbContext.CheckInOutRecords.AddRange(filteredRecords);            
             return efDbContext.SaveChanges();
         }
 

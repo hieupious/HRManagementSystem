@@ -928,7 +928,7 @@ namespace Hrms.Web.Test
             BreaktimeEnd = new TimeSpan(13, 0, 0)
         };
 
-        public static UserGroup _special1_Group = new UserGroup()
+        public static WorkingPoliciesGroup _special1_Group = new WorkingPoliciesGroup()
         {
             WorkingHoursRules = new WorkingHoursRuleBase[]
             {
@@ -1015,7 +1015,7 @@ namespace Hrms.Web.Test
             BreaktimeEnd = new TimeSpan(13, 0, 0)
         };
 
-        public static UserGroup _special1_ml_Group = new UserGroup()
+        public static WorkingPoliciesGroup _special1_ml_Group = new WorkingPoliciesGroup()
         {
             WorkingHoursRules = new WorkingHoursRuleBase[]
             {
@@ -1102,7 +1102,7 @@ namespace Hrms.Web.Test
             BreaktimeEnd = new TimeSpan(13, 0, 0)
         };
 
-        public static UserGroup _special1_me_Group = new UserGroup()
+        public static WorkingPoliciesGroup _special1_me_Group = new WorkingPoliciesGroup()
         {
             WorkingHoursRules = new WorkingHoursRuleBase[]
             {

@@ -12,21 +12,34 @@ using Microsoft.AspNet.Authorization;
 
 namespace HRMS.Web.Controllers
 {
-    [Authorize(Roles = "NormalUser,Manager,Administrator,HRGroup")]
+
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IDailyWorkingProcessService dailyWorkingProcess;
+        private readonly IMonthlyWorkingProcess monthlyWorkingProcess;
         private readonly IWorkingHoursValidator workingHoursValidator;
-        private DbSet<WorkingPoliciesGroup> WorkingPoliciesGroup;
+        private DbSet<WorkingPoliciesGroup> _policies;
+        private DbSet<WorkingPoliciesGroup> WorkingPoliciesGroup
+        {
+            get
+            {
+                if(_policies == null)
+                {
+                    _policies = dbContext.GetWorkingPoliciesGroups();
+                }
+                return _policies;
+            }
+        }
 
-        public UsersController(ApplicationDbContext dbContext, IDailyWorkingProcessService dailyWorkingProcess, IWorkingHoursValidator workingHoursValidator)
+        public UsersController(ApplicationDbContext dbContext, IDailyWorkingProcessService dailyWorkingProcess, IWorkingHoursValidator workingHoursValidator,
+            IMonthlyWorkingProcess monthlyWorkingProcess)
         {
             this.dbContext = dbContext;
             this.dailyWorkingProcess = dailyWorkingProcess;
-            WorkingPoliciesGroup = dbContext.GetWorkingPoliciesGroups();
             this.workingHoursValidator = workingHoursValidator;
+            this.monthlyWorkingProcess = monthlyWorkingProcess;
         }
 
         // GET: api/values
@@ -44,9 +57,10 @@ namespace HRMS.Web.Controllers
             var user = dbContext.UserInfoes.Include(u => u.Department).FirstOrDefault(u => u.Id == id);
             if (user != null)
                 return JsonConvert.SerializeObject(user);
-            return "Not Found";
+            return null;
         }
 
+        [Authorize(Roles = "NormalUser,Manager,Administrator,HRGroup")]
         [HttpGet("{empId}/{Report}/{month?}")]
         public string Report(int empId, DateTime? month)
         {
@@ -56,87 +70,69 @@ namespace HRMS.Web.Controllers
             }
             if (!month.HasValue)
                 month = DateTime.Now;
-            var user = dbContext.UserInfoes.Where(u => int.Parse(u.EmployeeId) == empId).First();
+            var user = dbContext.UserInfoes.Where(u => int.Parse(u.EmployeeId) == empId).FirstOrDefault();
             if (user == null)
                 return null;
             if (user.WorkingPoliciesGroupId.HasValue)
+            {
+
                 user.WorkingPoliciesGroup = WorkingPoliciesGroup.SingleOrDefault(w => w.Id == user.WorkingPoliciesGroupId.Value);
+            }
             var records = new List<DailyWorkingRecord>();
             foreach (var day in WorkingProcessService.AllDatesInMonth(month.Value.Year, month.Value.Month))
             {
-                if (day <= DateTime.Now.Date && WorkingProcessService.IsWorkingDay(day))
+                var record = dbContext.DailyWorkingRecords.Include(d => d.Approver).Include(d => d.CheckInOutRecords).FirstOrDefault(d => d.WorkingDay.Date == day.Date && d.UserInfoId == user.Id);
+                if (record != null)
                 {
-                    var record = dailyWorkingProcess.HandleWorkingReport(user.Id, day);
-                    if(user.WorkingPoliciesGroupId.HasValue)
-                    {                        
-                        record.MinuteLate = workingHoursValidator.ValidateDailyRecord(record, user.WorkingPoliciesGroup, day);
-                    }
+                    record.MinuteLate = workingHoursValidator.ValidateDailyRecord(record, user.WorkingPoliciesGroup, day);
                     records.Add(record);
                 }
             }
-            return JsonConvert.SerializeObject(records);
+            return JsonConvert.SerializeObject(records.OrderByDescending(r => r.WorkingDay));
         }
 
-
+        [Authorize(Roles = "NormalUser,Manager,Administrator,HRGroup")]
         [HttpGet("ManagerList")]
         public string ManagerList()
         {
-            var managers = dbContext.UserInfoes.Where(u => u.Role == Role.Manager);
+            var managers = dbContext.UserInfoes.Where(u => u.Role == Role.Manager || u.Role == Role.HRGroup);
             return JsonConvert.SerializeObject(managers);
         }
 
+        [Authorize(Roles = "Administrator,HRGroup")]
         [HttpGet("GetMonthlyWorkingReport")]
-        public string GetMonthlyWorkingReport(int year, int month)
+        public string GetMonthlyWorkingReport(DateTime month)
         {
-            var monthRecords = dbContext.MonthlyRecords.Where(m => m.Month == month && m.Year == year);
-
+            var monthRecords = monthlyWorkingProcess.GetMonthlyRecords(2015, 10);
             return JsonConvert.SerializeObject(monthRecords);
         }
 
-        [HttpGet("ProcessDailyWorkingReport")]
-        public string ProcessDailyWorkingReport()
-        {
-            int year = 2015;
-            int month = 8;
-            var users = dbContext.UserInfoes.ToList();
-            foreach (var user in users)
-            {
-                var days = WorkingProcessService.AllDatesInMonth(year, month);
-                foreach (var day in days)
-                {
-                    var records = dbContext.CheckInOutRecords.Where(u => u.UserId == user.Id && u.CheckTime.Date == day).ToList();
-                    if (records != null && records.Count > 0)
-                    {
-                        var dailyRecord = dailyWorkingProcess.ProcessDailyWorking(user, records, day);
-                        if (dailyRecord != null)
-                            dbContext.DailyWorkingRecords.Add(dailyRecord);
-                    }
-                }
-                dbContext.SaveChanges();
-            }
-
-
-            return "";
-        }
-
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
 
         // PUT api/values/5
+        [Authorize(Roles = "NormalUser,Manager,Administrator,HRGroup")]
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody]DailyWorkingRecord value)
         {
             var record = dbContext.DailyWorkingRecords.FirstOrDefault(d => d.Id == value.Id);
             if (record != null)
             {
+                // if approve/reject, cannot update
+                if (record.Approved.HasValue)
+                    return new HttpUnauthorizedResult();
+                // get current user is userid of dailyworking record
+                var currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                if (currentUserId != record.UserInfoId)
+                    return new HttpUnauthorizedResult();
+                // check whether ApproverId in Manager List
+                if (!dbContext.UserInfoes.Where(u => u.Role == Role.Manager || u.Role == Role.HRGroup).Any(u => u.Id == value.ApproverId))
+                    return new HttpUnauthorizedResult();
+
                 record.GetApprovedReason = value.GetApprovedReason;
                 record.ApproverId = value.ApproverId;
                 dbContext.SaveChanges();
+                return new HttpOkResult();
             }
-            return new NoContentResult();
+            return new HttpNotFoundResult();
         }
 
         // DELETE api/values/5
@@ -145,24 +141,45 @@ namespace HRMS.Web.Controllers
         {
         }
 
+        [Authorize(Roles = "Manager,Administrator,HRGroup")]
         [HttpGet("GetPendingApproval")]
         public string GetPendingApproval()
         {
-            var pendingRecords = dbContext.DailyWorkingRecords.Include(d => d.UserInfo).Include(d => d.Approver).Where(d => d.GetApprovedReason != null);
+            var pendingRecords = new List<DailyWorkingRecord>();
+            if (User.IsInRole(Role.Manager.ToString()) || User.IsInRole(Role.HRGroup.ToString()))
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                pendingRecords = dbContext.DailyWorkingRecords.Include(d => d.UserInfo).Include(d => d.Approver).Include(d => d.CheckInOutRecords).Where(d => d.ApproverId == int.Parse(userId)).ToList();
+            }
+            else
+            {
+                pendingRecords = dbContext.DailyWorkingRecords.Include(d => d.UserInfo).Include(d => d.Approver).Include(d => d.CheckInOutRecords).Where(d => d.GetApprovedReason != null).ToList();
+            }
+            foreach (var record in pendingRecords)
+            {
+                if(record.UserInfo.WorkingPoliciesGroupId.HasValue)
+                    record.MinuteLate = workingHoursValidator.ValidateDailyRecord(record, WorkingPoliciesGroup.SingleOrDefault(w => w.Id == record.UserInfo.WorkingPoliciesGroupId.Value), record.WorkingDay);
+            }
             return JsonConvert.SerializeObject(pendingRecords);
         }
 
+        [Authorize(Roles = "Manager,Administrator,HRGroup")]
         [HttpPut("Approval")]
         public IActionResult Approval([FromBody] DailyWorkingRecord value)
         {
             var record = dbContext.DailyWorkingRecords.FirstOrDefault(d => d.Id == value.Id);
             if (record != null)
             {
+                // check only current user is manager, hrgroup, administrator is updated approval.
+                // check if their id is approverid, they will permit to update.
+                if (!record.ApproverId.HasValue || record.ApproverId.Value != int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))
+                    return new HttpUnauthorizedResult();
                 record.Approved = value.Approved;
                 record.ApproverComment = value.ApproverComment;
                 dbContext.SaveChanges();
+                return new HttpOkResult();
             }
-            return new NoContentResult();
+            return new HttpNotFoundResult();
         }
     }
 }

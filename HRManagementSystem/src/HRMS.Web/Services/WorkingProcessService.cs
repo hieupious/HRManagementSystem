@@ -16,20 +16,24 @@ namespace HRMS.Web.Services
             this.dbContext = dbContext;
             this.workingHourValidator = workingHourValidator;
         }
-        public IEnumerable<CheckInOutRecord> GetCheckInOutRecordOfDay(UserInfo user, DateTime day)
-        {
-            return dbContext.CheckInOutRecords.Where(u => u.UserId == user.ExternalId && u.CheckTime.Date == day);
-        }
 
-        public DailyWorkingRecord HandleWorkingReport(int userId, DateTime day)
+        public DailyWorkingRecord ProcessDailyWorkingReport(int userId, DateTime day, ApplicationDbContext exDbContext = null)
         {
+            if (exDbContext != null)
+                dbContext = exDbContext;
             var user = dbContext.UserInfoes.Include(u => u.DailyRecords).ThenInclude(d => d.CheckInOutRecords).SingleOrDefault(u => u.Id == userId);
-            var userRecordOfDay = dbContext.CheckInOutRecords.Where(c => c.CheckTime.Date == day.Date && c.UserId == user.ExternalId);
-            if (user != null)
+            if (user != null && IsWorkingDay(day, user))
             {
+                var userRecordOfDay = dbContext.CheckInOutRecords.Where(c => c.CheckTime.Date == day.Date && c.UserId == user.ExternalId);
                 var dailyRecordOfDay = user.DailyRecords.SingleOrDefault(d => d.WorkingDay.Date == day.Date);
                 if (dailyRecordOfDay != null)
                 {
+                    if (userRecordOfDay == null)
+                    {
+                        dailyRecordOfDay.CheckInOutRecords = null;
+                        dbContext.SaveChanges();
+                        return dailyRecordOfDay;
+                    }
                     var newRecords = userRecordOfDay.Where(c => c.DailyRecordId == null);
                     if (newRecords != null && newRecords.Count() > 0)
                     {
@@ -53,58 +57,14 @@ namespace HRMS.Web.Services
                 }
 
             }
-
             return null;
         }
 
-        public DailyWorkingRecord GetDailyWorkingReport(UserInfo user, DateTime day, DailyWorkingRecord existedRecord = null)
+        public bool IsWorkingDay(DateTime day, UserInfo user)
         {
-            if (user != null)
-            {
-                var checkInOutRecords = GetCheckInOutRecordOfDay(user, day);
-                return ProcessDailyWorking(user, checkInOutRecords, day, existedRecord);
-            }
-            return null;
-        }
-        public DailyWorkingRecord ProcessDailyWorking(UserInfo user, IEnumerable<CheckInOutRecord> checkInOutRecords, DateTime day, DailyWorkingRecord existedRecord = null)
-        {
-            if (IsWorkingDay(day))
-            {
-
-                DailyWorkingRecord workingReport = new DailyWorkingRecord()
-                {
-                    UserInfoId = user.Id,
-                    WorkingDay = day
-                };
-
-                if (checkInOutRecords != null && checkInOutRecords.Count() > 0)
-                {
-                    // var recordsOfDay = 
-                    var group = checkInOutRecords.GroupBy(c => c.CheckTime.Date);
-                    var sortedList = checkInOutRecords.OrderBy(c => c.CheckTime);
-                    //workingReport.CheckIn = sortedList.First().CheckTime;
-                    //workingReport.CheckOut = sortedList.Last().CheckTime;
-                    //workingReport.CheckInOutRecords = checkInOutRecords.
-                }
-                else
-                {
-                    //workingReport.CheckIn = null;
-                    //workingReport.CheckOut = null;
-                }
-                if (existedRecord != null)
-                {
-                    //existedRecord.CheckIn = workingReport.CheckIn;
-                    //existedRecord.CheckOut = workingReport.CheckOut;
-                    return existedRecord;
-                }
-                return workingReport;
-            }
-            return null;
-        }
-
-        public static bool IsWorkingDay(DateTime day)
-        {
-            if (day.DayOfWeek != DayOfWeek.Saturday && day.DayOfWeek != DayOfWeek.Sunday && !PublicHolidays(day.Year).Exists(d => d == day))
+            if (user.StartWorkingDay.HasValue && day >= user.StartWorkingDay.Value.Date
+                && day.DayOfWeek != DayOfWeek.Saturday && day.DayOfWeek != DayOfWeek.Sunday
+                && !PublicHolidays(day.Year).Exists(d => d.Date == day.Date))
                 return true;
             return false;
         }
@@ -122,7 +82,7 @@ namespace HRMS.Web.Services
         {
             if (fromDay.Date < toDay.Date)
                 throw new InvalidOperationException();
-            for(var day = fromDay.Date; day <= toDay.Date; day.AddDays(1))
+            for (var day = fromDay.Date; day <= toDay.Date; day.AddDays(1))
             {
                 yield return day;
             }
@@ -144,49 +104,42 @@ namespace HRMS.Web.Services
             return holidays;
         }
 
-        public MonthlyRecord GetMonthlyRecord(int year, int month, UserInfo user, IEnumerable<DailyWorkingRecord> dailyRecords)
+
+        /// <summary>
+        /// Get monthly report records 
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <returns></returns>
+        public ICollection<MonthlyRecord> GetMonthlyRecords(int year, int month)
         {
-            if (user != null && dailyRecords != null)
+            var violatedRecords = dbContext.DailyWorkingRecords.Include(d => d.CheckInOutRecords).Include(u => u.UserInfo).Where(
+                d => d.WorkingDay.Year == year && d.WorkingDay.Month == month && d.Approved != true && d.UserInfo.WorkingPoliciesGroupId.HasValue
+                ).GroupBy(v => v.UserInfoId).ToList();
+            var count = violatedRecords.Count();
+            ICollection<MonthlyRecord> monthRecords = new List<MonthlyRecord>();
+            var WorkingPolicyGroup = dbContext.GetWorkingPoliciesGroups();
+            foreach (var grpRecords in violatedRecords)
             {
-                MonthlyRecord monthlyRecord = new MonthlyRecord()
+                foreach (var record in grpRecords)
                 {
-                    Month = month,
-                    Year = year,
-                    UserInfoId = user.Id
-                };
-                var reportRecords = new List<DailyWorkingRecord>();
-
-                var lackTimeRecords = dailyRecords.Where(d => d.MinuteLate > 0).ToList();
-                reportRecords.AddRange(lackTimeRecords);
-
-                var totalLackTime = dailyRecords.Sum(d => d.MinuteLate);
-                if (totalLackTime > WorkingRule.TotalLackTime)
+                    record.MinuteLate = workingHourValidator.ValidateDailyRecord(record, WorkingPolicyGroup.SingleOrDefault(w => w.Id == record.UserInfo.WorkingPoliciesGroupId.Value), record.WorkingDay);
+                }
+                if(grpRecords.Sum(s => s.MinuteLate) > 30)
                 {
-                    monthlyRecord.DailyRecords = reportRecords;
-                    monthlyRecord.TotalLackTime = totalLackTime;
-                    return monthlyRecord;
+                    var monthRecord = new MonthlyRecord()
+                    {
+                        Month = month,
+                        Year = year,
+                        UserInfoId = grpRecords.Key,
+                        DailyRecords = grpRecords.Where(d => d.MinuteLate > 0).OrderBy(d => d.WorkingDay).ToList(),
+                        TotalLackTime = grpRecords.Sum(s => s.MinuteLate),
+                        UserInfo = grpRecords.First().UserInfo
+                    };
+                    monthRecords.Add(monthRecord);
                 }
             }
-
-            return null;
+            return monthRecords;
         }
     }
-
-    public class WorkingRule
-    {
-        public static TimeSpan MinCheckInTime = new TimeSpan(7, 0, 0);
-        public static TimeSpan MaxCheckInTime = new TimeSpan(9, 0, 0);
-        public static TimeSpan MinCheckOutTime = new TimeSpan(16, 0, 0);
-        public static TimeSpan MaxCheckOutTime = new TimeSpan(18, 0, 0);
-        public static TimeSpan FullWorkingHour = new TimeSpan(9, 0, 0);
-        public static TimeSpan HalfWorkingHour = new TimeSpan(4, 0, 0);
-        public static TimeSpan NoonHour = new TimeSpan(12, 0, 0);
-        public static double TotalLackTime = 30d;
-    }
-
-    public class DevWorkingRule : WorkingRule
-    {
-
-    }
-
 }

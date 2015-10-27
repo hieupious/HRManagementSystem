@@ -9,7 +9,7 @@
         @* // TODO:: Revise *@
     </div>
     <div class="toolbox pull-right">
-        <a download='Timekeepking Report {{date | date: "MMMM, yyyy"}}' href="" onclick="GG.setUpExport()" id="export" title="Export to Excel" class="export"><span class="icon icon-export"></span> <sup>Excel</sup></a>
+        <a download='Timekeepking Report {{date | date: "MMMM, yyyy"}}' href="" onclick="GG.setUpExport()" id="export" title="Export to Excel" class="export" ng-hide="users.length == 0 || loading"><span class="icon icon-export"></span> <sup>Excel</sup></a>
     </div>
     <header class="m-t-lg m-b-lg clearfix">
         <div class="pull-left">
@@ -30,8 +30,9 @@
             </select>
         </div>
     </header>
-    <div class="text-center m-b">
-        <i class="fa fa-spinner fa-pulse fa-4x" ng-show="loading"></i>
+    <div class="text-center m-b" ng-show="loading">
+        <i class="fa fa-spinner fa-pulse fa-4x"></i>
+        <p style="margin-top: 10px">Processing... <br/> Please wait for a minute.</p>
     </div>
     <table class="table table-condensed table-hover" ng-show="users.length > 0">
         <thead>
@@ -49,7 +50,7 @@
             <tr>
                 <td rowspan="{{user.DailyRecords.length === 1 ? 1 : user.DailyRecords.length + 1}}">ASWVN{{user.UserInfo.EmployeeId}}</td>
                 <td rowspan="{{user.DailyRecords.length === 1 ? 1 : user.DailyRecords.length + 1}}">{{user.UserInfo.Name}}</td>
-                <td rowspan="{{user.DailyRecords.length === 1 ? 1 : user.DailyRecords.length + 1}}">{{user.UserInfo.Department.Office}}</td>
+                <td rowspan="{{user.DailyRecords.length === 1 ? 1 : user.DailyRecords.length + 1}}">{{user.UserInfo.Office}}</td>
                 <td colspan="3" ng-show="user.DailyRecords.length > 1" ng-class="{'excel-hidden' : user.DailyRecords.length === 1}"></td>
                 <td class="text-center text-muted" ng-hide="user.DailyRecords.length > 1" ng-class="{'excel-hidden' : user.DailyRecords.length > 1}"><small>{{user.DailyRecords[0].WorkingDay | date: "dd/MM/yyyy"}}</small></td>
                 <td class="text-center text-muted" ng-hide="user.DailyRecords.length > 1" ng-class="{'excel-hidden' : user.DailyRecords.length > 1}"><small>{{user.DailyRecords[0].CheckIn | date: "shortTime"}}</small></td>

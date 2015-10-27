@@ -10,6 +10,7 @@ using HRMS.Web.Services;
 using Hangfire;
 using HRMS.Web.Configuration;
 using HRMS.Web.Jobs;
+using Hangfire.SqlServer;
 
 namespace HRMS.Web
 {
@@ -101,10 +102,15 @@ namespace HRMS.Web
                 options.AutomaticAuthentication = true;
             });
 
+            var hangfireOptions = new SqlServerStorageOptions()
+            {
+                PrepareSchemaIfNecessary = true
 
+            };
             // Configure for Hangfire Server
-            GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration["Data:HangfireServer:ConnectionString"]);
+            GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration["Data:HangfireServer:ConnectionString"], hangfireOptions);
             GlobalConfiguration.Configuration.UseActivator(new ServiceJobActivator(app.ApplicationServices));
+
             app.UseHangfireServer();
             app.UseHangfireDashboard();
 
@@ -123,7 +129,7 @@ namespace HRMS.Web
 
             app.UseIdentity();
 
-            //app.ApplicationServices.GetService<RegisteredJob>().InitializeJobs();
+            app.ApplicationServices.GetService<RegisteredJob>().InitializeJobs();
             //app.ApplicationServices.GetService<RegisteredJob>().MigrationJobs();
         }
     }

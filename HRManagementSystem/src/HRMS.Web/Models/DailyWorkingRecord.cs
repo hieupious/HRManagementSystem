@@ -62,6 +62,7 @@ namespace HRMS.Web.Models
         public bool? Approved { get; set; }
         public virtual UserInfo UserInfo { get; set; }
         public virtual UserInfo Approver { get; set; }
+        [JsonIgnore]
         public virtual ICollection<CheckInOutRecord> CheckInOutRecords { get; set; }
         [JsonIgnore]
         public virtual MonthlyRecord MonthlyRecord { get; set; }

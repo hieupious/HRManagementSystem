@@ -14,16 +14,14 @@ using Microsoft.AspNet.Authorization;
 
 namespace HRMS.Web.Controllers
 {
-    [Authorize(Roles = "HRGroup")]
+    [Authorize(Roles = "HRGroup,Administrator")]
     [Route("api/[controller]")]
     public class ReportsController : Controller
     {
         private readonly ApplicationDbContext dbContext;
-        private readonly IImportDataService importDataService;
-        public ReportsController(ApplicationDbContext dbContext, IImportDataService importDataService)
+        public ReportsController(ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
-            this.importDataService = importDataService;
         }
         // GET: api/values
         [HttpGet]

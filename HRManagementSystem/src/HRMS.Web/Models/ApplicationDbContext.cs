@@ -26,13 +26,13 @@ namespace HRMS.Web.Models
             foreach (var userGroup in WorkingPoliciesGroups)
             {
                 var baseTime = BaseTimeWorkingHoursRules.Include(b => b.WorkingPoliciesGroups).SingleOrDefault(b => b.WorkingPoliciesGroups.Contains(userGroup));
-                if (baseTime != null)
+                if (baseTime != null && userGroup.WorkingHoursRules.Count(s => s is BaseTimeWorkingHoursRule) < 1)
                     userGroup.WorkingHoursRules.Add(baseTime);
                 var earlyTolerance = EarlyToleranceWorkingHoursRules.Include(e => e.WorkingPoliciesGroups).SingleOrDefault(e => e.WorkingPoliciesGroups.Contains(userGroup));
-                if (earlyTolerance != null)
+                if (earlyTolerance != null && userGroup.WorkingHoursRules.Count(s => s is EarlyToleranceWorkingHoursRule) < 1)
                     userGroup.WorkingHoursRules.Add(earlyTolerance);
                 var lateTolerance = LateToleranceWorkingHoursRules.Include(l => l.WorkingPoliciesGroups).SingleOrDefault(l => l.WorkingPoliciesGroups.Contains(userGroup));
-                if (lateTolerance != null)
+                if (lateTolerance != null && userGroup.WorkingHoursRules.Count(s => s is LateToleranceWorkingHoursRule) < 1)
                     userGroup.WorkingHoursRules.Add(lateTolerance);
             }
             return WorkingPoliciesGroups;
@@ -42,7 +42,7 @@ namespace HRMS.Web.Models
         {
             // Configure foreign key
             modelBuilder.Entity<DailyWorkingRecord>().Reference(d => d.Approver).InverseCollection(u => u.Approvals).ForeignKey(d => d.ApproverId);
-            modelBuilder.Entity<DailyWorkingRecord>().Reference(d => d.UserInfo).InverseCollection(u => u.DailyRecords).ForeignKey(d => d.UserInfoId);            
+            modelBuilder.Entity<DailyWorkingRecord>().Reference(d => d.UserInfo).InverseCollection(u => u.DailyRecords).ForeignKey(d => d.UserInfoId);
             modelBuilder.Entity<DailyWorkingRecord>().Reference(d => d.MonthlyRecord).InverseCollection(m => m.DailyRecords).ForeignKey(d => d.MonthlyRecordId);
             modelBuilder.Entity<CheckInOutRecord>().Reference(c => c.User).InverseCollection(u => u.CheckInOutRecords).ForeignKey(c => c.UserId).PrincipalKey(u => u.ExternalId);
             modelBuilder.Entity<CheckInOutRecord>().Reference(c => c.DailyRecord).InverseCollection(d => d.CheckInOutRecords).ForeignKey(c => c.DailyRecordId);
@@ -50,6 +50,10 @@ namespace HRMS.Web.Models
             modelBuilder.Entity<CheckInOutRecord>().Index(c => c.CheckTime);
             modelBuilder.Entity<CheckInOutRecord>().Index(c => new { c.UserId, c.CheckTime });
             modelBuilder.Entity<DailyWorkingRecord>().Index(d => d.WorkingDay);
+
+            // ignore property
+            modelBuilder.Entity<DailyWorkingRecord>().Ignore(d => d.CheckIn);
+            modelBuilder.Entity<DailyWorkingRecord>().Ignore(d => d.CheckOut);
         }
     }
 }

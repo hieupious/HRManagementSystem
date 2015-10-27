@@ -35,9 +35,9 @@ namespace HRMS.Web.Controllers
         {
             if (WindowsIdentity.GetCurrent().IsAuthenticated) // check if user signed in, sign them in else redirect to error page.
             {
-                var windowsAccountName = WindowsIdentity.GetCurrent().Name;
+                var windowsAccountName = User.GetUserName();
                 // base Identity Name >> get user >> check if user valid >> get Name, get Role, register
-                var user = dbContext.UserInfoes.FirstOrDefault(u => string.Equals(u.WindowsAccount, windowsAccountName, System.StringComparison.CurrentCultureIgnoreCase));
+                var user = dbContext.UserInfoes.FirstOrDefault(u => string.Equals(u.WindowsAccount, windowsAccountName, System.StringComparison.OrdinalIgnoreCase));
                 if (user != null)
                 {
                     var role = user.Role.ToString();
@@ -45,6 +45,7 @@ namespace HRMS.Web.Controllers
                     List<Claim> claims = new List<Claim>();
                     claims.Add(new Claim(ClaimTypes.Name, user.Name, ClaimValueTypes.String, issuer));
                     claims.Add(new Claim(ClaimTypes.Sid, user.EmployeeId));
+                    claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
                     claims.Add(new Claim(ClaimTypes.Role, role, ClaimValueTypes.String, issuer));
 
                     var identity = new ClaimsIdentity(claims, "hrmsAuth");
@@ -60,7 +61,7 @@ namespace HRMS.Web.Controllers
         public async Task<IActionResult> SignOut()
         {
             await Context.Authentication.SignOutAsync("Cookie");
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            return new HttpUnauthorizedResult();
         }
 
         [Authorize(Roles = "NormalUser,Manager,Administrator,HRGroup")]
@@ -69,19 +70,24 @@ namespace HRMS.Web.Controllers
             if (!id.HasValue)
                 id = int.Parse(User.FindFirstValue(ClaimTypes.Sid));
 
-
+            ViewBag.ShowApproval = false;
             var user = dbContext.UserInfoes.Include(u => u.Department).Where(u => int.Parse(u.EmployeeId) == id).FirstOrDefault();
+            if (user.Id == int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))
+            {
+                ViewBag.ShowApproval = true;
+            }
+
             ViewBag.SearchTerms = searchTerms;
             return View(user);
         }
 
-        [Authorize(Roles = "HRGroup")]
+        [Authorize(Roles = "Administrator,HRGroup")]
         public IActionResult Report()
         {
             return View();
         }
 
-        [Authorize(Roles = "Manager,HRGroup")]
+        [Authorize(Roles = "Manager,Administrator,HRGroup")]
         public IActionResult PendingApprovals()
         {
             return View();

@@ -34,7 +34,7 @@
             <div class="navbar-collapse collapse navbar-right">
                 <ul class="nav nav-bordered">
 
-                    <li class="@(ViewBag.ActiveMenuItem == "Users" ? "active" : null) text-uppercase"><a asp-controller="Home" asp-action="UserInfo">Users</a></li>
+                    <li class="@(ViewBag.ActiveMenuItem == "Users" ? "active" : null) text-uppercase"><a asp-controller="Home" asp-action="UserInfo" asp-route-id="">Users</a></li>
                     @if (User.IsInRole("HRGroup") || User.IsInRole("Administrator"))
                     {
                     <li class="@(ViewBag.ActiveMenuItem == "Report" ? "active" : null) text-uppercase"><a asp-controller="Home" asp-action="Report">Report</a></li>
