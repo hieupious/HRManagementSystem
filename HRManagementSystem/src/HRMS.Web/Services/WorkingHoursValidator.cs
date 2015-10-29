@@ -74,7 +74,12 @@ namespace HRMS.Web.Services
                 }
             }
 
+            // set checkOut cannot be earlier than checkIn
+            if (checkOut < checkIn)
+                checkOut = checkIn;
+
             var workedTime = checkOut - checkIn;
+            
             // If attendance covers breaktime, increase required time amount by breaktime amount
             if (checkIn < baseTimeRule.BreaktimeStartOnDate(date) && checkOut > baseTimeRule.BreaktimeEndOnDate(date))
             {

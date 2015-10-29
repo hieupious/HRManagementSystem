@@ -9,7 +9,7 @@
         @* // TODO:: Revise *@
     </div>
     <div class="toolbox pull-right">
-        <a download='Timekeepking Report {{date | date: "MMMM, yyyy"}}' href="" onclick="GG.setUpExport()" id="export" title="Export to Excel" class="export" ng-hide="users.length == 0 || loading"><span class="icon icon-export"></span> <sup>Excel</sup></a>
+        <a download='Timekeepking Report {{date | date: "MMMM, yyyy"}}' href="" onclick="GG.setUpExport({{date | date: 'MMMM, yyyy'}})" id="export" title="Export to Excel" class="export" ng-hide="users.length == 0 || loading"><span class="icon icon-export"></span> <sup>Excel</sup></a>
     </div>
     <header class="m-t-lg m-b-lg clearfix">
         <div class="pull-left">

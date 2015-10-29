@@ -103,7 +103,7 @@ namespace HRMS.Web.Controllers
         [HttpGet("GetMonthlyWorkingReport")]
         public string GetMonthlyWorkingReport(DateTime month)
         {
-            var monthRecords = monthlyWorkingProcess.GetMonthlyRecords(2015, 10);
+            var monthRecords = monthlyWorkingProcess.GetMonthlyRecords(month.Year, month.Month);
             return JsonConvert.SerializeObject(monthRecords);
         }
 

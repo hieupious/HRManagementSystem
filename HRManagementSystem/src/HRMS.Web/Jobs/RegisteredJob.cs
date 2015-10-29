@@ -19,14 +19,12 @@ namespace HRMS.Web.Jobs
         private ApplicationDbContext dbContext;
         private ImportConfiguration importConfiguration;
         private IDailyWorkingProcessService dailyWorkingProcess;
-        IServiceProvider app;
         public RegisteredJob(IOptions<ImportConfiguration> importConfiguration,
-            IServiceProvider app, ApplicationDbContext dbContext)
+            ApplicationDbContext dbContext, IDailyWorkingProcessService dailyWorkingProcess, IImportDataService importDataService)
         {
-            this.app = app;
             this.importConfiguration = importConfiguration.Options;
-            importDataService = app.GetService<IImportDataService>();
-            dailyWorkingProcess = app.GetService<IDailyWorkingProcessService>();
+            this.importDataService = importDataService;
+            this.dailyWorkingProcess = dailyWorkingProcess;
             this.dbContext = dbContext;
         }
 
@@ -39,14 +37,14 @@ namespace HRMS.Web.Jobs
             var noonImport = importConfiguration.TimeToImportAtNoon;
             var nightImport = importConfiguration.TimeToImportAtNight;
             RecurringJob.AddOrUpdate<RegisteredJob>("noonImport", r => r.DailyCopyExternalFile(), Cron.Daily(noonImport.Hours, noonImport.Minutes), TimeZoneInfo.Local);
-            //BackgroundJob.ContinueWith<RegisteredJob>("1", r => r.DailyImportJob(), JobContinuationOptions.OnlyOnSucceededState);
             RecurringJob.AddOrUpdate<RegisteredJob>("nightImport", r => r.DailyCopyExternalFile(), Cron.Daily(nightImport.Hours, nightImport.Minutes), TimeZoneInfo.Local);
-            //BackgroundJob.ContinueWith<RegisteredJob>("2", r => r.DailyImportJob(), JobContinuationOptions.OnlyOnSucceededState);
         }
 
         public void MigrationJobs()
         {
-            BackgroundJob.Enqueue<RegisteredJob>(r => r.ImportAndHandleData());
+            //BackgroundJob.Enqueue<RegisteredJob>(r => r.ImportAndProcessDataWithMonth(new DateTime(2015, 9, 1)));
+
+            //BackgroundJob.Enqueue<RegisteredJob>(r => r.ImportAndProcessDataWithDay());
         }
 
         public void DailyCopyExternalFile()
@@ -55,14 +53,12 @@ namespace HRMS.Web.Jobs
             var copySuccessful = importDataService.CopyFileFromExternal(ref lastWriteTime);
             if (copySuccessful)
             {
-                dbContext = app.GetService<ApplicationDbContext>();
                 // write down latest import time.                
-                var result = importDataService.ImportCheckInOutRecordWithDay(DateTime.Now, null, dbContext);
+                var result = importDataService.ImportCheckInOutRecordWithDay(DateTime.Now);
                 if (result > 0)
                 {
                     ProcessDailyWorkingReportJobWithDay(DateTime.Now);
                 }
-                dbContext.Dispose();
             }
         }
 
@@ -78,11 +74,7 @@ namespace HRMS.Web.Jobs
 
         public void ProcessDailyWorkingReportJobWithDay(DateTime day)
         {
-            var userIds = dbContext.UserInfoes.ToList();
-            foreach (var userId in userIds)
-            {
-                dailyWorkingProcess.ProcessDailyWorkingReport(userId.Id, day, dbContext);
-            }
+             dailyWorkingProcess.ProcessDailyWorkingReport(day);
         }
 
         public void ProcessDailyWorkingReportJob()
@@ -90,33 +82,36 @@ namespace HRMS.Web.Jobs
             ProcessDailyWorkingReportJobWithDay(DateTime.Now);
         }
 
-        public void ImportAndHandleData()
+        public void ImportAndProcessDataWithMonth(DateTime month)
         {
-            foreach (var day in WorkingProcessService.AllDatesInMonth(2015, 10))
+            foreach (var day in WorkingProcessService.AllDatesInMonth(month.Year, month.Month))
             {
                 if (day.Date < DateTime.Now.Date)
                 {
-                    
-                    dbContext = app.GetService<ApplicationDbContext>();
-
-                    var result = importDataService.ImportCheckInOutRecordWithDay(day, null, dbContext);
+                    var result = importDataService.ImportCheckInOutRecordWithDay(day);
                     if (result > 0)
                     {
                         ProcessDailyWorkingReportJobWithDay(day);
                     }
-                    dbContext.Dispose();
-
                 }
             }
 
         }
 
-
-
-        public void ProcessMonthlyReport(DateTime month)
+        public void ImportAndProcessDataWithDay()
         {
-
+            var fromDay = new DateTime(2015, 10, 24);
+            var toDay = DateTime.Now.Date;
+            foreach (var day in WorkingProcessService.DaysBetweenTwoDays(fromDay, toDay))
+            {
+                var result = importDataService.ImportCheckInOutRecordWithDay(day);
+                if(result > 0)
+                {
+                    ProcessDailyWorkingReportJobWithDay(day);
+                }
+            }
         }
+
 
 
         public void BootstapData()

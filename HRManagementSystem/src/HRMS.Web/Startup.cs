@@ -129,8 +129,8 @@ namespace HRMS.Web
 
             app.UseIdentity();
 
-            app.ApplicationServices.GetService<RegisteredJob>().InitializeJobs();
-            //app.ApplicationServices.GetService<RegisteredJob>().MigrationJobs();
+            //app.ApplicationServices.GetService<RegisteredJob>().InitializeJobs();
+            app.ApplicationServices.GetService<RegisteredJob>().MigrationJobs();
         }
     }
 }

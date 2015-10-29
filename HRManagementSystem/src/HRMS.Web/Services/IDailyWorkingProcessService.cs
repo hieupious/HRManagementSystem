@@ -8,6 +8,6 @@ namespace HRMS.Web.Services
 {
     public interface IDailyWorkingProcessService
     {
-        DailyWorkingRecord ProcessDailyWorkingReport(int userId, DateTime day, ApplicationDbContext exDbContext = null);
+        void ProcessDailyWorkingReport(DateTime day);
     }
 }

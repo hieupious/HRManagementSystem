@@ -73,7 +73,7 @@ var GG = {
         }
    },
 
-   setUpExport: function () {
+   setUpExport: function (name) {
        var table = $("table"),
        original = table.html();
        table = $("<table></table>").html(original);
@@ -84,7 +84,8 @@ var GG = {
            "border-top": ".5pt solid windowtext",
            "border-right": ".5pt solid windowtext",
            "border-bottom": ".5pt solid windowtext",
-           "border-left": ".5pt solid windowtext"
+           "border-left": ".5pt solid windowtext",
+           "font-size" : "12px"
        });
        $("th", table).not(".text-right").not(".text-center").css("text-align", "left");
        $("th.text-right", table).css("text-align", "right");
@@ -109,10 +110,10 @@ var GG = {
        $("thead", table).prepend($("<tr></tr>").append($("<th></th>").attr("colspan", 13)
                                                                      .css({
                                                                          "text-align": "left",
-                                                                         "font-size": "25px",
+                                                                         "font-size": "20px",
                                                                          "height": "50px"
                                                                      })
                                                                      .append(title)));
-       $("#export").prop("href", GG.tableToExcel(table, "2015"));       
+       $("#export").prop("href", GG.tableToExcel(table, name));       
    }
 }

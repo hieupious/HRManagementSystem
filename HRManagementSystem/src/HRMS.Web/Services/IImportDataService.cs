@@ -12,7 +12,7 @@ namespace HRMS.Web.Services
         IEnumerable<CheckInOutRecord> GetDailyCheckInOutFromAccessDB();
         IEnumerable<CheckInOutRecord> GetCheckInOutRecordWithDayFromAccessDB(DateTime fromDay, DateTime? toDay);
         int ImportCheckInOutFromAccessDBDaily();
-        int ImportCheckInOutRecordWithDay(DateTime fromDay, DateTime? toDay = null, ApplicationDbContext exDbContext = null);
+        int ImportCheckInOutRecordWithDay(DateTime fromDay, DateTime? toDay = null);
         bool CopyFileFromExternal(ref DateTime lastWriteTime);
     }
 }

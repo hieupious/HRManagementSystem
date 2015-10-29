@@ -34,6 +34,7 @@ namespace Hrms.Web.Test
 
         [Theory]
         #region InlineData
+        [InlineData(7, 50, 7, 50, 480)]
         [InlineData(7, 50, 8, 0, 480)]
         [InlineData(7, 50, 8, 10, 470)]
         [InlineData(7, 50, 11, 50, 250)]
@@ -1617,7 +1618,19 @@ namespace Hrms.Web.Test
                 WorkingPoliciesGroup = group,
                 DailyRecords = new DailyWorkingRecord[]
                 {
-                    new DailyWorkingRecord { WorkingDay = date, CheckIn = date.AddHours(checkInHour).AddMinutes(checkInMinute), CheckOut = date.AddHours(checkOutHour).AddMinutes(checkOutMinute) }
+                    new DailyWorkingRecord { WorkingDay = date, CheckIn = date.AddHours(checkInHour).AddMinutes(checkInMinute), CheckOut = date.AddHours(checkOutHour).AddMinutes(checkOutMinute),
+                    CheckInOutRecords = new List<CheckInOutRecord>()
+                    {
+                        new CheckInOutRecord()
+                        {
+                            CheckTime = date.AddHours(checkInHour).AddMinutes(checkInMinute)
+                        },
+                        new CheckInOutRecord()
+                        {
+                            CheckTime = date.AddHours(checkOutHour).AddMinutes(checkOutMinute)
+                        }
+                    }
+                    }
                 }
             };
 
