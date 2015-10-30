@@ -67,7 +67,7 @@ namespace HRMS.Web.Controllers
         [Authorize(Roles = "NormalUser,Manager,Administrator,HRGroup")]
         public IActionResult UserInfo(int? id, string searchTerms)
         {
-            if (!id.HasValue)
+            if (!id.HasValue || User.IsInRole("NormalUser"))
                 id = int.Parse(User.FindFirstValue(ClaimTypes.Sid));
 
             ViewBag.ShowApproval = false;

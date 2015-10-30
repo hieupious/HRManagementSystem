@@ -116,8 +116,8 @@ namespace HRMS.Web.Services
         /// <returns></returns>
         public ICollection<MonthlyRecord> GetMonthlyRecords(int year, int month)
         {
-            var violatedRecords = dbContext.DailyWorkingRecords.Include(d => d.CheckInOutRecords).Include(u => u.UserInfo).Where(
-                d => d.WorkingDay.Year == year && d.WorkingDay.Month == month && d.Approved != true && d.UserInfo.WorkingPoliciesGroupId.HasValue
+            var violatedRecords = dbContext.DailyWorkingRecords.Include(d => d.CheckInOutRecords).Include(u => u.UserInfo).Include(a => a.Approver).Where(
+                d => d.WorkingDay.Year == year && d.WorkingDay.Month == month && d.UserInfo.WorkingPoliciesGroupId.HasValue
                 ).GroupBy(v => v.UserInfoId).ToList();
             var count = violatedRecords.Count();
             ICollection<MonthlyRecord> monthRecords = new List<MonthlyRecord>();

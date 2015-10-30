@@ -73,7 +73,7 @@ var GG = {
         }
    },
 
-   setUpExport: function (name) {
+   setUpExport: function () {
        var table = $("table"),
        original = table.html();
        table = $("<table></table>").html(original);
@@ -85,7 +85,11 @@ var GG = {
            "border-right": ".5pt solid windowtext",
            "border-bottom": ".5pt solid windowtext",
            "border-left": ".5pt solid windowtext",
-           "font-size" : "12px"
+           "font-size" : "18px"
+       });
+       $("td small", table).css({
+           "font-size": "14px",
+           "text-align" : "right"
        });
        $("th", table).not(".text-right").not(".text-center").css("text-align", "left");
        $("th.text-right", table).css("text-align", "right");
@@ -101,19 +105,18 @@ var GG = {
            return $(this).html();
        });
 
-       $("td[data-date-value]", table).each(function (index, element) {
+       $("td[data-time]", table).each(function (index, element) {
            var $element = $(element);
-           $element.html($element.data("date-value"));
-           $element.attr("style", "mso-number-format:'dd/mm/yyyy;@'; text-align: center;" + $(element).attr("style"));
+           $element.attr("style", "mso-number-format:'[h]:mm;@'; text-align: right;" + $(element).attr("style"));
        });
        var title = $('.toolbox a').attr("download");
-       $("thead", table).prepend($("<tr></tr>").append($("<th></th>").attr("colspan", 13)
+       $("thead", table).prepend($("<tr></tr>").append($("<th></th>").attr("colspan", 8)
                                                                      .css({
-                                                                         "text-align": "left",
-                                                                         "font-size": "20px",
+                                                                         "text-align": "center",
+                                                                         "font-size": "25px",
                                                                          "height": "50px"
                                                                      })
                                                                      .append(title)));
-       $("#export").prop("href", GG.tableToExcel(table, name));       
+       $("#export").prop("href", GG.tableToExcel(table, null));       
    }
 }

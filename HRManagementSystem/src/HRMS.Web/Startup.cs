@@ -112,7 +112,10 @@ namespace HRMS.Web
             GlobalConfiguration.Configuration.UseActivator(new ServiceJobActivator(app.ApplicationServices));
 
             app.UseHangfireServer();
-            app.UseHangfireDashboard();
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                AuthorizationFilters = new[] { new HangfireAuthorizationFilter() }
+            });
 
             // Add static files to the request pipeline.
             app.UseStaticFiles();

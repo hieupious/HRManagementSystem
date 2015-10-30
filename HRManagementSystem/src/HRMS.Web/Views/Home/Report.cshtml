@@ -9,7 +9,7 @@
         @* // TODO:: Revise *@
     </div>
     <div class="toolbox pull-right">
-        <a download='Timekeepking Report {{date | date: "MMMM, yyyy"}}' href="" onclick="GG.setUpExport({{date | date: 'MMMM, yyyy'}})" id="export" title="Export to Excel" class="export" ng-hide="users.length == 0 || loading"><span class="icon icon-export"></span> <sup>Excel</sup></a>
+        <a download='Timekeepking Report {{date | date: "MMMM, yyyy"}}' href="" onclick="GG.setUpExport()" id="export" title="Export to Excel" class="export" ng-hide="users.length == 0 || loading"><span class="icon icon-export"></span> <sup>Excel</sup></a>
     </div>
     <header class="m-t-lg m-b-lg clearfix">
         <div class="pull-left">
@@ -44,6 +44,7 @@
                 <th class="text-center">Check-in</th>
                 <th class="text-center">Check-out</th>
                 <th class="text-center">Lack Time (h:mm)</th>
+                <th class="text-center">Approval</th>
             </tr>
         </thead>
         <tbody ng-repeat="user in users">
@@ -55,13 +56,23 @@
                 <td class="text-center text-muted" ng-hide="user.DailyRecords.length > 1" ng-class="{'excel-hidden' : user.DailyRecords.length > 1}"><small>{{user.DailyRecords[0].WorkingDay | date: "dd/MM/yyyy"}}</small></td>
                 <td class="text-center text-muted" ng-hide="user.DailyRecords.length > 1" ng-class="{'excel-hidden' : user.DailyRecords.length > 1}"><small>{{user.DailyRecords[0].CheckIn | date: "shortTime"}}</small></td>
                 <td class="text-center text-muted" ng-hide="user.DailyRecords.length > 1" ng-class="{'excel-hidden' : user.DailyRecords.length > 1}"><small>{{user.DailyRecords[0].CheckOut | date: "shortTime"}}</small></td>
-                <td class="text-center">{{user.TotalLackTime | timespan}}</td>
+                <td class="text-center" data-time>{{user.TotalLackTime | timespan}}</td>
+                <td></td>
             </tr>
             <tr ng-repeat="date in user.DailyRecords" ng-show="user.DailyRecords.length > 1" ng-class="{'excel-hidden' : user.DailyRecords.length === 1}">
                 <td class="text-center text-muted"><small>{{date.WorkingDay | date: "dd/MM/yyyy"}}</small></td>
                 <td class="text-center text-muted"><small>{{date.CheckIn | date: "shortTime"}}</small></td>
                 <td class="text-center text-muted"><small>{{date.CheckOut | date: "shortTime"}}</small></td>
                 <td class="text-center text-muted"><small>{{date.MinuteLate | timespan}}</small></td>
+                <td class="w-sm">
+                    <div>{{date.GetApprovedReason}}</div>
+                    <div ng-show="date.GetApprovedReason" ng-class="{'excel-hidden' : date.GetApprovedReason == null}">
+                        <span ng-show="date.Approved == null" class="text-warning" ng-class="{'excel-hidden' : date.Approved !== null}">Waiting for approval from {{date.Approver.Name}}</span>
+                        <span ng-show="date.Approved === true" class="text-success" ng-class="{'excel-hidden' : date.Approved !== true}">Approved by {{date.Approver.Name}}</span>
+                        <span ng-show="date.Approved === false" class="text-danger" ng-class="{'excel-hidden' : date.Approved !== false}">Disapproved by {{date.Approver.Name}}</span>
+                        <span ng-show="date.ApproverComment" ng-class="{'excel-hidden' : date.ApproverComment == null}"> with comments: '{{date.ApproverComment}}'</span>
+                    </div>
+                </td>
             </tr>
         </tbody>
     </table>
