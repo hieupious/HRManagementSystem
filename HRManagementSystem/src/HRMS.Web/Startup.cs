@@ -19,10 +19,12 @@ namespace HRMS.Web
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
             var builder = new ConfigurationBuilder(appEnv.ApplicationBasePath)
-                            .AddJsonFile("config.json");
+                            .AddJsonFile("config.json")
+                            .AddJsonFile($"config.{env.EnvironmentName}.json", optional: true);
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
             appBasePath = appEnv.ApplicationBasePath;
+
         }
 
         public string appBasePath { get; set; }

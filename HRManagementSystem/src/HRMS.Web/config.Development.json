@@ -1,4 +1,4 @@
-{
+﻿{
   "AppSettings": {
     "Title": "Less Timesheet"
   },
@@ -10,10 +10,10 @@
   },
   "Data": {
     "DefaultConnection": {
-      "ConnectionString": "Server=ASWVNLIM-HR02\\SQLEXPRESS;Database=HRMSDB;uid=hrms-web;pwd=HRMS@ASWIG@2015;MultipleActiveResultSets=true"
+      "ConnectionString": "Server=10.9.1.100\\SQLSERVER2012;Database=HRMSDBNew;uid=hrms;pwd=Hrms@100;MultipleActiveResultSets=true"
     },
     "HangfireServer": {
-      "ConnectionString": "Server=ASWVNLIM-HR02\\SQLEXPRESS;Database=HRMSDBHangfire;uid=hrms-web;pwd=HRMS@ASWIG@2015;MultipleActiveResultSets=true"
+      "ConnectionString":  "Server=10.9.1.100\\SQLSERVER2012;Database=HRMSDBHangfire;uid=hrms;pwd=Hrms@100;MultipleActiveResultSets=true"
     }
   }
 }
