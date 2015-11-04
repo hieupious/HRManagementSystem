@@ -35,13 +35,6 @@ namespace HRMS.Web.Services
             accessDbContext = Db.Open(dbPath);
         }
 
-        public void ImportAllCheckInOutFromAccessDB()
-        {
-            var allCheckInOutRecords = GetAllCheckInOutFromAccessDB();
-            dbContext.CheckInOutRecords.AddRange(allCheckInOutRecords);
-            dbContext.SaveChanges();
-        }
-
         public IEnumerable<CheckInOutRecord> GetAllCheckInOutFromAccessDB()
         {
             var checkInOutInfo = accessDbContext.ExecuteMany(queryAllCheckInOutRecord);
@@ -50,12 +43,6 @@ namespace HRMS.Web.Services
 
         public int ImportCheckInOutFromAccessDBDaily()
         {
-            //// only get records have userId in the system
-            //var dailyCheckInOutRecords = GetDailyCheckInOutFromAccessDB().Where(r => efDbContext.UserInfoes.Any(u => u.ExternalId == r.UserId));
-            //// filter duplicated records
-            //var filteredRecords = dailyCheckInOutRecords.Where(r => !efDbContext.CheckInOutRecords.Any(c => c.CheckTime == r.CheckTime && c.UserId == r.UserId));
-            //efDbContext.CheckInOutRecords.AddRange(filteredRecords);
-            //return efDbContext.SaveChanges();
             return ImportCheckInOutRecordWithDay(DateTime.Now);
         }
 
@@ -78,7 +65,7 @@ namespace HRMS.Web.Services
             var records = GetCheckInOutRecordWithDayFromAccessDB(fromDay, toDay).Where(r => dbContext.UserInfoes.Any(u => u.ExternalId == r.UserId && u.WorkingPoliciesGroupId.HasValue));
             // filter duplicated records
             var filteredRecords = records.Where(r => !dbContext.CheckInOutRecords.Any(c => c.CheckTime == r.CheckTime && c.UserId == r.UserId));
-            dbContext.CheckInOutRecords.AddRange(filteredRecords);            
+            dbContext.CheckInOutRecords.AddRange(filteredRecords);
             return dbContext.SaveChanges();
         }
 
@@ -115,18 +102,13 @@ namespace HRMS.Web.Services
 
         public bool CopyFileFromExternal(ref DateTime lastWriteTime)
         {
-            try
-            {
-                string fullFilePath = importConfiguration.FileToCopyPath;
-                File.Copy(fullFilePath, dbPath, true);
-                
-                lastWriteTime = File.GetLastWriteTime(dbPath);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+
+            string fullFilePath = importConfiguration.FileToCopyPath;
+            File.Copy(fullFilePath, dbPath, true);
+            File.SetAttributes(dbPath, FileAttributes.Normal);
+            lastWriteTime = File.GetLastWriteTime(dbPath);
+            return true;
+
         }
     }
 

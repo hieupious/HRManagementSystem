@@ -42,7 +42,7 @@ namespace HRMS.Web.Jobs
 
         public void MigrationJobs()
         {
-            //BackgroundJob.Enqueue<RegisteredJob>(r => r.ImportAndProcessDataWithMonth(new DateTime(2015, 9, 1)));
+            //BackgroundJob.Enqueue<RegisteredJob>(r => r.ImportAndProcessDataWithMonth(new DateTime(2015, 10, 1)));
 
             //BackgroundJob.Enqueue<RegisteredJob>(r => r.ImportAndProcessDataWithDay());
         }
@@ -86,7 +86,7 @@ namespace HRMS.Web.Jobs
         {
             foreach (var day in WorkingProcessService.AllDatesInMonth(month.Year, month.Month))
             {
-                if (day.Date < DateTime.Now.Date)
+                if (day.Date <= DateTime.Now.Date)
                 {
                     var result = importDataService.ImportCheckInOutRecordWithDay(day);
                     if (result > 0)

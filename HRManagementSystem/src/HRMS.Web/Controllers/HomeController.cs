@@ -30,12 +30,12 @@ namespace HRMS.Web.Controllers
             ViewBag.SearchTerms = id;
             return View();
         }
-
+        [AllowAnonymous]
         public async Task<IActionResult> SignIn()
         {
             if (WindowsIdentity.GetCurrent().IsAuthenticated) // check if user signed in, sign them in else redirect to error page.
             {
-                var windowsAccountName = User.GetUserName();
+                var windowsAccountName = User.GetUserName() ?? WindowsIdentity.GetCurrent().Name;
                 // base Identity Name >> get user >> check if user valid >> get Name, get Role, register
                 var user = dbContext.UserInfoes.FirstOrDefault(u => string.Equals(u.WindowsAccount, windowsAccountName, System.StringComparison.OrdinalIgnoreCase));
                 if (user != null)
@@ -57,7 +57,7 @@ namespace HRMS.Web.Controllers
             }
             return RedirectToAction(nameof(HomeController.PermissionDenied), "Home");
         }
-
+        [AllowAnonymous]
         public async Task<IActionResult> SignOut()
         {
             await Context.Authentication.SignOutAsync("Cookie");
@@ -93,12 +93,13 @@ namespace HRMS.Web.Controllers
             return View();
         }
 
+        [AllowAnonymous]
         public IActionResult Error()
         {
-
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        [AllowAnonymous]
         public IActionResult PermissionDenied()
         {
             return View("~/Views/Shared/PermissionDenied.cshtml");
