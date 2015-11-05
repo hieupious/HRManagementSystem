@@ -17,11 +17,12 @@ namespace HRMS.Web.Services
         private ImportConfiguration importConfiguration;
         private ApplicationDbContext dbContext;
         // Query string 
-        private const string queryUser = "SELECT [USERID], [Badgenumber], [Name], [DEFAULTDEPTID] from USERINFO";
-        private const string queryUserWithId = "SELECT [USERID], [Badgenumber], [Name], [DEFAULTDEPTID] from USERINFO WHERE ([USERID] = {0})";
-        private const string queryDepartment = "SELECT [DEPTID], [DEPTNAME] FROM DEPARTMENTS";
-        private const string queryAllCheckInOutRecord = "SELECT [USERID], [CHECKTIME] FROM CHECKINOUT";
-        private const string queryCheckInOutRecordWithDay = "SELECT [USERID], [CHECKTIME] FROM CHECKINOUT WHERE (CHECKTIME >= #{0}#) AND (CHECKTIME < #{1}#)";
+        private const string QueryUser = "SELECT [USERID], [Badgenumber], [Name], [DEFAULTDEPTID] from USERINFO";
+        private const string QueryUserWithId = "SELECT [USERID], [Badgenumber], [Name], [DEFAULTDEPTID] from USERINFO WHERE ([USERID] = {0})";
+        private const string QueryDepartment = "SELECT [DEPTID], [DEPTNAME] FROM DEPARTMENTS";
+        private const string QueryAllCheckInOutRecord = "SELECT [USERID], [CHECKTIME] FROM CHECKINOUT";
+        private const string QueryCheckInOutRecordWithDay = "SELECT [USERID], [CHECKTIME] FROM CHECKINOUT WHERE (CHECKTIME >= #{0}#) AND (CHECKTIME < #{1}#)";
+        private const string QueryGetUserCheckTime = "SELECT CHECKINOUT.CHECKTIME FROM(CHECKINOUT INNER JOIN USERINFO ON CHECKINOUT.USERID = USERINFO.USERID) WHERE(CHECKINOUT.CHECKTIME >= #{0}#) AND (CHECKINOUT.CHECKTIME < #{1}#) AND (USERINFO.Badgenumber = '{2}')";
 
         public ImportDataService()
         {
@@ -35,9 +36,25 @@ namespace HRMS.Web.Services
             accessDbContext = Db.Open(dbPath);
         }
 
+        public IEnumerable<DateTime> GetUserCheckTime(UserInfo user, DateTime day)
+        {
+            if (user == null || day == null)
+                throw new InvalidOperationException();
+            var query = string.Format(QueryGetUserCheckTime, day.Date, day.AddDays(1).Date, user.FingerPrintId);
+            var userCheckTime = accessDbContext.ExecuteMany(query);
+            var result = new List<DateTime>();
+            foreach (var ct in userCheckTime)
+            {
+                foreach (var r in (ct as IDictionary<string, object>))
+                {
+                    result.Add((DateTime)r.Value);
+                }
+            }
+            return result;
+        }
         public IEnumerable<CheckInOutRecord> GetAllCheckInOutFromAccessDB()
         {
-            var checkInOutInfo = accessDbContext.ExecuteMany(queryAllCheckInOutRecord);
+            var checkInOutInfo = accessDbContext.ExecuteMany(QueryAllCheckInOutRecord);
             return Mapper.MapMany<CheckInOutRecord, CheckInOutMapping>(checkInOutInfo);
         }
 
@@ -54,7 +71,7 @@ namespace HRMS.Web.Services
         {
             if (!toDay.HasValue)
                 toDay = fromDay.AddDays(1);
-            var query = string.Format(queryCheckInOutRecordWithDay, fromDay.Date.ToShortDateString(), toDay.Value.Date.ToShortDateString());
+            var query = string.Format(QueryCheckInOutRecordWithDay, fromDay.Date.ToShortDateString(), toDay.Value.Date.ToShortDateString());
             var checkInOutInfo = accessDbContext.ExecuteMany(query);
             return Mapper.MapMany<CheckInOutRecord, CheckInOutMapping>(checkInOutInfo);
         }
@@ -71,19 +88,19 @@ namespace HRMS.Web.Services
 
         public IEnumerable<Department> GetDepartmentFromAccessDB()
         {
-            var deptInfo = accessDbContext.ExecuteMany(queryDepartment);
+            var deptInfo = accessDbContext.ExecuteMany(QueryDepartment);
             return Mapper.MapMany<Department, DepartmentMapping>(deptInfo);
         }
 
         public IEnumerable<UserInfo> GetUserFromAccessDB()
         {
-            var userInfo = accessDbContext.ExecuteMany(queryUser);
+            var userInfo = accessDbContext.ExecuteMany(QueryUser);
             return Mapper.MapMany<UserInfo, UserMapping>(userInfo);
         }
 
         public UserInfo GetUserFromAccessDBWithId(int id)
         {
-            var query = string.Format(queryUserWithId, id);
+            var query = string.Format(QueryUserWithId, id);
             var userInfo = accessDbContext.ExecuteSingle(query);
             return Mapper.Map<UserInfo, UserMapping>(userInfo);
         }

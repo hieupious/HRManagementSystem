@@ -11,57 +11,104 @@ namespace HRMS.Web.Services
     {
         private ApplicationDbContext dbContext;
         private IWorkingHoursValidator workingHourValidator;
-        public WorkingProcessService(ApplicationDbContext dbContext, IWorkingHoursValidator workingHourValidator)
+        private ImportDataService importDataService;
+        public WorkingProcessService(ApplicationDbContext dbContext, IWorkingHoursValidator workingHourValidator, ImportDataService importDataService)
         {
             this.dbContext = dbContext;
             this.workingHourValidator = workingHourValidator;
+            this.importDataService = importDataService;
         }
+
+        //public void ProcessDailyWorkingReport(DateTime day)
+        //{
+        //    // get list of activated user >> 
+        //    var listActivatedUser = dbContext.UserInfoes.Where(u => u.WorkingPoliciesGroupId.HasValue).Select(u => u);
+        //    foreach (var user in listActivatedUser)
+        //    {
+        //        if (IsWorkingDay(day, user))
+        //        {
+        //            Console.WriteLine("User: " + user.Name + " - Day: " + day);
+        //            var userRecordOfDay = dbContext.CheckInOutRecords.Where(c => c.CheckTime.Date == day.Date && c.UserId == user.ExternalId && c.DailyRecordId == null);
+        //            var dailyRecordOfDay = dbContext.DailyWorkingRecords.SingleOrDefault(d => d.WorkingDay.Date == day.Date && d.UserInfoId == user.Id);
+        //            if (dailyRecordOfDay != null)
+        //            {
+        //                if (userRecordOfDay == null)
+        //                {
+        //                    dailyRecordOfDay.CheckInOutRecords = null;
+        //                    dbContext.Entry(dailyRecordOfDay).State = EntityState.Modified;
+        //                }
+        //                else
+        //                {
+        //                    foreach (var r in userRecordOfDay)
+        //                    {
+        //                        r.DailyRecordId = dailyRecordOfDay.Id;
+        //                        dbContext.Entry(r).State = EntityState.Modified;
+        //                    }
+        //                }
+        //            }
+        //            else
+        //            {
+        //                DailyWorkingRecord dailyRecord = new DailyWorkingRecord()
+        //                {
+        //                    UserInfoId = user.Id,
+        //                    CheckInOutRecords = userRecordOfDay != null ? userRecordOfDay.ToList() : null,
+        //                    WorkingDay = day.Date
+        //                };
+        //                dbContext.DailyWorkingRecords.Add(dailyRecord);
+        //            }
+        //        }
+        //    }
+        //    dbContext.SaveChanges();
+        //}
 
         public void ProcessDailyWorkingReport(DateTime day)
         {
-            // get list of activated user >> 
-            var listActivatedUser = dbContext.UserInfoes.Where(u => u.WorkingPoliciesGroupId.HasValue).Select(u => u);
-            foreach (var user in listActivatedUser)
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            foreach (var user in dbContext.UserInfoes.ToList())
             {
                 if (IsWorkingDay(day, user))
                 {
-                    Console.WriteLine("User: " + user.Name + " - Day: " + day);
-                    var userRecordOfDay = dbContext.CheckInOutRecords.Where(c => c.CheckTime.Date == day.Date && c.UserId == user.ExternalId && c.DailyRecordId == null);
-                    var dailyRecordOfDay = dbContext.DailyWorkingRecords.SingleOrDefault(d => d.WorkingDay.Date == day.Date && d.UserInfoId == user.Id);
-                    if (dailyRecordOfDay != null)
+                    Console.WriteLine(user.Name + " - " + day);
+                    var checkTime = importDataService.GetUserCheckTime(user, day);
+                    ICollection<CheckInOutRecord> records = new List<CheckInOutRecord>();
+                    foreach (var ct in checkTime)
                     {
-                        if (userRecordOfDay == null)
+                        if (!dbContext.CheckInOutRecords.Any(c => c.CheckTime == ct && c.UserId == user.ExternalId))
+                            records.Add(new CheckInOutRecord { CheckTime = ct, UserId = user.ExternalId });
+                    }
+                    if (records.Count > 0)
+                        dbContext.CheckInOutRecords.AddRange(records);
+                    var existedDailyRecord = dbContext.DailyWorkingRecords.Include(d => d.CheckInOutRecords).SingleOrDefault(d => d.WorkingDay == day && d.UserInfoId == user.Id);
+                    if (existedDailyRecord != null)
+                    {
+                        foreach (var record in records)
                         {
-                            dailyRecordOfDay.CheckInOutRecords = null;
-                            dbContext.Entry(dailyRecordOfDay).State = EntityState.Modified;
+                            if (!existedDailyRecord.CheckInOutRecords.Any(c => c.CheckTime == record.CheckTime))
+                                existedDailyRecord.CheckInOutRecords.Add(record);
                         }
-                        else
-                        {
-                            foreach (var r in userRecordOfDay)
-                            {
-                                r.DailyRecordId = dailyRecordOfDay.Id;
-                                dbContext.Entry(r).State = EntityState.Modified;
-                            }
-                        }
+                        dbContext.Attach(existedDailyRecord);
                     }
                     else
                     {
-                        DailyWorkingRecord dailyRecord = new DailyWorkingRecord()
+                        var dailyRecord = new DailyWorkingRecord()
                         {
+                            CheckInOutRecords = records,
                             UserInfoId = user.Id,
-                            CheckInOutRecords = userRecordOfDay != null ? userRecordOfDay.ToList() : null,
                             WorkingDay = day.Date
                         };
                         dbContext.DailyWorkingRecords.Add(dailyRecord);
                     }
-                }
-            }
-            dbContext.SaveChanges();
-        }
 
+                }
+                dbContext.SaveChanges();
+                sw.Stop();
+                Console.WriteLine("Total time: " + sw.ElapsedMilliseconds);
+            }
+        }
         public bool IsWorkingDay(DateTime day, UserInfo user = null)
         {
-            if(user != null)
+            if (user != null)
             {
                 if (!user.StartWorkingDay.HasValue || day.Date < user.StartWorkingDay.Value.Date)
                     return false;

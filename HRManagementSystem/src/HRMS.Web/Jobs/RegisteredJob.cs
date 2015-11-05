@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Hangfire;
 using HRMS.Web.Services;
 using HRMS.Web.Models;
 using HRMS.Web.Configuration;
 using Microsoft.Framework.OptionsModel;
-using Microsoft.AspNet.Builder;
-using Microsoft.Framework.DependencyInjection;
-
 
 namespace HRMS.Web.Jobs
 {
@@ -43,7 +37,6 @@ namespace HRMS.Web.Jobs
         public void MigrationJobs()
         {
             //BackgroundJob.Enqueue<RegisteredJob>(r => r.ImportAndProcessDataWithMonth(new DateTime(2015, 10, 1)));
-
             //BackgroundJob.Enqueue<RegisteredJob>(r => r.ImportAndProcessDataWithDay());
         }
 
@@ -53,12 +46,8 @@ namespace HRMS.Web.Jobs
             var copySuccessful = importDataService.CopyFileFromExternal(ref lastWriteTime);
             if (copySuccessful)
             {
-                // write down latest import time.                
-                var result = importDataService.ImportCheckInOutRecordWithDay(DateTime.Now);
-                if (result > 0)
-                {
-                    ProcessDailyWorkingReportJobWithDay(DateTime.Now);
-                }
+                // write down latest import time.      
+                ProcessDailyWorkingReportJobWithDay(DateTime.Now);
             }
         }
 
@@ -74,7 +63,7 @@ namespace HRMS.Web.Jobs
 
         public void ProcessDailyWorkingReportJobWithDay(DateTime day)
         {
-             dailyWorkingProcess.ProcessDailyWorkingReport(day);
+            dailyWorkingProcess.ProcessDailyWorkingReport(day);
         }
 
         public void ProcessDailyWorkingReportJob()
@@ -88,11 +77,7 @@ namespace HRMS.Web.Jobs
             {
                 if (day.Date <= DateTime.Now.Date)
                 {
-                    var result = importDataService.ImportCheckInOutRecordWithDay(day);
-                    if (result > 0)
-                    {
-                        ProcessDailyWorkingReportJobWithDay(day);
-                    }
+                    ProcessDailyWorkingReportJobWithDay(day);
                 }
             }
 
@@ -104,11 +89,7 @@ namespace HRMS.Web.Jobs
             var toDay = DateTime.Now.Date;
             foreach (var day in WorkingProcessService.DaysBetweenTwoDays(fromDay, toDay))
             {
-                var result = importDataService.ImportCheckInOutRecordWithDay(day);
-                if(result > 0)
-                {
-                    ProcessDailyWorkingReportJobWithDay(day);
-                }
+                ProcessDailyWorkingReportJobWithDay(day);
             }
         }
 
