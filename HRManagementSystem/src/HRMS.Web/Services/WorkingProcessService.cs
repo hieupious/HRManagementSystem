@@ -11,8 +11,8 @@ namespace HRMS.Web.Services
     {
         private ApplicationDbContext dbContext;
         private IWorkingHoursValidator workingHourValidator;
-        private ImportDataService importDataService;
-        public WorkingProcessService(ApplicationDbContext dbContext, IWorkingHoursValidator workingHourValidator, ImportDataService importDataService)
+        private IImportDataService importDataService;
+        public WorkingProcessService(ApplicationDbContext dbContext, IWorkingHoursValidator workingHourValidator, IImportDataService importDataService)
         {
             this.dbContext = dbContext;
             this.workingHourValidator = workingHourValidator;

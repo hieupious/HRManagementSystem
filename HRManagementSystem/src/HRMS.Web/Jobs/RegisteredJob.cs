@@ -38,6 +38,7 @@ namespace HRMS.Web.Jobs
         {
             //BackgroundJob.Enqueue<RegisteredJob>(r => r.ImportAndProcessDataWithMonth(new DateTime(2015, 10, 1)));
             //BackgroundJob.Enqueue<RegisteredJob>(r => r.ImportAndProcessDataWithDay());
+            //ProcessDailyWorkingReportJobWithDay(new DateTime(2015, 11, 6));
         }
 
         public void DailyCopyExternalFile()
@@ -66,11 +67,6 @@ namespace HRMS.Web.Jobs
             dailyWorkingProcess.ProcessDailyWorkingReport(day);
         }
 
-        public void ProcessDailyWorkingReportJob()
-        {
-            ProcessDailyWorkingReportJobWithDay(DateTime.Now);
-        }
-
         public void ImportAndProcessDataWithMonth(DateTime month)
         {
             foreach (var day in WorkingProcessService.AllDatesInMonth(month.Year, month.Month))
@@ -83,10 +79,8 @@ namespace HRMS.Web.Jobs
 
         }
 
-        public void ImportAndProcessDataWithDay()
+        public void ImportAndProcessDataWithDay(DateTime fromDay, DateTime toDay)
         {
-            var fromDay = new DateTime(2015, 10, 24);
-            var toDay = DateTime.Now.Date;
             foreach (var day in WorkingProcessService.DaysBetweenTwoDays(fromDay, toDay))
             {
                 ProcessDailyWorkingReportJobWithDay(day);
