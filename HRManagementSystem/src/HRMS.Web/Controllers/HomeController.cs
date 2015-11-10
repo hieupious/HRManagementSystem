@@ -14,7 +14,6 @@ namespace HRMS.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext dbContext;
-        private static int[] activeDepts = { 2, 3, 6, 7, 8, 9, 10 };
 
         public HomeController(ApplicationDbContext dbContext)
         {
