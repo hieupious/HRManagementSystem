@@ -15,27 +15,21 @@
             <h2 class="m-a-0 text-uppercase pul">User Dashboard</h2>
         </div>
     </div>
-    @*<div class="m-t-lg m-b-lg clearfix">
-        <div class="pull-left">
-            <h3 class="m-a-0 text-uppercase">@Model.Name <small class="text-muted">ASWVN@(Model.EmployeeId) - @Model.Office</small></h3>
-        </div>
-    </div>*@
     <div class="col-lg-12 panel panel-primary">
         <div class="panel-body">
             <h3 class="m-a-0 text-uppercase">@Model.Name <small class="text-muted">ASWVN@(Model.EmployeeId)</small></h3>
-            <p></p>
-            <ul class="list-group">
+            <ul class="list-group margin-list-top">
                 <li class="list-group-item"><strong>Office: </strong>@Model.Office</li>
                 <li class="list-group-item"><strong>Department: </strong>@Model.Department</li>
                 <li class="list-group-item"><strong>Working Hour Rule Applied: </strong>@Model.WorkingHourRuleApplied</li>          
                 <li class="list-group-item"><strong>Check-in Time Today: </strong>@Model.CurrentDayCheckinTime</li>
                 <li class="list-group-item list-group-item-danger"><strong>Total Lacking Time In Month: </strong>{{@Model.TotalLackingTimeInMonth | timespan }}</li>
             </ul>
-            <div class="col-lg-6" style="margin-left:-10px;">
-                <a asp-action="UserInfo" asp-controller="Home" class="btn btn-primary pull-left"><strong>View Timesheet</strong></a>
+            <div class="col-lg-6">
+                <a asp-action="UserInfo" asp-controller="Home" class="btn btn-primary pull-left btn-viewtimesheet"><strong>View Timesheet</strong></a>
             </div>
-            <div class="col-lg-6" style="margin-left:10px;">
-                <div class="pull-right" data-toggle="tooltip" data-placement="left" title="Request admin change informations if incorrectt">
+            <div class="col-lg-6">
+                <div class="lnk-requestforchange pull-right" data-toggle="tooltip" data-placement="left" title="Request admin change informations if incorrectt">
                     <u>Request For Change</u>
                 </div>
             </div>
