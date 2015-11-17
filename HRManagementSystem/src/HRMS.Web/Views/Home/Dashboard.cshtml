@@ -1,30 +1,48 @@
-﻿@{ 
-    ViewData["Title"] = "Tram Ngoc Minh - Dashboard";
+﻿@model HRMS.Web.ViewModels.UserInfoViewModel
+@{
+    ViewData["Title"] = Model.Name;
 }
-<div class="row">
+
+
+@section scripts{
+    <script src="~/js/home/dashboard/app.js" asp-append-version="true"></script>
+    <script src="~/js/home/dashboard/controller.js" asp-append-version="true"></script>
+}
+
+<div class="row" ng-app="hrmsDashboard" ng-controller="DashboardController as vm" ng-cloak>
     <div class="m-t-lg m-b-lg clearfix">
         <div class="pull-left">
-            <h2 class="m-a-0 text-uppercase">@ViewData["Title"] <small class="text-muted">ASWVN431 - GPTower</small></h2>
+            <h2 class="m-a-0 text-uppercase pul">User Dashboard</h2>
         </div>
     </div>
+    @*<div class="m-t-lg m-b-lg clearfix">
+        <div class="pull-left">
+            <h3 class="m-a-0 text-uppercase">@Model.Name <small class="text-muted">ASWVN@(Model.EmployeeId) - @Model.Office</small></h3>
+        </div>
+    </div>*@
     <div class="col-lg-12 panel panel-primary">
         <div class="panel-body">
+            <h3 class="m-a-0 text-uppercase">@Model.Name <small class="text-muted">ASWVN@(Model.EmployeeId)</small></h3>
+            <p></p>
             <ul class="list-group">
-                <li class="list-group-item"><strong>Department: </strong>Developer</li>
-                <li class="list-group-item"><strong>Working Hour Rule Applied: </strong>Devs/QAs</li>
-                <li class="list-group-item"><strong>Check-in Time Today: </strong>8:00 A.M</li>
-                <li class="list-group-item list-group-item-danger"><strong>Total Lacking Time In Month: </strong>45 minutes</li>
+                <li class="list-group-item"><strong>Office: </strong>@Model.Office</li>
+                <li class="list-group-item"><strong>Department: </strong>@Model.Department</li>
+                <li class="list-group-item"><strong>Working Hour Rule Applied: </strong>@Model.WorkingHourRuleApplied</li>          
+                <li class="list-group-item"><strong>Check-in Time Today: </strong>@Model.CurrentDayCheckinTime</li>
+                <li class="list-group-item list-group-item-danger"><strong>Total Lacking Time In Month: </strong>{{@Model.TotalLackingTimeInMonth | timespan }}</li>
             </ul>
-            <div class="col-lg-6">
-                @Html.ActionLink("View Timesheet", "UserInfo", "Home", null, new { @class = "btn btn-primary pull-left" })
+            <div class="col-lg-6" style="margin-left:-10px;">
+                <a asp-action="UserInfo" asp-controller="Home" class="btn btn-primary pull-left"><strong>View Timesheet</strong></a>
             </div>
-            <div class="col-lg-6">
-                <div class="pull-right danger" data-toggle="tooltip" data-placement="left" title="Request admin change informations if incorrectt">
-                <u>Request For Change</u>
-             </div>
+            <div class="col-lg-6" style="margin-left:10px;">
+                <div class="pull-right" data-toggle="tooltip" data-placement="left" title="Request admin change informations if incorrectt">
+                    <u>Request For Change</u>
+                </div>
             </div>
         </div>
-       
-     </div>
-    
- </div>
+
+    </div>
+
+</div>
+
+

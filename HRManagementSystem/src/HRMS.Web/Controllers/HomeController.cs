@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Security.Principal;
+using HRMS.Web.ViewModels;
+using System;
+using HRMS.Web.Services;
 
 namespace HRMS.Web.Controllers
 {
@@ -15,20 +18,39 @@ namespace HRMS.Web.Controllers
     {
         private readonly ApplicationDbContext dbContext;
 
-        public HomeController(ApplicationDbContext dbContext)
+        private readonly IWorkingHoursValidator workingHoursValidator;
+
+        private DbSet<WorkingPoliciesGroup> _policies;
+
+        private DbSet<WorkingPoliciesGroup> WorkingPoliciesGroup
+        {
+            get
+            {
+                if (_policies == null)
+                {
+                    _policies = dbContext.GetWorkingPoliciesGroups();
+                }
+                return _policies;
+            }
+        }
+
+        public HomeController(ApplicationDbContext dbContext, IWorkingHoursValidator workingHoursValidator)
         {
             this.dbContext = dbContext;
+            this.workingHoursValidator = workingHoursValidator;
         }
+
         [Authorize(Roles = "NormalUser,Manager,Administrator,HRGroup")]
         public IActionResult Index(string id)
         {
             if (User.IsInRole("NormalUser"))
             {
-                return RedirectToAction(nameof(HomeController.UserInfo), "Home");
+                return RedirectToAction(nameof(HomeController.Dashboard), "Home");
             }
             ViewBag.SearchTerms = id;
             return View();
         }
+
         [AllowAnonymous]
         public async Task<IActionResult> SignIn()
         {
@@ -56,6 +78,7 @@ namespace HRMS.Web.Controllers
             }
             return RedirectToAction(nameof(HomeController.PermissionDenied), "Home");
         }
+
         [AllowAnonymous]
         public async Task<IActionResult> SignOut()
         {
@@ -85,6 +108,55 @@ namespace HRMS.Web.Controllers
         {
             return View();
         }
+
+        public IActionResult Dashboard()
+        {
+            string id = (User.FindFirstValue(ClaimTypes.Sid));
+            var user = dbContext.UserInfoes.Where(u => u.EmployeeId == id).Include(u => u.Department).Include(u => u.WorkingPoliciesGroup).FirstOrDefault();
+              
+            var record = dbContext.DailyWorkingRecords.Where(d => d.WorkingDay.Date == DateTime.Now && d.UserInfoId == user.Id).Include(d => d.CheckInOutRecords).FirstOrDefault();
+            UserInfoViewModel viewModel = new UserInfoViewModel
+            {
+                Name = user.Name,
+                EmployeeId = user.EmployeeId,
+                Department = user.Department.Name,
+                Office = user.Office.ToString(),
+                TotalLackingTimeInMonth = CaculateTotalLackingTimeInMonth(DateTime.Now).ToString(),
+                WorkingHourRuleApplied = user.WorkingPoliciesGroup.Name,
+                CurrentDayCheckinTime = record == null ? "" : record.CheckIn.Value.ToShortTimeString()
+            };
+            
+            return View(viewModel);
+        }
+
+        [HttpGet("CaculateTotalLackingTimeInMonth/{currentDate?}")]
+        public int CaculateTotalLackingTimeInMonth(DateTime? currentDate)
+        {
+            if (currentDate == null)
+            {
+                currentDate = DateTime.Now;
+            }
+
+            string id = (User.FindFirstValue(ClaimTypes.Sid));
+            var user = dbContext.UserInfoes.Where(u => u.EmployeeId == id).Include(u => u.Department).Include(u => u.WorkingPoliciesGroup).FirstOrDefault();
+            if (user.WorkingPoliciesGroupId.HasValue)
+            {
+                user.WorkingPoliciesGroup = WorkingPoliciesGroup.SingleOrDefault(w => w.Id == user.WorkingPoliciesGroupId.Value);
+            }
+
+            int totalLackingTime = 0;
+            foreach (var day in WorkingProcessService.AllDatesInMonth(currentDate.Value.Year, currentDate.Value.Month))
+            {
+                var record = dbContext.DailyWorkingRecords.Where(d => d.WorkingDay.Date == day.Date && d.UserInfoId == user.Id).Include(d => d.CheckInOutRecords).FirstOrDefault();                
+                if (record != null)
+                {
+                    totalLackingTime += workingHoursValidator.ValidateDailyRecord(record, user.WorkingPoliciesGroup, day);
+                }
+            }
+
+            return totalLackingTime;
+        }
+
 
         [Authorize(Roles = "Manager,Administrator,HRGroup")]
         public IActionResult PendingApprovals()
