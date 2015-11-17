@@ -13,7 +13,7 @@ using HRMS.Web.Services;
 
 namespace HRMS.Web.Controllers
 {
-
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext dbContext;
@@ -111,10 +111,13 @@ namespace HRMS.Web.Controllers
 
         public IActionResult Dashboard()
         {
-            string id = (User.FindFirstValue(ClaimTypes.Sid));
-            var user = dbContext.UserInfoes.Where(u => u.EmployeeId == id).Include(u => u.Department).Include(u => u.WorkingPoliciesGroup).FirstOrDefault();
-              
-            var record = dbContext.DailyWorkingRecords.Where(d => d.WorkingDay.Date == DateTime.Now && d.UserInfoId == user.Id).Include(d => d.CheckInOutRecords).FirstOrDefault();
+            string id = User.FindFirstValue(ClaimTypes.Sid);
+            var user = dbContext.UserInfoes.Include(u => u.WorkingPoliciesGroup).Include(u => u.Department).FirstOrDefault(u => u.EmployeeId.Equals(id));
+            if (user == null)
+                return RedirectToAction(nameof(HomeController.PermissionDenied), "Home");
+
+            var record = dbContext.DailyWorkingRecords.Include(d => d.CheckInOutRecords).FirstOrDefault(d => d.WorkingDay.Date == DateTime.Now.Date && d.UserInfoId == user.Id);
+
             UserInfoViewModel viewModel = new UserInfoViewModel
             {
                 Name = user.Name,
@@ -123,41 +126,12 @@ namespace HRMS.Web.Controllers
                 Office = user.Office.ToString(),
                 TotalLackingTimeInMonth = CaculateTotalLackingTimeInMonth(DateTime.Now).ToString(),
                 WorkingHourRuleApplied = user.WorkingPoliciesGroup.Name,
-                CurrentDayCheckinTime = record == null ? "" : record.CheckIn.Value.ToShortTimeString()
+                CurrentDayCheckinTime = record == null ? String.Empty : record.CheckIn.Value.ToShortTimeString()
             };
-            
+
             return View(viewModel);
         }
-
-        [HttpGet("CaculateTotalLackingTimeInMonth/{currentDate?}")]
-        public int CaculateTotalLackingTimeInMonth(DateTime? currentDate)
-        {
-            if (currentDate == null)
-            {
-                currentDate = DateTime.Now;
-            }
-
-            string id = (User.FindFirstValue(ClaimTypes.Sid));
-            var user = dbContext.UserInfoes.Where(u => u.EmployeeId == id).Include(u => u.Department).Include(u => u.WorkingPoliciesGroup).FirstOrDefault();
-            if (user.WorkingPoliciesGroupId.HasValue)
-            {
-                user.WorkingPoliciesGroup = WorkingPoliciesGroup.SingleOrDefault(w => w.Id == user.WorkingPoliciesGroupId.Value);
-            }
-
-            int totalLackingTime = 0;
-            foreach (var day in WorkingProcessService.AllDatesInMonth(currentDate.Value.Year, currentDate.Value.Month))
-            {
-                var record = dbContext.DailyWorkingRecords.Where(d => d.WorkingDay.Date == day.Date && d.UserInfoId == user.Id).Include(d => d.CheckInOutRecords).FirstOrDefault();                
-                if (record != null)
-                {
-                    totalLackingTime += workingHoursValidator.ValidateDailyRecord(record, user.WorkingPoliciesGroup, day);
-                }
-            }
-
-            return totalLackingTime;
-        }
-
-
+    
         [Authorize(Roles = "Manager,Administrator,HRGroup")]
         public IActionResult PendingApprovals()
         {
@@ -176,5 +150,33 @@ namespace HRMS.Web.Controllers
             return View("~/Views/Shared/PermissionDenied.cshtml");
         }
 
+        #region Help methods
+        private int CaculateTotalLackingTimeInMonth(DateTime? currentDate)
+        {
+            if (currentDate == null)
+            {
+                currentDate = DateTime.Now;
+            }
+
+            string id = User.FindFirstValue(ClaimTypes.Sid);
+            var user = dbContext.UserInfoes.FirstOrDefault(u => u.EmployeeId.Equals(id));
+            if (user.WorkingPoliciesGroupId.HasValue)
+            {
+                user.WorkingPoliciesGroup = WorkingPoliciesGroup.SingleOrDefault(w => w.Id == user.WorkingPoliciesGroupId.Value);
+            }
+
+            int totalLackingTime = 0;
+            foreach (var day in WorkingProcessService.AllDatesInMonth(currentDate.Value.Year, currentDate.Value.Month))
+            {
+                var record = dbContext.DailyWorkingRecords.Include(d => d.CheckInOutRecords).FirstOrDefault(d => d.WorkingDay.Date == day.Date && d.UserInfoId.Value == user.Id);              
+                if (record != null)
+                {
+                    totalLackingTime += workingHoursValidator.ValidateDailyRecord(record, user.WorkingPoliciesGroup, day);
+                }
+            }
+
+            return totalLackingTime;
+        }
+        #endregion
     }
 }
