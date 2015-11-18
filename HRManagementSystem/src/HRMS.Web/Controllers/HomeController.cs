@@ -115,7 +115,7 @@ namespace HRMS.Web.Controllers
             var user = dbContext.UserInfoes.Include(u => u.WorkingPoliciesGroup).Include(u => u.Department).FirstOrDefault(u => u.EmployeeId.Equals(id));
             if (user == null)
                 return RedirectToAction(nameof(HomeController.PermissionDenied), "Home");
-
+          
             var record = dbContext.DailyWorkingRecords.Include(d => d.CheckInOutRecords).FirstOrDefault(d => d.WorkingDay.Date == DateTime.Now.Date && d.UserInfoId == user.Id);
 
             UserInfoViewModel viewModel = new UserInfoViewModel
@@ -126,12 +126,17 @@ namespace HRMS.Web.Controllers
                 Office = user.Office.ToString(),
                 TotalLackingTimeInMonth = CaculateTotalLackingTimeInMonth(DateTime.Now).ToString(),
                 WorkingHourRuleApplied = user.WorkingPoliciesGroup.Name,
-                CurrentDayCheckinTime = record == null ? String.Empty : record.CheckIn.Value.ToShortTimeString()
+                CurrentDayCheckinTime = record != null && record.CheckIn != null ? record.CheckIn.Value.ToShortTimeString() : string.Empty
             };
+
+            if (record != null && record.CheckIn != null)
+            {
+                viewModel.WorkingHourRuleApplied = record.CheckIn.Value.ToShortTimeString();
+            }
 
             return View(viewModel);
         }
-    
+
         [Authorize(Roles = "Manager,Administrator,HRGroup")]
         public IActionResult PendingApprovals()
         {
@@ -168,7 +173,7 @@ namespace HRMS.Web.Controllers
             int totalLackingTime = 0;
             foreach (var day in WorkingProcessService.AllDatesInMonth(currentDate.Value.Year, currentDate.Value.Month))
             {
-                var record = dbContext.DailyWorkingRecords.Include(d => d.CheckInOutRecords).FirstOrDefault(d => d.WorkingDay.Date == day.Date && d.UserInfoId.Value == user.Id);              
+                var record = dbContext.DailyWorkingRecords.Include(d => d.CheckInOutRecords).FirstOrDefault(d => d.WorkingDay.Date == day.Date && d.UserInfoId.Value == user.Id);
                 if (record != null)
                 {
                     totalLackingTime += workingHoursValidator.ValidateDailyRecord(record, user.WorkingPoliciesGroup, day);
