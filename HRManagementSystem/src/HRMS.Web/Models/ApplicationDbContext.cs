@@ -21,6 +21,9 @@ namespace HRMS.Web.Models
         public DbSet<LateToleranceWorkingHoursRule> LateToleranceWorkingHoursRules { get; set; }
         public DbSet<EarlyToleranceWorkingHoursRule> EarlyToleranceWorkingHoursRules { get; set; }
 
+        public DbSet<PublicHoliday> PublicHolidays { get; set; }
+        public DbSet<VietnamesePublicHoliday> VietnamesePublicHolidays { get; set; }
+
         public DbSet<WorkingPoliciesGroup> GetWorkingPoliciesGroups()
         {
             foreach (var userGroup in WorkingPoliciesGroups)
@@ -46,6 +49,7 @@ namespace HRMS.Web.Models
             modelBuilder.Entity<DailyWorkingRecord>().Reference(d => d.MonthlyRecord).InverseCollection(m => m.DailyRecords).ForeignKey(d => d.MonthlyRecordId);
             modelBuilder.Entity<CheckInOutRecord>().Reference(c => c.User).InverseCollection(u => u.CheckInOutRecords).ForeignKey(c => c.UserId).PrincipalKey(u => u.ExternalId);
             modelBuilder.Entity<CheckInOutRecord>().Reference(c => c.DailyRecord).InverseCollection(d => d.CheckInOutRecords).ForeignKey(c => c.DailyRecordId);
+            modelBuilder.Entity<PublicHoliday>().Reference(p => p.VNPublicHoliday).InverseCollection(v => v.PublicHolidays).ForeignKey(p => p.VietnamesePublicHolidayId);
             // Create index
             modelBuilder.Entity<CheckInOutRecord>().Index(c => c.CheckTime);
             modelBuilder.Entity<CheckInOutRecord>().Index(c => new { c.UserId, c.CheckTime });

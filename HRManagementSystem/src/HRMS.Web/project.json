@@ -23,7 +23,8 @@
     "Microsoft.AspNet.Mvc.WebApiCompatShim": "6.0.0-beta7",
     "Microsoft.AspNet.Identity": "3.0.0-beta7",
     "Hangfire": "1.5.2",
-    "Microsoft.AspNet.Owin": "1.0.0-beta7"
+    "Microsoft.AspNet.Owin": "1.0.0-beta7",
+    "AutoMapper": "4.1.1"
   },
 
   "commands": {

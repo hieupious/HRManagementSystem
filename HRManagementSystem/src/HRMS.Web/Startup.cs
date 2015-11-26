@@ -81,6 +81,9 @@ namespace HRMS.Web
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
 
+            // Configure autommaper
+            AutoMapperBootStrapper.ConfigureAutoMapper();
+
             // Configure the HTTP request pipeline.
 
             // Add the following to the request pipeline only in development environment.

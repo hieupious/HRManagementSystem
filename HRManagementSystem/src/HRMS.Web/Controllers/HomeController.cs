@@ -10,7 +10,8 @@ using System.Security.Principal;
 using HRMS.Web.ViewModels;
 using System;
 using HRMS.Web.Services;
-
+using AutoMapper;
+using AutoMapper.Mappers;
 namespace HRMS.Web.Controllers
 {
     [Authorize]
@@ -109,13 +110,20 @@ namespace HRMS.Web.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Administrator,HRGroup")]
+        public IActionResult PublicHoliday()
+        {
+            return View();
+        }
+
         public IActionResult Dashboard()
         {
+
             string id = User.FindFirstValue(ClaimTypes.Sid);
             var user = dbContext.UserInfoes.Include(u => u.WorkingPoliciesGroup).Include(u => u.Department).FirstOrDefault(u => u.EmployeeId.Equals(id));
             if (user == null)
                 return RedirectToAction(nameof(HomeController.PermissionDenied), "Home");
-          
+
             var record = dbContext.DailyWorkingRecords.Include(d => d.CheckInOutRecords).FirstOrDefault(d => d.WorkingDay.Date == DateTime.Now.Date && d.UserInfoId == user.Id);
 
             UserInfoViewModel viewModel = new UserInfoViewModel

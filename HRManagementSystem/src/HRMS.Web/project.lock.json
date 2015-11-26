@@ -3,6 +3,15 @@
   "version": 1,
   "targets": {
     "DNX,Version=v4.5.1": {
+      "AutoMapper/4.1.1": {
+        "type": "package",
+        "compile": {
+          "lib/net45/AutoMapper.dll": {}
+        },
+        "runtime": {
+          "lib/net45/AutoMapper.dll": {}
+        }
+      },
       "EntityFramework.Commands/7.0.0-beta7": {
         "type": "package",
         "dependencies": {
@@ -1922,6 +1931,37 @@
     }
   },
   "libraries": {
+    "AutoMapper/4.1.1": {
+      "type": "package",
+      "sha512": "wTNIFaF21i0heEEOMOLn4Ki991I+b6Ls+tiwTvmzVhkLo5PmSJcNLuf2eGJEtUnQ3UDBTAAdZEaXAgbTqOe2pg==",
+      "files": [
+        "AutoMapper.4.1.1.nupkg",
+        "AutoMapper.4.1.1.nupkg.sha512",
+        "AutoMapper.nuspec",
+        "lib/dotnet/AutoMapper.dll",
+        "lib/dotnet/AutoMapper.xml",
+        "lib/MonoAndroid/AutoMapper.dll",
+        "lib/MonoAndroid/AutoMapper.XML",
+        "lib/MonoTouch/AutoMapper.dll",
+        "lib/MonoTouch/AutoMapper.XML",
+        "lib/net40/AutoMapper.dll",
+        "lib/net40/AutoMapper.xml",
+        "lib/net45/AutoMapper.dll",
+        "lib/net45/AutoMapper.xml",
+        "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10/AutoMapper.dll",
+        "lib/portable-net45+win+wpa81+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10/AutoMapper.xml",
+        "lib/sl50/AutoMapper.dll",
+        "lib/sl50/AutoMapper.XML",
+        "lib/win/AutoMapper.dll",
+        "lib/win/AutoMapper.xml",
+        "lib/wp80/AutoMapper.dll",
+        "lib/wp80/AutoMapper.xml",
+        "lib/wpa81/AutoMapper.dll",
+        "lib/wpa81/AutoMapper.xml",
+        "lib/Xamarin.iOS10/AutoMapper.dll",
+        "lib/Xamarin.iOS10/AutoMapper.XML"
+      ]
+    },
     "EntityFramework.Commands/7.0.0-beta7": {
       "type": "package",
       "serviceable": true,
@@ -3562,7 +3602,8 @@
       "Microsoft.AspNet.Mvc.WebApiCompatShim >= 6.0.0-beta7",
       "Microsoft.AspNet.Identity >= 3.0.0-beta7",
       "Hangfire >= 1.5.2",
-      "Microsoft.AspNet.Owin >= 1.0.0-beta7"
+      "Microsoft.AspNet.Owin >= 1.0.0-beta7",
+      "AutoMapper >= 4.1.1"
     ],
     "DNX,Version=v4.5.1": []
   }

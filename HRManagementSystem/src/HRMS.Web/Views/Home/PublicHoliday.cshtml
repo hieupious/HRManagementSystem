@@ -1,0 +1,108 @@
+﻿@model List<HRMS.Web.ViewModels.PublicHolidayViewModel>
+@{
+    ViewData["Title"] = "Manage Public Holiday";
+}
+
+@section scripts{
+    <script src="~/js/home/publicholiday/app.js" asp-append-version="true"></script>
+    <script src="~/js/home/publicholiday/controller.js" asp-append-version="true"></script>
+    <script src="~/js/home/publicholiday/services.js" asp-append-version="true"></script>
+}
+<div ng-app="hrmsPublicHoliday" ng-controller="PublicHolidayController as vm" class="ng-cloak">
+    <div class="m-t-lg m-b-lg clearfix">
+        <div class="pull-left">
+            <h2 class="m-a-0 text-uppercase">Manage Public Holidays <strong>{{vm.currentYear}}</strong></h2>
+        </div>
+        <div class="visible-xs m-b clearfix"></div>
+        <div class="form-inline pull-right-sm">
+
+            <select class="custom-select custom-select-sm" ng-model="vm.currentYear" ng-show="!vm.loading"
+                    ng-options="year for year in vm.years" ng-change="vm.changeCurrentYear()"></select>
+        </div>
+    </div>
+
+    <div class="panel panel-info">
+        <div class="panel-heading">Add public holiday</div>
+        <div class="panel-body">
+            <form class="form-horizontal" name="publicHolidayForm" novalidate>
+                <div class="form-group">
+                    <label class="col-md-1 control-label" for="inputHolidayName">Name: </label>
+                    <select class="col-md-4 custom-select" id="inputHolidayName" name="inputHolidayName" ng-model="vm.newHoliday.vietnameseHoliday"
+                            ng-options="holiday as holiday.Name for holiday in vm.vietnameseHolidays" ng-change="vm.changeVietnamesHoliday()"></select>
+                </div>
+
+                <div class="form-group" ng-class="{'has-error': publicHolidayForm.inputHolidayDate.$invalid && publicHolidayForm.inputHolidayDate.$dirty}">
+                    <label class="col-md-1 control-label" for="inputHolidayDate">Date: </label>
+                    <div class="input-group col-md-4">
+                        <input class="form-control" type="text" id="inputHolidayDate" name="inputHolidayDate"
+                               uib-datepicker-popup="MM/dd/yyyy"
+                               is-open="vm.opened"
+                               ng-model="vm.newHoliday.date"
+                               required ng-change="vm.changeNewHolidayDate()" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-default"
+                                    ng-click="vm.openDatepicker($event)">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </button>
+                        </span>
+                    </div>
+                    <div ng-cloak>
+                        <span ng-show="publicHolidayForm.inputHolidayDate.$error.required" class="text-danger" style="margin-left:8.33333%">
+                            The date is required.
+                        </span>
+                        <span ng-show="vm.isWeekend" class="text-danger bold" style="margin-left:8.33333%">
+                            <strong>Warning: This date is weekend! Replace with: </strong> <a href="#" ng-click="vm.newHoliday.date = vm.dayInLieu">{{vm.dayInLieu | date:'MM/dd/yyyy'}}</a>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-4 col-md-offset-1">
+                        <span>
+                            <button type="submit" class="btn btn-primary" ng-click="vm.createHoliday(publicHolidayForm.$valid)" style="margin-left: -3%; margin-right:10px">
+                                Add
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="text-center m-b">
+        <i class="fa fa-spinner fa-pulse fa-4x" ng-show="vm.loading"></i>
+    </div>
+
+    <table class="table table-condensed table-hover" ng-show="!vm.loading && vm.publicHolidays.length > 0">
+        <thead>
+            <tr>
+                <th class="text-center">#</th>
+                <th class="text-center">Name</th>
+                <th class="text-center">Description</th>
+                <th class="text-center">Date</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="holiday in vm.publicHolidays | orderBy : 'Name'" uib-tooltip="{{holiday.DayOfWeek === 0 || holiday.DayOfWeek === 6 ? 'Warning: This date is weekend!' : ''}}" ng-class="{'warning': holiday.DayOfWeek === 0 || holiday.DayOfWeek === 6}">
+                <td class="text-center">{{$index+1}}</td>
+                <td class="text-center">{{holiday.Name}}</td>
+                <td class="text-center">{{holiday.Description}}</td>
+                <td class="text-center">
+                    <a href="#" editable-bsdate="holiday.Date"
+                       e-datepicker-popup="MM/dd/yyyy"
+                       e-is-open="vm.opened2"
+                       e-ng-click="vm.openDatepicker2($event)"
+                       onbeforesave="vm.updateHoliday($data,holiday.Id)">{{(holiday.Date | date:'MM/dd/yyyy')}}</a>
+                </td>
+                <td class="text-center"><a href="" ng-click="vm.deleteHoliday(holiday.Id)" confirm="Are you sure to delete {{holiday.Name}} - {{holiday.Date | date:'MM/dd/yyyy'}}?">Delete</a></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="alert alert-warning" ng-hide="vm.publicHolidays.length > 0 || vm.loading">
+        <p>
+            No public holiday data for this year.
+        </p>
+    </div>
+</div>

@@ -1,23 +1,23 @@
 ﻿@using Microsoft.Framework.OptionsModel;
 @using HRMS.Web.Configuration;
 @using System.Security.Claims;
-
 @inject IOptions<AppSettings> AppSettings
-
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - @AppSettings.Options.Title</title>
-
     <environment names="Development">
         <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-        <link href="~/css/font-awesome.css" rel="stylesheet" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/font-awesome.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/toastr.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/xeditable.css" asp-append-version="true" />
     </environment>
     <environment names="Staging,Production">
         <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
         <link href="~/css/font-awesome.css" rel="stylesheet" asp-append-version="true" />
+
     </environment>
 </head>
 <body>
@@ -33,7 +33,6 @@
             </div>
             <div class="navbar-collapse collapse navbar-right">
                 <ul class="nav nav-bordered">
-
                     <li class="@(ViewBag.ActiveMenuItem == "Users" ? "active" : null) text-uppercase"><a asp-controller="Home" asp-action="UserInfo" asp-route-id="">Users</a></li>
                     @if (User.IsInRole("HRGroup") || User.IsInRole("Administrator"))
                     {
@@ -67,7 +66,6 @@
             <p>&copy; 2015 - @AppSettings.Options.Title</p>
         </footer>
     </div>
-
     <environment names="Development">
         <script src="~/js/jquery.js"></script>
         <script src="~/js/bootstrap.js"></script>
@@ -84,10 +82,13 @@
     </environment>
     <script src="~/js/angular.js" asp-append-version="true"></script>
     <script src="~/js/angular-resource.js" asp-append-version="true"></script>
+    <script src="~/js/ui-bootstrap-tpls.min.js" asp-append-version="true"></script>
+    <script src="~/js/xeditable.js" asp-append-version="true"></script>
+    <script src="~/js/angular-confirm.min.js" asp-append-version="true"></script>
+    <script src="~/js/toastr.js" asp-append-version="true"></script>
     <script src="~/js/focusif.js" asp-append-version="true"></script>
     <script src="~/js/phantomnet-resource.js" asp-append-version="true"></script>
     <script src="~/js/filters.js" asp-append-version="true"></script>
-
     @RenderSection("scripts", required: false)
 </body>
 </html>
