@@ -1,6 +1,4 @@
 {
-  "directory": "assets/bower_components",
-  "registry": "http://bower.herokuapp.com",
-  "proxy": "http://10.9.0.49:3128",
-  "https-proxy": "http://10.9.0.49:3128"
+  "directory": "assets/bower_components"
+
 }
