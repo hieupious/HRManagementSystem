@@ -15,3 +15,8 @@ The system is developed by using ASP.NET 5, EF7 with SQLServer in back-end and A
 
 __Note__ : The system is currently using ASP.NET 5 beta 7
 
+**Docs**
+- [ASP.NET 5](https://docs.asp.net/en/latest/)
+- [Entity Framework 7](http://ef.readthedocs.org/en/latest/)
+- [Hangfire](http://docs.hangfire.io/en/latest/)
+
