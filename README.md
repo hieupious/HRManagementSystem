@@ -13,7 +13,7 @@ The system is developed by using ASP.NET 5, EF7 with SQLServer in back-end and A
 
 - Please refer [Install on windows](http://docs.asp.net/en/latest/getting-started/installing-on-windows.html)
 
-__Note__ : The system is currently using ASP.NET 5 beta 7
+__Note__ : The system is currently using ASP.NET 5 beta 7 and in plan to migrate to RC1
 
 **Docs**
 - [ASP.NET 5](https://docs.asp.net/en/latest/)
